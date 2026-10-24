@@ -1136,6 +1136,168 @@
         gap: 8px;
       }
     }
+
+
+    /* EK MOBİL DÜZELTME: YATAY TAŞMA VE EKRAN DIŞINA ÇIKAN TUŞLAR */
+    @media (max-width: 900px) {
+      html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+      }
+      .wrap, .card, .app, .chat, .chat-head, .messages, .composer,
+      .composer-box, .plus-card, .gp-card, .gp-box, .gp-grid, .gp-admin,
+      .gp-products, .gp-banner, .gp-toolbar, .trade-room-shell,
+      .trade-room-columns, .trade-room-side {
+        min-width: 0;
+        max-width: 100%;
+      }
+      .wrap, .card, .app, .chat { width: 100%; overflow-x: hidden; }
+      .chat-head { width: 100%; padding: 8px; gap: 7px; }
+      .head-left { min-width: 0; width: 100%; flex-wrap: wrap; gap: 6px; }
+      .head-badges { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+
+      /* Üst menü artık yana kaydırılmaz; butonlar iki sütuna sığar. */
+      .top-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+        overflow: visible;
+        padding: 0;
+        justify-content: stretch;
+      }
+      .top-actions > button {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 34px;
+        padding: 6px 5px;
+        font-size: 10px;
+        line-height: 1.2;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: center;
+      }
+
+      /* Sohbet listesi de yatay kaydırma yerine satırları kullanır. */
+      .sidebar { min-width: 0; width: 100%; max-width: 100%; }
+      .thread-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 100%;
+      }
+      .thread {
+        flex: 0 1 calc(50% - 3px);
+        width: calc(50% - 3px);
+        min-width: 0;
+        max-width: calc(50% - 3px);
+        overflow: hidden;
+      }
+      .thread .name, .thread-preview { overflow-wrap: anywhere; }
+
+      .messages { width: 100%; min-width: 0; }
+      .bubble { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .composer-top { min-width: 0; width: 100%; }
+      .button-stack {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .button-stack > button, .send-btn, .send-btn.small {
+        min-width: 0;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      textarea, input, select, button { max-width: 100%; }
+      .composer-bottom { min-width: 0; }
+
+      /* Mağaza, bonus ve admin düğmeleri mobil genişliğe göre sarılır. */
+      .gp-banner { align-items: stretch; flex-direction: column; }
+      .gp-toolbar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+      }
+      .gp-toolbar > button {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        padding: 9px 6px;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .gp-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gp-product-card, .gp-product-body { min-width: 0; }
+      .gp-product-title, .gp-product-desc { overflow-wrap: anywhere; }
+      .gp-product-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gp-product-actions button { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+      .gp-admin-create-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gp-admin-create-grid > *, .plus-admin-create-grid > * { min-width: 0; max-width: 100%; }
+      .gp-input, .gp-textarea, .plus-input { width: 100%; min-width: 0; }
+      .gp-head > div, .plus-head > div { min-width: 0; flex: 1 1 150px; }
+      .gp-modal-actions, .image-modal-actions, .video-actions { flex-wrap: wrap; }
+      .gp-modal-actions > button, .image-modal-actions > button { min-width: 0; max-width: 100%; }
+      #gpPromoInput { flex: 1 1 0; width: 1%; min-width: 0; }
+      #gpRedeemBtn { flex: 0 0 auto; padding: 9px 10px !important; }
+
+      /* Canlı takas odası: iki kolon telefonlarda taşmaz; dikey içerik kendi alanında kalır. */
+      .trade-room-overlay { padding: 0; overflow: hidden; }
+      .trade-room-shell {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        padding: 8px;
+        gap: 8px;
+        border: 0;
+        border-radius: 0;
+      }
+      .trade-room-head { min-width: 0; gap: 7px; padding-bottom: 8px; }
+      .trade-room-head > div { min-width: 0; flex: 1 1 150px; }
+      .trade-room-title { font-size: 16px; overflow-wrap: anywhere; }
+      .trade-room-subtitle { overflow-wrap: anywhere; }
+      .trade-room-head > button { flex: 0 0 auto; max-width: 100%; padding: 8px; font-size: 11px; }
+      .trade-room-notice { min-width: 0; overflow-wrap: anywhere; padding: 8px; font-size: 12px; }
+      .trade-room-columns {
+        grid-template-columns: minmax(0, 1fr);
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-bottom: 4px;
+      }
+      .trade-room-side {
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        padding: 10px;
+        gap: 8px;
+      }
+      .trade-room-side.opponent { min-height: 0; }
+      .trade-room-side h3 { font-size: 14px; overflow-wrap: anywhere; }
+      .trade-room-item { min-width: 0; gap: 6px; flex-wrap: wrap; overflow-wrap: anywhere; }
+      .trade-room-item label { min-width: 0; overflow-wrap: anywhere; }
+      .trade-room-gp { min-width: 0; padding: 8px; }
+      .trade-room-confirm, #tradeRoomCancelBtn { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+
+      /* Uzun kodlar, açıklamalar ve modal içerikleri yatay taşma oluşturmasın. */
+      .gp-box, .plus-box, .gp-row, .plus-row, .terminal-box,
+      .image-modal-panel, .gp-modal-panel { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .gp-modal-content { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+    }
+
   </style>
 </head>
 <body>
