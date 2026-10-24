@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -1564,6 +1565,20 @@
                   <div class="plus-box-title" style="margin-bottom:8px; color:#c4b5fd;">PRO Kodları</div>
                   <div id="proCodeAdminList" class="plus-admin-list"></div>
                 </div>
+
+                <div class="plus-admin-create" style="border-color:rgba(110,168,254,.35);">
+                  <div class="plus-box-title">Eski Hesap Şifre Kaydı / Yönetimi</div>
+                  <div class="plus-admin-note" style="grid-column:auto;">
+                    Bu bölüm yalnızca şifre doğrulama kaydını yönetir; sohbet, GP, envanter, Tickets ve üyelik verileri silinmez. Önce “Şifre Kaydını Sıfırla” ile mevcut şifre kaydını kaldır, ardından aynı kutudaki doğru/eski şifreyi “Şifreyi Kaydet” ile yeniden kaydet.
+                  </div>
+                  <div class="plus-admin-create-grid">
+                    <input id="legacyAccountUsername" class="plus-input" type="text" maxlength="80" placeholder="Hesap kullanıcı adı" autocomplete="off" />
+                    <input id="legacyAccountPassword" class="plus-input" type="password" placeholder="Kaydedilecek şifre" autocomplete="new-password" />
+                    <button id="legacyPasswordCreateBtn" class="btn" type="button">Şifreyi Kaydet</button>
+                    <button id="legacyPasswordResetBtn" class="btn warn" type="button" title="Yalnızca şifre doğrulama kaydını kaldırır; diğer kullanıcı verileri korunur.">Şifre Kaydını Sıfırla</button>
+                  </div>
+                  <div id="legacyPasswordAdminMsg" class="msg"></div>
+                </div>
               </div>
             </div>
           </section>
@@ -2230,6 +2245,195 @@
       return encodeURIComponent(raw || "user").slice(0, 150);
     }
 
+    // Kullanıcı adları için sabit, büyük/küçük harfe duyarsız hesap kimliği.
+    // Şifreler asla düz metin olarak saklanmaz; PBKDF2 + benzersiz salt kullanılır.
+    const PASSWORD_HASH_ITERATIONS = 210000;
+    const PASSWORD_CREDENTIALS_COLLECTION = "userAccounts";
+
+    function requirePasswordCrypto() {
+      if (!globalThis.crypto?.subtle || !globalThis.crypto?.getRandomValues) {
+        throw new Error("Şifre doğrulaması için HTTPS bağlantısı olan güncel bir tarayıcı kullan.");
+      }
+      return globalThis.crypto;
+    }
+
+    function bytesToBase64(bytes) {
+      let binary = "";
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    }
+
+    function base64ToBytes(value) {
+      const binary = atob(value);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function getAccountDocumentId(username) {
+      const cryptoApi = requirePasswordCrypto();
+      const normalized = normalizeKey(username);
+      const digest = await cryptoApi.subtle.digest("SHA-256", new TextEncoder().encode(normalized));
+      return bytesToBase64(new Uint8Array(digest))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+    }
+
+    function createPasswordSalt() {
+      const cryptoApi = requirePasswordCrypto();
+      const salt = new Uint8Array(16);
+      cryptoApi.getRandomValues(salt);
+      return bytesToBase64(salt);
+    }
+
+    async function derivePasswordHash(password, saltBase64, iterations = PASSWORD_HASH_ITERATIONS) {
+      const cryptoApi = requirePasswordCrypto();
+      const salt = base64ToBytes(saltBase64);
+      if (salt.length < 16) throw new Error("Hesap şifre kaydı geçersiz.");
+      const rounds = Number(iterations);
+      if (!Number.isInteger(rounds) || rounds < 100000 || rounds > 500000) {
+        throw new Error("Hesap şifre ayarı geçersiz. Yöneticiyle iletişime geç.");
+      }
+      const keyMaterial = await cryptoApi.subtle.importKey(
+        "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]
+      );
+      const bits = await cryptoApi.subtle.deriveBits(
+        { name: "PBKDF2", salt, iterations: rounds, hash: "SHA-256" },
+        keyMaterial,
+        256
+      );
+      return bytesToBase64(new Uint8Array(bits));
+    }
+
+    function constantTimeStringEqual(a, b) {
+      if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+      let diff = 0;
+      for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+      return diff === 0;
+    }
+
+    async function verifySavedPassword(accountData, password, username) {
+      const salt = accountData?.passwordSalt;
+      const savedHash = accountData?.passwordHash;
+      const iterations = Number(accountData?.passwordIterations);
+      if (!salt || !savedHash || !Number.isInteger(iterations)) {
+        throw new Error("Bu hesapta şifre kaydı eksik. Hesap verileri silinmedi; yöneticiyle iletişime geç.");
+      }
+      const enteredHash = await derivePasswordHash(password, salt, iterations);
+      if (!constantTimeStringEqual(enteredHash, savedHash)) {
+        throw new Error("Kullanıcı adı veya şifre hatalı.");
+      }
+      return { isNew: false, username: accountData.username || username };
+    }
+
+    async function verifyOrCreateUserAccount(username, password) {
+      // Giriş sırasında asla parola oluşturma. Aksi hâlde eski bir kullanıcı adını bilen
+      // biri kendi seçtiği ilk parolayı kaydedip o hesaba girebilir.
+      const accountId = await getAccountDocumentId(username);
+      const accountRef = doc(db, PASSWORD_CREDENTIALS_COLLECTION, accountId);
+      const existing = await getDoc(accountRef);
+
+      if (!existing.exists()) {
+        throw new Error(
+          "Bu hesap için doğrulanabilir bir şifre kaydı bulunamadı. Hesap verilerin silinmedi. " +
+          "Güvenlik için şifreyi yönetici, Tickets > Eski Hesap Şifre Kaydı bölümünden kaydetmeli."
+        );
+      }
+
+      return verifySavedPassword(existing.data(), password, username);
+    }
+
+    async function adminSaveUserPassword(overwrite = false) {
+      const messageEl = document.getElementById("legacyPasswordAdminMsg");
+      const usernameEl = document.getElementById("legacyAccountUsername");
+      const passwordEl = document.getElementById("legacyAccountPassword");
+      const createBtn = document.getElementById("legacyPasswordCreateBtn");
+      const resetBtn = document.getElementById("legacyPasswordResetBtn");
+      if (!isAdmin) {
+        if (messageEl) messageEl.textContent = "Bu işlem yalnızca yöneticiye açıktır.";
+        return;
+      }
+
+      const username = (usernameEl?.value || "").trim();
+      const password = passwordEl?.value || "";
+      if (messageEl) messageEl.textContent = "";
+      if (!username || (!overwrite && !password)) {
+        if (messageEl) messageEl.textContent = overwrite
+          ? "Sıfırlanacak hesabın kullanıcı adını gir."
+          : "Kullanıcı adı ve kaydedilecek şifre zorunludur.";
+        return;
+      }
+      if (username.length > 80) {
+        if (messageEl) messageEl.textContent = "Kullanıcı adı en fazla 80 karakter olabilir.";
+        return;
+      }
+      if (normalizeKey(username) === normalizeKey(ADMIN_USER)) {
+        if (messageEl) messageEl.textContent = "Yönetici şifresi bu bölümden değiştirilemez.";
+        return;
+      }
+
+      if (createBtn) createBtn.disabled = true;
+      if (resetBtn) resetBtn.disabled = true;
+      try {
+        const accountId = await getAccountDocumentId(username);
+        const accountRef = doc(db, PASSWORD_CREDENTIALS_COLLECTION, accountId);
+        const before = await getDoc(accountRef);
+
+        if (overwrite) {
+          if (!before.exists()) {
+            throw new Error("Bu hesapta sıfırlanacak bir şifre kaydı yok. Önce kullanıcı adını kontrol et.");
+          }
+          if (!window.confirm(
+            `“${username}” hesabının yalnızca şifre doğrulama kaydı sıfırlanacak. Sohbetler, GP, envanter, Tickets ve üyelik verileri korunacak. Ardından “Şifreyi Kaydet” ile doğru şifreyi ekleyebilirsin. Devam edilsin mi?`
+          )) return;
+
+          await runTransaction(db, async (transaction) => {
+            const fresh = await transaction.get(accountRef);
+            if (!fresh.exists()) {
+              throw new Error("Şifre kaydı zaten kaldırılmış. Şimdi “Şifreyi Kaydet” düğmesini kullanabilirsin.");
+            }
+            transaction.delete(accountRef);
+          });
+
+          if (messageEl) messageEl.textContent = `“${username}” hesabının eski şifre kaydı kaldırıldı. Kullanıcı adı ve şifre kutusunu kontrol edip şimdi “Şifreyi Kaydet” düğmesine bas. Diğer kullanıcı verileri korunuyor.`;
+          // Şifre alanını bilerek temizleme: kullanıcı hemen ardından aynı şifreyi yeniden kaydedebilir.
+        } else {
+          if (before.exists()) {
+            throw new Error("Bu hesapta şifre kaydı zaten var. Önce “Şifre Kaydını Sıfırla” düğmesine bas; sonra yeniden kaydet.");
+          }
+
+          const salt = createPasswordSalt();
+          const passwordHash = await derivePasswordHash(password, salt, PASSWORD_HASH_ITERATIONS);
+          await runTransaction(db, async (transaction) => {
+            const fresh = await transaction.get(accountRef);
+            if (fresh.exists()) {
+              throw new Error("Şifre kaydı bu sırada oluşturuldu. Güvenlik için üzerine yazılmadı; gerekiyorsa sıfırla ve tekrar dene.");
+            }
+            transaction.set(accountRef, {
+              username,
+              usernameKey: normalizeKey(username),
+              passwordHash,
+              passwordSalt: salt,
+              passwordIterations: PASSWORD_HASH_ITERATIONS,
+              credentialVersion: 1,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          });
+
+          if (messageEl) messageEl.textContent = `“${username}” hesabının şifresi kaydedildi.`;
+          if (passwordEl) passwordEl.value = "";
+        }
+      } catch (err) {
+        console.error("Yönetici şifre kayıt hatası:", err);
+        if (messageEl) messageEl.textContent = err?.message || "Şifre kaydedilemedi. Firestore izinlerini kontrol et.";
+      } finally {
+        if (createBtn) createBtn.disabled = false;
+        if (resetBtn) resetBtn.disabled = false;
+      }
+    }
+
     function formatTime(value) {
       try {
         const d = value?.toDate ? value.toDate() : (value ? new Date(value) : null);
@@ -2266,7 +2470,8 @@
     }
 
     function saveSession() {
-      sessionStorage.setItem(sessionKey, JSON.stringify({ currentUser, isAdmin }));
+      // Önceki sürümden kalan, şifre kontrolü yapılmadan açılmış oturumları kabul etme.
+      sessionStorage.setItem(sessionKey, JSON.stringify({ currentUser, isAdmin, authVersion: 3 }));
     }
 
     function loadSession() {
@@ -2274,11 +2479,15 @@
         const raw = sessionStorage.getItem(sessionKey);
         if (!raw) return false;
         const data = JSON.parse(raw);
-        if (!data?.currentUser) return false;
+        if (!data?.currentUser || data.authVersion !== 3) {
+          sessionStorage.removeItem(sessionKey);
+          return false;
+        }
         currentUser = data.currentUser;
         isAdmin = !!data.isAdmin;
         return true;
       } catch {
+        sessionStorage.removeItem(sessionKey);
         return false;
       }
     }
@@ -4271,12 +4480,14 @@
     function listenProChat() {
       if (unsubscribeProChat) unsubscribeProChat();
       const oneHourAgo = Date.now() - 3600000;
-      const q = query(collection(db, "proChatMessages"), where("createdAtClient", ">", oneHourAgo), orderBy("createdAtClient", "asc"), limit(80));
+      // Önce en yeni 80 mesajı al; görünümde kronolojik sıra için sonra ters çevir.
+      const q = query(collection(db, "proChatMessages"), where("createdAtClient", ">", oneHourAgo), orderBy("createdAtClient", "desc"), limit(80));
       unsubscribeProChat = onSnapshot(q, (snap) => {
         const box = document.getElementById("proChatMessages");
         if (!box) return;
         const items = [];
         snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+        items.reverse();
         box.innerHTML = items.map(item => {
           const mine = item.sender === currentUser;
           const time = new Date(item.createdAtClient).toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' });
@@ -4331,21 +4542,55 @@
       setGpPanelOpen(false);
     }
 
+    let loginInProgress = false;
     async function login() {
+      if (loginInProgress) return;
       const username = usernameInput.value.trim();
       const password = passwordInput.value;
-      if (!username || !password) return setLoginError("Kullanıcı adı ve şifre yaz.");
+      if (!username || !password) return setLoginError("Kullanıcı adı ve şifre zorunludur.");
+      if (username.length > 80) return setLoginError("Kullanıcı adı en fazla 80 karakter olabilir.");
 
-      if (username === ADMIN_USER && password === ADMIN_PASS) {
-        currentUser = ADMIN_USER;
-        isAdmin = true;
-      } else {
-        currentUser = username;
-        isAdmin = false;
-      }
-      saveSession();
+      loginInProgress = true;
+      loginBtn.disabled = true;
       setLoginError("");
-      showApp();
+      try {
+        if (normalizeKey(username) === normalizeKey(ADMIN_USER)) {
+          // Yönetici adı başka bir normal hesap olarak oluşturulamasın.
+          if (password !== ADMIN_PASS) throw new Error("Kullanıcı adı veya şifre hatalı.");
+          currentUser = ADMIN_USER;
+          isAdmin = true;
+        } else {
+          const authResult = await verifyOrCreateUserAccount(username, password);
+          currentUser = authResult.username || username;
+          isAdmin = false;
+        }
+
+        saveSession();
+        passwordInput.value = "";
+        setLoginError("");
+        showApp();
+      } catch (err) {
+        currentUser = null;
+        isAdmin = false;
+        clearSession();
+        const message = String(err?.message || "");
+        showLogin();
+        if (
+          message === "Kullanıcı adı veya şifre hatalı." ||
+          message.startsWith("Bu hesap için doğrulanabilir bir şifre kaydı") ||
+          message.startsWith("Bu hesapta şifre kaydı") ||
+          message.startsWith("Hesap şifre") ||
+          message.startsWith("Şifre doğrulaması")
+        ) {
+          setLoginError(message);
+        } else {
+          console.error("Giriş doğrulama hatası:", err);
+          setLoginError("Giriş doğrulanamadı. İnternet bağlantısını ve Firestore izinlerini kontrol et.");
+        }
+      } finally {
+        loginInProgress = false;
+        loginBtn.disabled = false;
+      }
     }
 
     async function logout() {
@@ -5073,7 +5318,9 @@
 
     document.getElementById("giftBtn")?.addEventListener("click", sendGpGift);
     loginBtn.addEventListener("click", login);
-    passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+    document.getElementById("legacyPasswordCreateBtn")?.addEventListener("click", () => void adminSaveUserPassword(false));
+    document.getElementById("legacyPasswordResetBtn")?.addEventListener("click", () => void adminSaveUserPassword(true));
+    passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") void login(); });
     usernameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
     logoutBtn.addEventListener("click", logout);
 
