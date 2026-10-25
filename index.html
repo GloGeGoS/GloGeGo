@@ -1417,6 +1417,104 @@
       }
     }
 
+
+
+    /* GP oyuncu pazarı — mobil uyumlu, görsel verilerini tekrar indirmeden küçük ilan kartları */
+    .gp-market-form { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,210px) auto; gap:8px; align-items:center; }
+    .gp-market-form > * { min-width:0; }
+    .gp-market-list { grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:9px; }
+    .gp-market-card-actions { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; margin-top:6px; }
+    .gp-market-card-actions button { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+    .gp-market-status { color:#86efac; font-size:11px; font-weight:800; }
+    @media(max-width:760px) {
+      .gp-market-form { grid-template-columns:minmax(0,1fr); }
+      .gp-market-form .btn { width:100%; }
+      .gp-market-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media(max-width:520px) {
+      .gp-market-list { grid-template-columns:minmax(0,1fr); }
+    }
+
+    /* GloGeGo Atölye — responsive, düşük sorgu ve güvenli gömülü oyun alanı */
+    .workshop-panel {
+      position: fixed; inset: 0; z-index: 24000; padding: 14px;
+      background: rgba(7, 10, 18, .97); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .workshop-shell {
+      width: min(1450px, 100%); height: calc(100dvh - 28px); min-width: 0;
+      display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+      border-radius: 22px; border: 1px solid rgba(167,139,250,.28);
+      background: linear-gradient(150deg,#111827,#0c101a); padding: 16px;
+      box-shadow: 0 24px 90px rgba(0,0,0,.5);
+    }
+    .workshop-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-bottom:10px; border-bottom:1px solid var(--line); }
+    .workshop-title { font-size:22px; font-weight:950; letter-spacing:.2px; color:#e9d5ff; }
+    .workshop-subtitle { color:var(--muted); font-size:12px; margin-top:4px; }
+    .workshop-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .workshop-toolbar input[type="search"], .workshop-input, .workshop-textarea, .workshop-select {
+      width:100%; min-width:0; color:var(--text); background:#0b111d; border:1px solid #303b52;
+      border-radius:11px; padding:11px 12px; font:inherit; outline:none;
+    }
+    .workshop-textarea { min-height:90px; resize:vertical; }
+    .workshop-toolbar input[type="search"] { max-width:360px; }
+    .workshop-tabs { display:flex; gap:7px; flex-wrap:wrap; }
+    .workshop-tab { border:1px solid #303b52; border-radius:10px; padding:9px 12px; background:#111827; color:#dbe5ff; font-weight:800; cursor:pointer; }
+    .workshop-tab.active { background:#2b1d43; border-color:#8b5cf6; color:#f3e8ff; }
+    .workshop-layout { display:grid; grid-template-columns:minmax(260px, .78fr) minmax(0, 1.5fr); gap:12px; min-height:0; flex:1; }
+    .workshop-form-card, .workshop-list-card { min-width:0; min-height:0; overflow:auto; border:1px solid rgba(255,255,255,.08); background:#111827; border-radius:16px; padding:13px; }
+    .workshop-section-title { font-size:15px; font-weight:900; margin-bottom:10px; }
+    .workshop-form { display:grid; gap:9px; }
+    .workshop-label { display:grid; gap:5px; font-size:12px; font-weight:750; color:#cbd5e1; }
+    .workshop-checkbox-row { display:flex; align-items:center; gap:8px; font-size:13px; color:#dbe5ff; }
+    .workshop-checkbox-row input { width:18px; height:18px; }
+    .workshop-note { font-size:11px; line-height:1.45; color:var(--muted); }
+    .workshop-status { min-height:18px; font-size:12px; color:#ffb4b4; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .workshop-status.ok { color:#86efac; }
+    .workshop-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px; align-content:start; }
+    .workshop-card { min-width:0; border:1px solid rgba(167,139,250,.2); background:linear-gradient(155deg,#151d2d,#0d1421); border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:8px; }
+    .workshop-card-title { font-size:15px; font-weight:900; overflow-wrap:anywhere; }
+    .workshop-card-desc { font-size:12px; line-height:1.45; color:#cbd5e1; white-space:pre-wrap; overflow-wrap:anywhere; max-height:85px; overflow:auto; }
+    .workshop-card-meta { display:flex; gap:6px; flex-wrap:wrap; font-size:11px; color:var(--muted); }
+    .workshop-chip { background:#201a33; color:#e9d5ff; border:1px solid #4c3472; border-radius:999px; padding:4px 7px; font-weight:800; }
+    .workshop-card-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-top:auto; }
+    .workshop-card-actions button { min-width:0; white-space:normal; overflow-wrap:anywhere; padding:9px 6px; font-size:11px; }
+    .workshop-empty { grid-column:1/-1; border:1px dashed #334155; border-radius:12px; padding:24px; text-align:center; color:var(--muted); font-size:13px; }
+    .workshop-player { position:fixed; inset:0; z-index:25000; padding:10px; background:#070a11; display:flex; }
+    .workshop-player-shell { width:100%; min-width:0; display:flex; flex-direction:column; gap:8px; background:#0f1420; border:1px solid #3d2c5b; border-radius:16px; padding:10px; overflow:hidden; }
+    .workshop-player-head { display:flex; align-items:center; flex-wrap:wrap; gap:8px; justify-content:space-between; }
+    .workshop-player-name { font-weight:950; color:#e9d5ff; font-size:16px; overflow-wrap:anywhere; }
+    .workshop-player-controls { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+    .workshop-player-controls input { width:125px; min-width:0; background:#0b111d; color:var(--text); border:1px solid #303b52; border-radius:9px; padding:8px; text-transform:uppercase; }
+    #workshopGameFrame { flex:1; width:100%; height:100%; min-height:0; border:1px solid #283247; border-radius:10px; background:#fff; }
+    .workshop-api-help { font-size:11px; color:var(--muted); line-height:1.4; }
+    .workshop-api-help code { color:#ddd6fe; overflow-wrap:anywhere; }
+    .workshop-top-btn { background:linear-gradient(135deg,#4c1d95,#7c3aed)!important; border-color:#8b5cf6!important; color:#f3e8ff!important; }
+    @media(max-width:900px) {
+      .workshop-panel { padding:0; }
+      .workshop-shell { width:100%; height:100dvh; border:0; border-radius:0; padding:10px; gap:9px; }
+      .workshop-title { font-size:18px; }
+      .workshop-layout { grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); overflow:hidden; gap:8px; }
+      .workshop-form-card { max-height:40dvh; }
+      .workshop-list-card { min-height:0; }
+      .workshop-list { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+      .workshop-card { padding:9px; gap:7px; }
+      .workshop-card-actions { grid-template-columns:1fr; }
+      .workshop-toolbar { width:100%; }
+      .workshop-toolbar input[type="search"] { max-width:none; }
+      .workshop-player { padding:0; }
+      .workshop-player-shell { border:0; border-radius:0; padding:7px; }
+      .workshop-player-controls { width:100%; }
+      .workshop-player-controls input { flex:1; width:auto; }
+    }
+    @media(max-width:520px) {
+      .workshop-list { grid-template-columns:minmax(0,1fr); }
+      .workshop-form-card { max-height:45dvh; }
+      .workshop-card-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .workshop-head { gap:7px; }
+      .workshop-head > button { padding:8px 10px; }
+    }
+
 </style>
 </head>
 <body>
@@ -1440,6 +1538,7 @@
         </div>
 
         <button class="btn" id="loginBtn">Giriş Yap</button>
+        <button class="btn secondary" id="registerBtn" type="button" style="margin-top:8px;">Yeni Hesap Oluştur</button>
         <div class="msg" id="loginMsg"></div>
       </div>
 
@@ -1473,7 +1572,7 @@
               <button id="topInvBtn" class="live-btn" style="background:#1e293b; border-color:#3b82f6; color:#93c5fd;">🎒 Envanter & Takas</button>
               <button id="voiceToggleBtn" class="voice-toggle-btn hidden" type="button">Ses: Açık</button>
               <button id="statusToggleBtn" class="status-btn hidden">Durum</button>
-              <button id="scrollBottomBtn" class="scroll-bottom-btn">⬇ En Alta</button>
+              <button id="workshopOpenBtn" class="live-btn workshop-top-btn">🧩 Atölye</button>
               <button id="settingsBtn" class="live-btn">⚙ Ayarlar</button>
             </div>
           </div>
@@ -1564,7 +1663,7 @@
 
                 <div class="plus-box" style="border-color:#7c3aed;background:#12101b;">
                   <div class="plus-box-title" style="color:#e9d5ff;">🎁 ULTRA Ödül Kodunu Kullan</div>
-                  <div class="muted">ULTRA ÖDÜLLER.</div>
+                  <div class="muted">Yönetici tarafından dağıtılan ödül kodları GP kazandırır. Her hesap aynı kodu bir kez kullanabilir.</div>
                   <input id="ultraRewardCodeInput" class="plus-input" type="text" maxlength="100" placeholder="ULTRA ödül kodu" autocomplete="off" />
                   <button id="ultraRewardRedeemBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">Ödül Kodunu Kullan</button>
                   <div id="ultraRewardMsg" class="msg"></div>
@@ -1703,6 +1802,24 @@
                     <button id="gpRedeemBtn" class="btn" type="button" style="white-space:nowrap;">Kullan</button>
                   </div>
                   <div class="muted">Promosyon kodları anında GP verir. Envanterlik ürünler satın alındığında aşağıda Envanterine düşer.</div>
+                </div>
+              </div>
+
+              <!-- OYUNCUDAN OYUNCUYA GP PAZARI -->
+              <div id="gpPlayerMarketSection" class="gp-grid">
+                <div class="gp-box" style="grid-column:1 / -1; border-color:rgba(74,222,128,.28);">
+                  <div class="gp-box-title" style="color:#86efac;">🪙 Oyuncu Pazarı — Envanterindeki Eşyaları Sat</div>
+                  <div class="muted" style="margin-bottom:10px;">Envanterinden bir eşya seç, fiyatını belirle ve diğer oyunculara satışa çıkar. Fiyat 5–500.000 GP arasında olmalı. Satıştaki eşya kullanılamaz veya takas edilemez; istediğin zaman satıştan çekebilirsin.</div>
+                  <div class="gp-market-form">
+                    <select id="gpMarketItemSelect" class="gp-input" aria-label="Satılacak envanter eşyası">
+                      <option value="">Envanter yükleniyor...</option>
+                    </select>
+                    <input id="gpMarketPriceInput" class="gp-input" type="number" min="5" max="500000" step="1" inputmode="numeric" placeholder="Fiyat (5–500000 GP)" aria-label="Satış fiyatı GP" />
+                    <button id="gpMarketListBtn" class="btn" type="button">🛒 Satışa Koy</button>
+                  </div>
+                  <div id="gpMarketMsg" class="msg" style="margin:8px 0 0; text-align:left; min-height:18px;"></div>
+                  <div class="gp-box-title" style="font-size:14px; margin-top:16px;">🌐 Oyuncuların İlanları</div>
+                  <div id="gpPlayerMarketList" class="gp-products gp-market-list"></div>
                 </div>
               </div>
 
@@ -1865,6 +1982,80 @@
     </div>
   </div>
 
+  <!-- GLOGEGO ATÖLYE -->
+  <section id="workshopPanel" class="workshop-panel hidden" aria-hidden="true">
+    <div class="workshop-shell">
+      <div class="workshop-head">
+        <div>
+          <div class="workshop-title">🧩 GloGeGo Atölye</div>
+          <div class="workshop-subtitle">HTML oyunlarını paylaş, oyna, beğen veya GP ile satın al. Yeni yayın 50 GP.</div>
+        </div>
+        <button id="workshopCloseBtn" class="plus-close" type="button">Kapat</button>
+      </div>
+      <div class="workshop-toolbar">
+        <div class="workshop-tabs">
+          <button class="workshop-tab active" type="button" data-workshop-view="market">🎮 Atölye</button>
+          <button class="workshop-tab" type="button" data-workshop-view="mine">🛠️ Eklediklerim</button>
+          <button class="workshop-tab" type="button" data-workshop-view="purchased">📥 Aldıklarım</button>
+        </div>
+        <input id="workshopSearchInput" type="search" placeholder="Oyun veya yapımcı ara..." aria-label="Atölyede ara" />
+        <button id="workshopRefreshBtn" class="btn secondary" type="button">↻ Yenile</button>
+      </div>
+      <div class="workshop-layout">
+        <aside class="workshop-form-card">
+          <div class="workshop-section-title" id="workshopFormTitle">⬆️ Yeni oyun yayınla</div>
+          <form id="workshopForm" class="workshop-form">
+            <label class="workshop-label">Oyun adı
+              <input id="workshopNameInput" class="workshop-input" type="text" maxlength="60" required placeholder="Örn. Uzay Macerası" />
+            </label>
+            <label class="workshop-label">Açıklama
+              <textarea id="workshopDescriptionInput" class="workshop-textarea" maxlength="700" required placeholder="Oyunun amacı, kontrolleri ve özellikleri..."></textarea>
+            </label>
+            <label class="workshop-label">index.html dosyası
+              <input id="workshopFileInput" class="workshop-input" type="file" accept=".html,text/html" />
+            </label>
+            <div class="workshop-note">En fazla 450 KB. Yalnızca kendi oluşturduğun veya paylaşma iznin olan HTML dosyalarını yükle. Düzenlerken dosya seçmezsen mevcut dosya korunur.</div>
+            <label class="workshop-checkbox-row"><input id="workshopForSaleInput" type="checkbox" /> Bu ürün satılsın mı?</label>
+            <label class="workshop-label" id="workshopPriceWrap">Satış fiyatı (5–100000 GP)
+              <input id="workshopPriceInput" class="workshop-input" type="number" min="5" max="100000" step="1" value="5" />
+            </label>
+            <button id="workshopPublishBtn" class="btn" type="submit">50 GP ile yayınla</button>
+            <button id="workshopCancelEditBtn" class="btn secondary hidden" type="button">Düzenlemeyi iptal et</button>
+            <div id="workshopFormMsg" class="workshop-status" role="status"></div>
+          </form>
+          <div class="workshop-api-help" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px;">
+            <strong>Multiplayer notu:</strong> Odanın kodunu arkadaşlarınla paylaş. Yüklenen oyunların çok oyunculu çalışması için oyunun aşağıdaki ortak durumu kullanacak şekilde yazılması gerekir:
+            <br><code>GloGeGoWorkshop.onState(state =&gt; { /* durumu işle */ });</code>
+            <br><code>GloGeGoWorkshop.setState({ turn: 1 });</code>
+            <br>Durum eşitleme kota için oyuncu başına yaklaşık 2,5 saniyede bir sınırlandırılır. Yalnızca tur/durum değişince setState çağır; her karede çağırma. Hızlı aksiyon oyunları için uygun olmayabilir.
+          </div>
+        </aside>
+        <main class="workshop-list-card">
+          <div class="workshop-section-title" id="workshopListTitle">🎮 Son eklenen oyunlar</div>
+          <div id="workshopList" class="workshop-list"><div class="workshop-empty">Atölye yükleniyor...</div></div>
+          <div id="workshopListMsg" class="workshop-status" style="margin-top:8px;"></div>
+        </main>
+      </div>
+    </div>
+    <section id="workshopPlayer" class="workshop-player hidden" aria-hidden="true">
+      <div class="workshop-player-shell">
+        <div class="workshop-player-head">
+          <div>
+            <div id="workshopGameTitle" class="workshop-player-name">Oyun</div>
+            <div id="workshopRoomStatus" class="workshop-subtitle">Tek oyunculu oyun</div>
+          </div>
+          <div class="workshop-player-controls">
+            <button id="workshopCreateRoomBtn" class="btn" type="button">🌐 Oda oluştur</button>
+            <input id="workshopJoinCodeInput" type="text" maxlength="8" placeholder="ODA KODU" aria-label="Katılınacak oda kodu" />
+            <button id="workshopJoinRoomBtn" class="btn secondary" type="button">Katıl</button>
+            <button id="workshopCloseGameBtn" class="btn danger" type="button">Oyundan çık</button>
+          </div>
+        </div>
+        <iframe id="workshopGameFrame" sandbox="allow-scripts allow-forms allow-pointer-lock allow-downloads" referrerpolicy="no-referrer" title="Atölye oyunu"></iframe>
+      </div>
+    </section>
+  </section>
+
   <!-- AYARLAR MODALI -->
   <div id="settingsModal" class="image-modal hidden" aria-hidden="true">
     <div class="image-modal-backdrop" id="settingsModalBackdrop"></div>
@@ -1874,6 +2065,7 @@
         <button id="settingsCloseBtn" class="image-modal-close" type="button">×</button>
       </div>
       <div style="display:grid;gap:14px;">
+        <button id="scrollBottomBtn" class="btn secondary" type="button">⬇ Sohbette En Alta Git</button>
         <div class="field" style="margin:0;">
           <label for="setVolume">GloGeGo Okuma Sesi Seviyesi</label>
           <input type="range" id="setVolume" min="0" max="1" step="0.1" value="1" />
@@ -2141,6 +2333,45 @@
     const messageSearchInput = document.getElementById("messageSearchInput");
     const messageSearchCount = document.getElementById("messageSearchCount");
 
+    const workshopOpenBtn = document.getElementById("workshopOpenBtn");
+    const workshopPanel = document.getElementById("workshopPanel");
+    const workshopCloseBtn = document.getElementById("workshopCloseBtn");
+    const workshopForm = document.getElementById("workshopForm");
+    const workshopNameInput = document.getElementById("workshopNameInput");
+    const workshopDescriptionInput = document.getElementById("workshopDescriptionInput");
+    const workshopFileInput = document.getElementById("workshopFileInput");
+    const workshopForSaleInput = document.getElementById("workshopForSaleInput");
+    const workshopPriceInput = document.getElementById("workshopPriceInput");
+    const workshopPublishBtn = document.getElementById("workshopPublishBtn");
+    const workshopCancelEditBtn = document.getElementById("workshopCancelEditBtn");
+    const workshopFormMsg = document.getElementById("workshopFormMsg");
+    const workshopSearchInput = document.getElementById("workshopSearchInput");
+    const workshopRefreshBtn = document.getElementById("workshopRefreshBtn");
+    const workshopList = document.getElementById("workshopList");
+    const workshopListTitle = document.getElementById("workshopListTitle");
+    const workshopListMsg = document.getElementById("workshopListMsg");
+    const workshopFormTitle = document.getElementById("workshopFormTitle");
+    const workshopPlayer = document.getElementById("workshopPlayer");
+    const workshopGameFrame = document.getElementById("workshopGameFrame");
+    const workshopGameTitle = document.getElementById("workshopGameTitle");
+    const workshopRoomStatus = document.getElementById("workshopRoomStatus");
+    const workshopCreateRoomBtn = document.getElementById("workshopCreateRoomBtn");
+    const workshopJoinCodeInput = document.getElementById("workshopJoinCodeInput");
+    const workshopJoinRoomBtn = document.getElementById("workshopJoinRoomBtn");
+    const workshopCloseGameBtn = document.getElementById("workshopCloseGameBtn");
+    let workshopItemsCache = [];
+    let workshopView = "market";
+    let workshopEditingId = null;
+    let workshopCurrentGame = null;
+    let workshopCurrentHtml = "";
+    let workshopRoomCode = null;
+    let workshopRoomUnsubscribe = null;
+    let workshopQueuedState = null;
+    let workshopStateWriteTimer = null;
+    let workshopLatestState = null;
+    let workshopFrameIsReady = false;
+    let workshopCurrentDataView = [];
+
     const proChatBtn = document.getElementById("proChatBtn");
     const proChatPanel = document.getElementById("proChatPanel");
     const proChatCloseBtn = document.getElementById("proChatCloseBtn");
@@ -2161,6 +2392,11 @@
     const gpRedeemBtn = document.getElementById("gpRedeemBtn");
     const gpUserMsg = document.getElementById("gpUserMsg");
     const gpProductsList = document.getElementById("gpProductsList");
+    const gpMarketItemSelect = document.getElementById("gpMarketItemSelect");
+    const gpMarketPriceInput = document.getElementById("gpMarketPriceInput");
+    const gpMarketListBtn = document.getElementById("gpMarketListBtn");
+    const gpMarketMsg = document.getElementById("gpMarketMsg");
+    const gpPlayerMarketList = document.getElementById("gpPlayerMarketList");
     const gpAdminSection = document.getElementById("gpAdminSection");
     const gpProductTitleInput = document.getElementById("gpProductTitleInput");
     const gpProductPriceInput = document.getElementById("gpProductPriceInput");
@@ -2200,6 +2436,7 @@
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
     const loginMsg = document.getElementById("loginMsg");
     const logoutBtn = document.getElementById("logoutBtn");
     const settingsBtn = document.getElementById("settingsBtn");
@@ -2305,6 +2542,8 @@
     let spinClaimedToday = false;
 
     let userInventory = [];
+    let gpMarketListings = [];
+    let unsubscribeGpMarketListings = null;
     let incomingTrades = [];
     let outgoingTrades = [];
     let activeTradeRoomId = null;
@@ -2357,6 +2596,468 @@
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
+
+    // ================= GLOGEGO ATÖLYE =================
+    const WORKSHOP_PUBLISH_FEE = 50;
+    const WORKSHOP_MAX_FILE_BYTES = 450000;
+    const WORKSHOP_MIN_PRICE = 5;
+    const WORKSHOP_MAX_PRICE = 100000;
+    const WORKSHOP_STATE_MAX_CHARS = 16000;
+    const WORKSHOP_STATE_WRITE_INTERVAL = 2500;
+
+    function setWorkshopStatus(message, ok = false) {
+      if (!workshopFormMsg) return;
+      workshopFormMsg.textContent = message || "";
+      workshopFormMsg.classList.toggle("ok", !!ok);
+    }
+    function setWorkshopListStatus(message, ok = false) {
+      if (!workshopListMsg) return;
+      workshopListMsg.textContent = message || "";
+      workshopListMsg.classList.toggle("ok", !!ok);
+    }
+    function setWorkshopOpen(open) {
+      if (!workshopPanel) return;
+      workshopPanel.classList.toggle("hidden", !open);
+      workshopPanel.setAttribute("aria-hidden", open ? "false" : "true");
+      if (open) void loadWorkshopView();
+    }
+    function setWorkshopView(view) {
+      workshopView = view;
+      document.querySelectorAll("[data-workshop-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.workshopView === view));
+      void loadWorkshopView();
+    }
+    function workshopSafeFileName(title) {
+      const base = String(title || "glogego-oyun").toLocaleLowerCase("tr-TR").replace(/[^a-z0-9çğıöşü_-]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
+      return (base || "glogego-oyun") + ".html";
+    }
+    function downloadWorkshopHtml(html, filename) {
+      const blob = new Blob([String(html || "")], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename || "index.html";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+    function workshopCurrentFilter(items) {
+      const term = normalizeKey(workshopSearchInput?.value || "");
+      if (!term) return items;
+      return items.filter(item => normalizeKey(`${item.title || ""} ${item.description || ""} ${item.owner || ""}`).includes(term));
+    }
+    async function readWorkshopList(view = workshopView) {
+      if (!currentUser) return [];
+      let snaps;
+      if (view === "mine") {
+        snaps = await getDocs(query(collection(db, "workshopItems"), where("ownerKey", "==", normalizeKey(currentUser)), limit(50)));
+      } else if (view === "purchased") {
+        snaps = await getDocs(query(collection(db, "workshopDeliveries"), where("buyerKey", "==", normalizeKey(currentUser)), limit(40)));
+      } else {
+        snaps = await getDocs(query(collection(db, "workshopItems"), orderBy("createdAtClient", "desc"), limit(30)));
+      }
+      const docs = [];
+      snaps.forEach(d => docs.push({ id: d.id, ...d.data() }));
+      docs.sort((a, b) => Number(b.createdAtClient || 0) - Number(a.createdAtClient || 0));
+      return docs;
+    }
+    function renderWorkshopItems(items, view = workshopView) {
+      if (!workshopList) return;
+      const filtered = workshopCurrentFilter(items);
+      workshopCurrentDataView = filtered;
+      if (workshopListTitle) workshopListTitle.textContent = view === "mine" ? "🛠️ Eklediğin oyunlar" : view === "purchased" ? "📥 Satın aldığın dosyalar" : "🎮 Atölyedeki oyunlar";
+      if (workshopFormTitle) workshopFormTitle.textContent = workshopEditingId ? "✏️ Oyunu düzenle" : "⬆️ Yeni oyun yayınla";
+      if (!filtered.length) {
+        workshopList.innerHTML = `<div class="workshop-empty">${view === "mine" ? "Henüz oyun eklemedin." : view === "purchased" ? "Henüz satın aldığın dosya yok." : "Aramana uygun oyun bulunamadı."}</div>`;
+        return;
+      }
+      workshopList.innerHTML = filtered.map(item => {
+        const purchased = view === "purchased";
+        const isOwner = !purchased && normalizeKey(item.ownerKey || item.owner || "") === normalizeKey(currentUser);
+        const canManage = !purchased && (isOwner || isAdmin);
+        const sale = !purchased && !!item.forSale;
+        const price = Math.max(0, normalizeGpNumber(item.priceGp, 0));
+        const title = escapeHtml(item.title || "Adsız Oyun");
+        const desc = escapeHtml(item.description || "Açıklama yok.");
+        const owner = escapeHtml(item.owner || (purchased ? item.seller : "Bilinmeyen" ) || "Bilinmeyen");
+        if (purchased) {
+          return `<article class="workshop-card"><div class="workshop-card-title">📥 ${title}</div><div class="workshop-card-desc">Satıcı: ${owner}</div><div class="workshop-card-meta"><span class="workshop-chip">Satın alındı</span><span>${new Date(Number(item.createdAtClient || Date.now())).toLocaleDateString("tr-TR")}</span></div><div class="workshop-card-actions"><button class="btn" type="button" data-workshop-download="${escapeHtml(item.id)}">⬇ HTML indir</button></div></article>`;
+        }
+        return `<article class="workshop-card">
+          <div class="workshop-card-title">${title}</div>
+          <div class="workshop-card-desc">${desc}</div>
+          <div class="workshop-card-meta"><span>👤 ${owner}</span><span>▶ ${Math.max(0, Number(item.playsCount || 0))} oynama</span><span>♥ ${Math.max(0, Number(item.likesCount || 0))} beğeni</span></div>
+          <div class="workshop-card-meta">${sale ? `<span class="workshop-chip">${formatGp(price)}</span><span>Satışta · tek kopya</span>` : `<span class="workshop-chip">Ücretsiz oyna</span>`}</div>
+          <div class="workshop-card-actions">
+            <button class="btn" type="button" data-workshop-play="${escapeHtml(item.id)}">▶ Oyna</button>
+            <button class="btn secondary" type="button" data-workshop-like="${escapeHtml(item.id)}">♥ Beğen</button>
+            ${sale && !isOwner ? `<button class="btn" type="button" data-workshop-buy="${escapeHtml(item.id)}">${formatGp(price)} ile al</button>` : ""}
+            ${canManage ? `<button class="btn secondary" type="button" data-workshop-edit="${escapeHtml(item.id)}">✏️ Düzenle</button><button class="btn danger" type="button" data-workshop-delete="${escapeHtml(item.id)}">🗑 Sil</button>` : ""}
+          </div>
+        </article>`;
+      }).join("");
+      workshopList.querySelectorAll("[data-workshop-play]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopPlay); if (item) void playWorkshopItem(item); }));
+      workshopList.querySelectorAll("[data-workshop-like]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopLike); if (item) void toggleWorkshopLike(item); }));
+      workshopList.querySelectorAll("[data-workshop-buy]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopBuy); if (item) void buyWorkshopItem(item); }));
+      workshopList.querySelectorAll("[data-workshop-edit]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopEdit); if (item) beginWorkshopEdit(item); }));
+      workshopList.querySelectorAll("[data-workshop-delete]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopDelete); if (item) void deleteWorkshopItem(item); }));
+      workshopList.querySelectorAll("[data-workshop-download]").forEach(btn => btn.addEventListener("click", () => { const item = filtered.find(x => x.id === btn.dataset.workshopDownload); if (item) void downloadWorkshopDelivery(item); }));
+    }
+    async function loadWorkshopView() {
+      if (!currentUser || workshopPanel?.classList.contains("hidden")) return;
+      if (workshopRefreshBtn) workshopRefreshBtn.disabled = true;
+      setWorkshopListStatus("Yükleniyor...");
+      try {
+        const items = await readWorkshopList(workshopView);
+        workshopItemsCache = workshopView === "market" ? items : workshopItemsCache;
+        renderWorkshopItems(items, workshopView);
+        setWorkshopListStatus(`${items.length} kayıt yüklendi. Arama tarayıcında uygulanır.`, true);
+      } catch (err) {
+        console.error("Atölye yükleme hatası:", err);
+        workshopList.innerHTML = `<div class="workshop-empty">Atölye yüklenemedi. Firestore izinlerini kontrol et.</div>`;
+        setWorkshopListStatus(err?.message || "Atölye yüklenemedi.");
+      } finally { if (workshopRefreshBtn) workshopRefreshBtn.disabled = false; }
+    }
+    function resetWorkshopForm() {
+      workshopEditingId = null;
+      workshopForm?.reset();
+      if (workshopPriceInput) workshopPriceInput.value = "5";
+      if (workshopFileInput) workshopFileInput.value = "";
+      if (workshopPriceInput && workshopForSaleInput) workshopPriceInput.disabled = !workshopForSaleInput.checked;
+      if (workshopPublishBtn) workshopPublishBtn.textContent = "50 GP ile yayınla";
+      if (workshopCancelEditBtn) workshopCancelEditBtn.classList.add("hidden");
+      if (workshopFormTitle) workshopFormTitle.textContent = "⬆️ Yeni oyun yayınla";
+      setWorkshopStatus("");
+    }
+    function beginWorkshopEdit(item) {
+      if (!isAdmin && normalizeKey(item.ownerKey || "") !== normalizeKey(currentUser)) return setWorkshopStatus("Yalnızca kendi oyunun düzenleyebilirsin.");
+      workshopEditingId = item.id;
+      workshopNameInput.value = item.title || "";
+      workshopDescriptionInput.value = item.description || "";
+      workshopForSaleInput.checked = !!item.forSale;
+      workshopPriceInput.value = String(Math.max(WORKSHOP_MIN_PRICE, Math.min(WORKSHOP_MAX_PRICE, normalizeGpNumber(item.priceGp, WORKSHOP_MIN_PRICE))));
+      workshopPriceInput.disabled = !workshopForSaleInput.checked;
+      workshopPublishBtn.textContent = "Değişiklikleri kaydet";
+      workshopCancelEditBtn.classList.remove("hidden");
+      workshopFormTitle.textContent = "✏️ Oyunu düzenle";
+      setWorkshopStatus("Dosya seçmezsen mevcut index.html korunur. Düzenleme ücretsizdir.", true);
+      workshopForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    async function readHtmlFile(file) {
+      if (!file) return null;
+      if (!/\.html?$/i.test(file.name) && file.type !== "text/html") throw new Error("Yalnızca .html dosyası yüklenebilir.");
+      if (file.size <= 0 || file.size > WORKSHOP_MAX_FILE_BYTES) throw new Error("HTML dosyası boş olamaz ve en fazla 450 KB olabilir.");
+      const html = await file.text();
+      if (!/<html[\s>]/i.test(html) && !/<body[\s>]/i.test(html)) throw new Error("Dosyada HTML belgesi bulunamadı.");
+      return { htmlContent: html, fileName: file.name.slice(0, 120), fileSize: file.size };
+    }
+    async function submitWorkshopForm(event) {
+      event?.preventDefault();
+      if (!currentUser) return setWorkshopStatus("Önce giriş yap.");
+      const title = String(workshopNameInput.value || "").trim();
+      const description = String(workshopDescriptionInput.value || "").trim();
+      const forSale = !!workshopForSaleInput.checked;
+      const priceGp = Number.parseInt(workshopPriceInput.value, 10);
+      const chosenFile = workshopFileInput.files?.[0] || null;
+      if (title.length < 2 || title.length > 60) return setWorkshopStatus("Oyun adı 2–60 karakter olmalı.");
+      if (description.length < 5 || description.length > 700) return setWorkshopStatus("Açıklama 5–700 karakter olmalı.");
+      if (forSale && (!Number.isInteger(priceGp) || priceGp < WORKSHOP_MIN_PRICE || priceGp > WORKSHOP_MAX_PRICE)) return setWorkshopStatus("Satış fiyatı 5 ile 100000 GP arasında tam sayı olmalı.");
+      if (!workshopEditingId && !chosenFile) return setWorkshopStatus("Yeni oyun için index.html dosyası seç.");
+      if (isAdmin && !workshopEditingId) return setWorkshopStatus("Yönetici hesabı yönetim ve silme işlemleri içindir; kullanıcı hesabıyla oyun yayınla.");
+      if (workshopEditingId && isAdmin) return setWorkshopStatus("Yönetici oyunları silebilir; düzenleme için oyunun sahibi giriş yapmalı.");
+      let filePayload = null;
+      try { if (chosenFile) filePayload = await readHtmlFile(chosenFile); }
+      catch (err) { return setWorkshopStatus(err?.message || "HTML okunamadı."); }
+      const wasEditing = !!workshopEditingId;
+      if (workshopPublishBtn) { workshopPublishBtn.disabled = true; workshopPublishBtn.textContent = wasEditing ? "Kaydediliyor..." : "50 GP düşülüyor..."; }
+      setWorkshopStatus("");
+      try {
+        if (wasEditing) {
+          const itemId = workshopEditingId;
+          const itemRef = doc(db, "workshopItems", itemId);
+          const fileRef = doc(db, "workshopFiles", itemId);
+          await runTransaction(db, async transaction => {
+            const itemSnap = await transaction.get(itemRef);
+            if (!itemSnap.exists()) throw new Error("Bu oyun artık atölyede bulunmuyor.");
+            const latest = itemSnap.data();
+            if (normalizeKey(latest.ownerKey || "") !== normalizeKey(currentUser)) throw new Error("Bu oyunu yalnızca sahibi düzenleyebilir.");
+            transaction.set(itemRef, { title, description, forSale, priceGp: forSale ? priceGp : 0, updatedAtClient: Date.now(), updatedAt: serverTimestamp() }, { merge: true });
+            if (filePayload) transaction.set(fileRef, { ...filePayload, ownerKey: normalizeKey(currentUser), itemId, updatedAtClient: Date.now() }, { merge: true });
+          });
+          resetWorkshopForm();
+          setWorkshopStatus("Oyun güncellendi.", true);
+          await loadWorkshopView();
+        } else {
+          const newItemRef = doc(collection(db, "workshopItems"));
+          const fileRef = doc(db, "workshopFiles", newItemRef.id);
+          const balanceRef = doc(db, "gpBalances", gpDocId(currentUser));
+          await runTransaction(db, async transaction => {
+            const balanceSnap = await transaction.get(balanceRef);
+            const balance = balanceSnap.exists() ? normalizeGpNumber(balanceSnap.data()?.gp, 0) : 0;
+            if (balance < WORKSHOP_PUBLISH_FEE) throw new Error("Yetersiz GP. Yeni oyun yayınlamak için 50 GP gerekiyor.");
+            transaction.set(balanceRef, { username: currentUser, usernameKey: normalizeKey(currentUser), gp: balance - WORKSHOP_PUBLISH_FEE, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+            transaction.set(newItemRef, {
+              title, description, owner: currentUser, ownerKey: normalizeKey(currentUser), forSale,
+              priceGp: forSale ? priceGp : 0, likesCount: 0, playsCount: 0,
+              createdAt: serverTimestamp(), createdAtClient: Date.now(), updatedAtClient: Date.now()
+            });
+            transaction.set(fileRef, { ...filePayload, ownerKey: normalizeKey(currentUser), itemId: newItemRef.id, createdAtClient: Date.now() });
+          });
+          resetWorkshopForm();
+          setWorkshopStatus("Oyun yayımlandı! 50 GP harcandı.", true);
+          workshopView = "mine";
+          document.querySelectorAll("[data-workshop-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.workshopView === "mine"));
+          await loadWorkshopView();
+        }
+      } catch (err) {
+        console.error("Atölye kaydetme hatası:", err);
+        setWorkshopStatus(err?.message || "İşlem tamamlanamadı. Firestore izinlerini kontrol et.");
+      } finally {
+        if (workshopPublishBtn) { workshopPublishBtn.disabled = false; workshopPublishBtn.textContent = workshopEditingId ? "Değişiklikleri kaydet" : "50 GP ile yayınla"; }
+      }
+    }
+    async function deleteWorkshopItem(item) {
+      const canDelete = isAdmin || normalizeKey(item.ownerKey || "") === normalizeKey(currentUser);
+      if (!canDelete) return;
+      if (!confirm(`“${item.title || "Adsız oyun"}” atölyeden silinsin mi? Bu işlem geri alınamaz.`)) return;
+      try {
+        const itemRef = doc(db, "workshopItems", item.id);
+        const fileRef = doc(db, "workshopFiles", item.id);
+        await runTransaction(db, async transaction => {
+          const fresh = await transaction.get(itemRef);
+          if (!fresh.exists()) throw new Error("Oyun zaten silinmiş.");
+          const data = fresh.data();
+          if (!isAdmin && normalizeKey(data.ownerKey || "") !== normalizeKey(currentUser)) throw new Error("Yalnızca sahibi silebilir.");
+          transaction.delete(itemRef);
+          transaction.delete(fileRef);
+        });
+        if (workshopEditingId === item.id) resetWorkshopForm();
+        setWorkshopListStatus("Oyun silindi.", true);
+        await loadWorkshopView();
+      } catch (err) { setWorkshopListStatus(err?.message || "Oyun silinemedi."); }
+    }
+    async function toggleWorkshopLike(item) {
+      if (!currentUser || isAdmin) return setWorkshopListStatus("Beğenmek için normal hesapla giriş yap.");
+      const itemRef = doc(db, "workshopItems", item.id);
+      const likeRef = doc(db, "workshopLikes", `${item.id}_${gpDocId(currentUser)}`);
+      let liked = false;
+      try {
+        await runTransaction(db, async transaction => {
+          const itemSnap = await transaction.get(itemRef);
+          const likeSnap = await transaction.get(likeRef);
+          if (!itemSnap.exists()) throw new Error("Bu oyun artık mevcut değil.");
+          const count = Math.max(0, normalizeGpNumber(itemSnap.data().likesCount, 0));
+          if (likeSnap.exists()) {
+            transaction.delete(likeRef);
+            transaction.set(itemRef, { likesCount: Math.max(0, count - 1) }, { merge: true });
+            liked = false;
+          } else {
+            transaction.set(likeRef, { itemId: item.id, username: currentUser, usernameKey: normalizeKey(currentUser), createdAtClient: Date.now() });
+            transaction.set(itemRef, { likesCount: count + 1 }, { merge: true });
+            liked = true;
+          }
+        });
+        item.likesCount = Math.max(0, normalizeGpNumber(item.likesCount, 0) + (liked ? 1 : -1));
+        const cached = workshopItemsCache.find(x => x.id === item.id);
+        if (cached) cached.likesCount = item.likesCount;
+        setWorkshopListStatus(liked ? "Beğeni eklendi." : "Beğeni kaldırıldı.", true);
+        renderWorkshopItems(workshopView === "market" ? workshopItemsCache : workshopCurrentDataView, workshopView);
+      } catch (err) { setWorkshopListStatus(err?.message || "Beğeni kaydedilemedi."); }
+    }
+    async function buyWorkshopItem(item) {
+      if (!currentUser || isAdmin) return setWorkshopListStatus("Satın almak için normal hesapla giriş yap.");
+      if (normalizeKey(item.ownerKey || "") === normalizeKey(currentUser)) return setWorkshopListStatus("Kendi oyununu satın alamazsın.");
+      const price = normalizeGpNumber(item.priceGp, 0);
+      if (!item.forSale || price < WORKSHOP_MIN_PRICE || price > WORKSHOP_MAX_PRICE) return setWorkshopListStatus("Bu oyun satışta değil veya fiyatı geçersiz.");
+      if (!confirm(`“${item.title}” oyununu ${formatGp(price)} karşılığında satın al? Satış tamamlanınca atölyeden kalkar ve dosya satın aldıklarına aktarılır.`)) return;
+      setWorkshopListStatus("Satın alma işlemi yapılıyor...");
+      const itemRef = doc(db, "workshopItems", item.id);
+      const fileRef = doc(db, "workshopFiles", item.id);
+      const buyerBalanceRef = doc(db, "gpBalances", gpDocId(currentUser));
+      const sellerBalanceRef = doc(db, "gpBalances", gpDocId(item.owner));
+      const deliveryRef = doc(collection(db, "workshopDeliveries"));
+      const deliveryFileRef = doc(db, "workshopDeliveryFiles", deliveryRef.id);
+      try {
+        await runTransaction(db, async transaction => {
+          const itemSnap = await transaction.get(itemRef);
+          const fileSnap = await transaction.get(fileRef);
+          const buyerBalanceSnap = await transaction.get(buyerBalanceRef);
+          const sellerBalanceSnap = await transaction.get(sellerBalanceRef);
+          if (!itemSnap.exists() || !fileSnap.exists()) throw new Error("Bu oyun başka biri tarafından alınmış veya kaldırılmış.");
+          const latest = itemSnap.data();
+          if (!latest.forSale) throw new Error("Bu oyun artık satışta değil.");
+          if (normalizeKey(latest.ownerKey || "") === normalizeKey(currentUser)) throw new Error("Kendi oyununu satın alamazsın.");
+          const cost = normalizeGpNumber(latest.priceGp, 0);
+          if (cost < WORKSHOP_MIN_PRICE || cost > WORKSHOP_MAX_PRICE) throw new Error("Satış fiyatı geçersiz.");
+          const buyerBalance = buyerBalanceSnap.exists() ? normalizeGpNumber(buyerBalanceSnap.data()?.gp, 0) : 0;
+          const sellerBalance = sellerBalanceSnap.exists() ? normalizeGpNumber(sellerBalanceSnap.data()?.gp, 0) : 0;
+          if (buyerBalance < cost) throw new Error("Yetersiz GP.");
+          const file = fileSnap.data();
+          if (typeof file.htmlContent !== "string" || file.htmlContent.length > WORKSHOP_MAX_FILE_BYTES) throw new Error("Oyun dosyası geçersiz veya çok büyük.");
+          transaction.set(buyerBalanceRef, { username: currentUser, usernameKey: normalizeKey(currentUser), gp: buyerBalance - cost, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          transaction.set(sellerBalanceRef, { username: latest.owner, usernameKey: normalizeKey(latest.owner), gp: sellerBalance + cost, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          transaction.set(deliveryRef, { title: latest.title || "Atölye oyunu", seller: latest.owner || "Bilinmeyen", buyer: currentUser, buyerKey: normalizeKey(currentUser), createdAt: serverTimestamp(), createdAtClient: Date.now(), fileName: file.fileName || workshopSafeFileName(latest.title), originalItemId: item.id });
+          transaction.set(deliveryFileRef, { htmlContent: file.htmlContent, fileName: file.fileName || workshopSafeFileName(latest.title), buyerKey: normalizeKey(currentUser), createdAtClient: Date.now() });
+          transaction.delete(itemRef);
+          transaction.delete(fileRef);
+        });
+        workshopItemsCache = workshopItemsCache.filter(x => x.id !== item.id);
+        workshopView = "purchased";
+        document.querySelectorAll("[data-workshop-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.workshopView === "purchased"));
+        setWorkshopListStatus("Satın alındı. Oyun atölyeden kaldırıldı ve Aldıkların bölümüne aktarıldı.", true);
+        await loadWorkshopView();
+      } catch (err) { setWorkshopListStatus(err?.message || "Satın alma başarısız."); }
+    }
+    async function downloadWorkshopDelivery(item) {
+      try {
+        const snap = await getDoc(doc(db, "workshopDeliveryFiles", item.id));
+        if (!snap.exists()) throw new Error("Dosya bulunamadı.");
+        const data = snap.data();
+        if (normalizeKey(data.buyerKey || "") !== normalizeKey(currentUser)) throw new Error("Bu dosya senin hesabına ait değil.");
+        downloadWorkshopHtml(data.htmlContent || "", data.fileName || workshopSafeFileName(item.title));
+        setWorkshopListStatus("Dosya indirilmeye başlandı.", true);
+      } catch (err) { setWorkshopListStatus(err?.message || "Dosya indirilemedi."); }
+    }
+    function workshopBuildSrcDoc(html, roomCode = "") {
+      const safeJson = value => JSON.stringify(value ?? "").replace(/</g, "\\u003c");
+      const bridge = `(()=>{const MARK="glogego-workshop-bridge";const roomId=${safeJson(roomCode)};const playerId=${safeJson(gpDocId(currentUser || "guest"))};const playerName=${safeJson(currentUser || "Oyuncu")};const callbacks=new Set();let latestState=null;const api={roomId,playerId,playerName,onState(fn){if(typeof fn!=="function")return()=>{};callbacks.add(fn);if(latestState!==null){try{fn(latestState)}catch(_){}}return()=>callbacks.delete(fn)},getState(){return latestState},setState(state){let raw="";try{raw=JSON.stringify(state)}catch(_){return false}if(raw.length>${WORKSHOP_STATE_MAX_CHARS})return false;parent.postMessage({[MARK]:true,type:"state-set",state},"*");return true}};Object.defineProperty(window,"GloGeGoWorkshop",{value:api,writable:false,configurable:false});addEventListener("message",event=>{const d=event.data;if(!d||d[MARK]!==true||d.type!=="state")return;latestState=d.state;for(const fn of callbacks){try{fn(latestState)}catch(_){}}});parent.postMessage({[MARK]:true,type:"ready"},"*")})();`;
+      // Split tag name so an embedded close-script sequence cannot terminate this parent module.
+      const scriptTag = "<scr" + "ipt>" + bridge + "</scr" + "ipt>";
+      if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, match => match + scriptTag);
+      return "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" + scriptTag + "</head><body>" + html + "</body></html>";
+    }
+    function workshopSendStateToFrame(state) {
+      workshopLatestState = state;
+      try { workshopGameFrame?.contentWindow?.postMessage({ "glogego-workshop-bridge": true, type: "state", state }, "*"); } catch {}
+    }
+    async function workshopQueueRoomState(state) {
+      if (!workshopRoomCode) return;
+      let serialized = "";
+      try { serialized = JSON.stringify(state); } catch { return; }
+      if (serialized.length > WORKSHOP_STATE_MAX_CHARS) return setWorkshopRoomStatus("Oyun verisi 16 KB sınırını aştı; durum kaydedilmedi.");
+      workshopQueuedState = state;
+      if (workshopStateWriteTimer) return;
+      workshopStateWriteTimer = setTimeout(async () => {
+        workshopStateWriteTimer = null;
+        const queued = workshopQueuedState;
+        workshopQueuedState = null;
+        if (!workshopRoomCode || !queued) return;
+        try {
+          await setDoc(doc(db, "workshopRooms", workshopRoomCode), { state: queued, stateUpdatedAtClient: Date.now() }, { merge: true });
+        } catch (err) { console.warn("Atölye oda durumu kaydedilemedi:", err); }
+      }, WORKSHOP_STATE_WRITE_INTERVAL);
+    }
+    function setWorkshopRoomStatus(message, ok = false) {
+      if (!workshopRoomStatus) return;
+      workshopRoomStatus.textContent = message || "";
+      workshopRoomStatus.style.color = ok ? "#86efac" : "var(--muted)";
+    }
+    function attachWorkshopRoom(roomCode) {
+      if (workshopRoomUnsubscribe) { workshopRoomUnsubscribe(); workshopRoomUnsubscribe = null; }
+      workshopRoomCode = roomCode;
+      workshopLatestState = null;
+      const roomRef = doc(db, "workshopRooms", roomCode);
+      workshopRoomUnsubscribe = onSnapshot(roomRef, snap => {
+        if (!snap.exists()) { setWorkshopRoomStatus("Oda bulunamadı veya kapatıldı."); return; }
+        const data = snap.data() || {};
+        if (data.itemId !== workshopCurrentGame?.id) { setWorkshopRoomStatus("Oda başka bir oyuna ait."); return; }
+        workshopSendStateToFrame(data.state ?? null);
+      }, err => setWorkshopRoomStatus("Oda bağlantısı kesildi. Firestore izinlerini kontrol et."));
+      workshopGameFrame.srcdoc = workshopBuildSrcDoc(workshopCurrentHtml, roomCode);
+      setWorkshopRoomStatus(`Oda kodu: ${roomCode} · Bu kodu arkadaşlarınla paylaş.`, true);
+      workshopCreateRoomBtn.disabled = true;
+      workshopJoinRoomBtn.disabled = true;
+    }
+    async function workshopCreateRoom() {
+      if (!currentUser || !workshopCurrentGame) return;
+      if (isAdmin) return setWorkshopRoomStatus("Oda açmak için normal kullanıcı hesabıyla giriş yap.");
+      if (workshopRoomCode) return setWorkshopRoomStatus(`Zaten bir odadasın: ${workshopRoomCode}`);
+      workshopCreateRoomBtn.disabled = true;
+      try {
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let code = "";
+        for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
+        const roomRef = doc(db, "workshopRooms", code);
+        if ((await getDoc(roomRef)).exists()) throw new Error("Oda kodu çakıştı. Tekrar dene.");
+        await setDoc(roomRef, { roomCode: code, itemId: workshopCurrentGame.id, itemTitle: workshopCurrentGame.title || "Oyun", host: currentUser, state: null, createdAt: serverTimestamp(), createdAtClient: Date.now() });
+        await setDoc(doc(db, "workshopRooms", code, "players", gpDocId(currentUser)), { username: currentUser, usernameKey: normalizeKey(currentUser), joinedAtClient: Date.now() });
+        attachWorkshopRoom(code);
+      } catch (err) { setWorkshopRoomStatus(err?.message || "Oda oluşturulamadı."); workshopCreateRoomBtn.disabled = false; }
+    }
+    async function workshopJoinRoom() {
+      if (!currentUser || !workshopCurrentGame) return;
+      if (isAdmin) return setWorkshopRoomStatus("Odaya katılmak için normal kullanıcı hesabıyla giriş yap.");
+      const code = String(workshopJoinCodeInput.value || "").trim().toUpperCase();
+      if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) return setWorkshopRoomStatus("6 karakterli geçerli oda kodu gir.");
+      workshopJoinRoomBtn.disabled = true;
+      try {
+        const roomRef = doc(db, "workshopRooms", code);
+        const snap = await getDoc(roomRef);
+        if (!snap.exists()) throw new Error("Bu oda kodu bulunamadı.");
+        if (snap.data()?.itemId !== workshopCurrentGame.id) throw new Error("Oda bu oyuna ait değil. Aynı oyun kartından aç.");
+        await setDoc(doc(db, "workshopRooms", code, "players", gpDocId(currentUser)), { username: currentUser, usernameKey: normalizeKey(currentUser), joinedAtClient: Date.now() });
+        attachWorkshopRoom(code);
+      } catch (err) { setWorkshopRoomStatus(err?.message || "Odaya katılınamadı."); workshopJoinRoomBtn.disabled = false; }
+    }
+    async function leaveWorkshopRoom() {
+      if (workshopStateWriteTimer) { clearTimeout(workshopStateWriteTimer); workshopStateWriteTimer = null; }
+      workshopQueuedState = null;
+      const oldRoom = workshopRoomCode;
+      if (workshopRoomUnsubscribe) { workshopRoomUnsubscribe(); workshopRoomUnsubscribe = null; }
+      workshopRoomCode = null;
+      if (oldRoom && currentUser) {
+        try { await deleteDoc(doc(db, "workshopRooms", oldRoom, "players", gpDocId(currentUser))); } catch {}
+      }
+      workshopCreateRoomBtn.disabled = false;
+      workshopJoinRoomBtn.disabled = false;
+      if (workshopJoinCodeInput) workshopJoinCodeInput.value = "";
+    }
+    async function playWorkshopItem(item) {
+      if (!currentUser) return;
+      try {
+        const fileSnap = await getDoc(doc(db, "workshopFiles", item.id));
+        if (!fileSnap.exists()) throw new Error("Oyun dosyası bulunamadı. Yapımcı veya yöneticiyle iletişime geç.");
+        const fileData = fileSnap.data();
+        if (typeof fileData.htmlContent !== "string" || fileData.htmlContent.length > WORKSHOP_MAX_FILE_BYTES) throw new Error("Oyun dosyası geçersiz.");
+        await leaveWorkshopRoom();
+        workshopCurrentGame = item;
+        workshopCurrentHtml = fileData.htmlContent;
+        workshopLatestState = null;
+        workshopGameTitle.textContent = item.title || "Atölye oyunu";
+        setWorkshopRoomStatus("Tek oyunculu oyun. Multiplayer için oda oluştur veya oda koduyla katıl.");
+        workshopPlayer.classList.remove("hidden");
+        workshopPlayer.setAttribute("aria-hidden", "false");
+        workshopGameFrame.srcdoc = workshopBuildSrcDoc(workshopCurrentHtml, "");
+        const itemRef = doc(db, "workshopItems", item.id);
+        await runTransaction(db, async transaction => {
+          const latest = await transaction.get(itemRef);
+          if (!latest.exists()) return;
+          const plays = Math.max(0, normalizeGpNumber(latest.data().playsCount, 0));
+          transaction.set(itemRef, { playsCount: plays + 1 }, { merge: true });
+          item.playsCount = plays + 1;
+        });
+        const cached = workshopItemsCache.find(x => x.id === item.id);
+        if (cached) cached.playsCount = item.playsCount;
+        renderWorkshopItems(workshopView === "market" ? workshopItemsCache : workshopCurrentDataView, workshopView);
+      } catch (err) { setWorkshopListStatus(err?.message || "Oyun açılamadı."); }
+    }
+    async function closeWorkshopGame() {
+      await leaveWorkshopRoom();
+      workshopPlayer?.classList.add("hidden");
+      workshopPlayer?.setAttribute("aria-hidden", "true");
+      if (workshopGameFrame) workshopGameFrame.srcdoc = "";
+      workshopCurrentGame = null;
+      workshopCurrentHtml = "";
+    }
+
+    window.addEventListener("message", event => {
+      if (!workshopGameFrame || event.source !== workshopGameFrame.contentWindow) return;
+      const data = event.data;
+      if (!data || data["glogego-workshop-bridge"] !== true) return;
+      if (data.type === "ready") {
+        workshopFrameIsReady = true;
+        if (workshopLatestState !== null) workshopSendStateToFrame(workshopLatestState);
+      } else if (data.type === "state-set") {
+        if (workshopRoomCode) void workshopQueueRoomState(data.state);
+      }
+    });
 
     function formatMarkdown(text) {
       if (!text) return "";
@@ -3432,6 +4133,19 @@
       });
     }
 
+    function listenGpPlayerMarket() {
+      if (unsubscribeGpMarketListings) return;
+      // Tek bir limitli canlı sorgu: ilan kartlarında büyük görsel/veri dosyaları tutulmaz.
+      const marketQ = query(collection(db, "gpPlayerMarketListings"), orderBy("createdAtClient", "desc"), limit(100));
+      unsubscribeGpMarketListings = onSnapshot(marketQ, (snap) => {
+        gpMarketListings = [];
+        snap.forEach((d) => gpMarketListings.push({ id: d.id, ...d.data() }));
+        renderGpPlayerMarket();
+      }, (err) => {
+        setGpMarketMsg(`Oyuncu pazarı yüklenemedi: ${err?.message || "Firebase izinlerini kontrol et."}`);
+      });
+    }
+
     function listenGpAdminUsers() {
       if (!isAdmin || unsubscribeGpAdminUsers) return;
       unsubscribeGpAdminUsers = onSnapshot(query(collection(db, "gpBalances"), limit(100)), (snap) => {
@@ -3493,6 +4207,8 @@
     function stopGpPanelListeners() {
       clearAllTradeCountdowns();
       if (unsubscribeGpProducts) { unsubscribeGpProducts(); unsubscribeGpProducts = null; }
+      if (unsubscribeGpMarketListings) { unsubscribeGpMarketListings(); unsubscribeGpMarketListings = null; }
+      gpMarketListings = [];
       if (unsubscribeGpAdminUsers) { unsubscribeGpAdminUsers(); unsubscribeGpAdminUsers = null; }
       if (unsubscribeGpAdminCodes) { unsubscribeGpAdminCodes(); unsubscribeGpAdminCodes = null; }
       if (unsubscribeInventory) { unsubscribeInventory(); unsubscribeInventory = null; }
@@ -3500,10 +4216,203 @@
       if (unsubscribeTradesOut) { unsubscribeTradesOut(); unsubscribeTradesOut = null; }
     }
 
+    function setGpMarketMsg(message, ok = false) {
+      if (!gpMarketMsg) return;
+      gpMarketMsg.textContent = message || "";
+      gpMarketMsg.style.color = ok ? "#86efac" : (message ? "#ffb4b4" : "var(--muted)");
+    }
+
+    function renderGpPlayerMarket() {
+      if (gpMarketItemSelect) {
+        const previous = gpMarketItemSelect.value;
+        const sellable = userInventory.filter((item) => item.marketListed !== true);
+        gpMarketItemSelect.innerHTML = sellable.length
+          ? `<option value="">Satılacak eşyayı seç...</option>` + sellable.map((item) =>
+              `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title || "Eşya")} — değer ${formatGp(getItemGpValue(item))}</option>`
+            ).join("")
+          : `<option value="">Satışa koyabileceğin eşya yok</option>`;
+        if (previous && sellable.some((item) => item.id === previous)) gpMarketItemSelect.value = previous;
+        if (gpMarketListBtn) gpMarketListBtn.disabled = !sellable.length || !currentUser || isAdmin;
+      }
+      if (!gpPlayerMarketList) return;
+      if (!gpMarketListings.length) {
+        gpPlayerMarketList.innerHTML = `<div class="empty" style="padding:20px; grid-column:1/-1;">Şu anda satışta eşya yok. Envanterinden ilk ilanı sen koyabilirsin.</div>`;
+        return;
+      }
+      const myKey = normalizeKey(currentUser || "");
+      gpPlayerMarketList.innerHTML = gpMarketListings.map((listing) => {
+        const sellerKey = listing.sellerKey || normalizeKey(listing.seller || "");
+        const mine = !!currentUser && sellerKey === myKey;
+        const title = listing.title || "Eşya";
+        const price = normalizeGpNumber(listing.priceGp, 0);
+        const validPrice = Number.isSafeInteger(price) && price >= 5 && price <= 500000;
+        return `
+          <article class="gp-product-card gp-market-card">
+            <div class="gp-product-body">
+              <div class="gp-product-title">🪙 ${escapeHtml(title)}</div>
+              <div class="gp-price-row"><span class="gp-price">${formatGp(price)}</span><span class="gp-badge val">Oyuncu ilanı</span></div>
+              <div class="muted">Satıcı: <strong>${escapeHtml(listing.seller || "Bilinmeyen")}</strong></div>
+              <div class="muted">${mine ? "Bu ilan senin." : "Satın alırsan eşya envanterine aktarılır."}</div>
+              <div class="gp-market-card-actions">
+                ${mine
+                  ? `<button class="btn secondary" type="button" data-market-withdraw="${escapeHtml(listing.id)}">Satıştan Çek</button>`
+                  : `<button class="btn" type="button" data-market-buy="${escapeHtml(listing.id)}" ${(!validPrice || !currentUser || isAdmin) ? "disabled" : ""}>${isAdmin ? "Admin hesabı satın alamaz" : "Satın Al — " + formatGp(price)}</button>`}
+              </div>
+            </div>
+          </article>`;
+      }).join("");
+    }
+
+    async function createGpMarketListing() {
+      if (!currentUser || isAdmin) {
+        setGpMarketMsg("Oyuncu pazarı için normal bir kullanıcı hesabıyla giriş yap.");
+        return;
+      }
+      const itemId = String(gpMarketItemSelect?.value || "");
+      const rawPrice = String(gpMarketPriceInput?.value || "").trim();
+      const priceGp = Number(rawPrice);
+      if (!itemId) return setGpMarketMsg("Önce envanterinden satılacak bir eşya seç.");
+      if (!/^\d+$/.test(rawPrice) || !Number.isSafeInteger(priceGp) || priceGp < 5 || priceGp > 500000) {
+        return setGpMarketMsg("Fiyat tam sayı olmalı ve 5 ile 500.000 GP arasında kalmalı.");
+      }
+      const item = userInventory.find((entry) => entry.id === itemId);
+      if (!item) return setGpMarketMsg("Seçtiğin eşya envanterinde bulunamadı. Envanter güncellendikten sonra tekrar dene.");
+      if (item.marketListed) return setGpMarketMsg("Bu eşya zaten satışta.");
+
+      if (!confirm(`“${item.title || "Eşya"}” ürününü ${formatGp(priceGp)} fiyatla satışa koymak istiyor musun? Satıştayken eşya kullanılamaz ve takas edilemez.`)) return;
+      if (gpMarketListBtn) { gpMarketListBtn.disabled = true; gpMarketListBtn.textContent = "İlan oluşturuluyor..."; }
+      try {
+        const seller = currentUser;
+        const sellerKey = normalizeKey(seller);
+        const inventoryRef = doc(db, "gpInventory", itemId);
+        // Listing ID'si envanter eşya ID'siyle aynı: tek eşya için ikinci ilan açılamaz.
+        const listingRef = doc(db, "gpPlayerMarketListings", itemId);
+        await runTransaction(db, async (tx) => {
+          const listingSnap = await tx.get(listingRef);
+          const itemSnap = await tx.get(inventoryRef);
+          if (!itemSnap.exists()) throw new Error("Bu eşya artık envanterinde yok.");
+          const liveItem = itemSnap.data() || {};
+          if (liveItem.ownerKey !== sellerKey) throw new Error("Bu eşyanın sahibi artık sen değilsin.");
+          if (liveItem.marketListed === true || listingSnap.exists()) throw new Error("Bu eşya zaten satışta.");
+          tx.update(inventoryRef, {
+            marketListed: true,
+            marketPriceGp: priceGp,
+            marketListedAt: serverTimestamp(),
+            marketListedAtClient: Date.now()
+          });
+          tx.set(listingRef, {
+            itemId,
+            seller,
+            sellerKey,
+            title: String(liveItem.title || "Eşya").slice(0, 120),
+            priceGp,
+            createdAt: serverTimestamp(),
+            createdAtClient: Date.now(),
+            status: "active"
+          });
+        });
+        if (gpMarketPriceInput) gpMarketPriceInput.value = "";
+        setGpMarketMsg(`✅ ${item.title || "Eşya"} ${formatGp(priceGp)} fiyatla satışa kondu.`, true);
+      } catch (err) {
+        setGpMarketMsg(err?.message || "İlan oluşturulamadı. Firebase izinlerini kontrol et.");
+      } finally {
+        if (gpMarketListBtn) { gpMarketListBtn.textContent = "🛒 Satışa Koy"; gpMarketListBtn.disabled = !userInventory.some((entry) => entry.marketListed !== true) || !currentUser || isAdmin; }
+      }
+    }
+
+    async function withdrawGpMarketListing(listingId) {
+      if (!currentUser || !listingId) return;
+      if (!confirm("Bu ilanı satıştan çekmek istiyor musun? Eşya envanterinde kalacak.")) return;
+      try {
+        const sellerKey = normalizeKey(currentUser);
+        const listingRef = doc(db, "gpPlayerMarketListings", listingId);
+        const inventoryRef = doc(db, "gpInventory", listingId);
+        await runTransaction(db, async (tx) => {
+          const listingSnap = await tx.get(listingRef);
+          const itemSnap = await tx.get(inventoryRef);
+          if (!listingSnap.exists()) throw new Error("İlan zaten kaldırılmış veya satılmış.");
+          const listing = listingSnap.data() || {};
+          if ((listing.sellerKey || normalizeKey(listing.seller || "")) !== sellerKey) throw new Error("Yalnızca kendi ilanını kaldırabilirsin.");
+          if (!itemSnap.exists() || itemSnap.data()?.ownerKey !== sellerKey) throw new Error("Satıştaki eşya artık sende değil.");
+          tx.update(inventoryRef, { marketListed: false, marketPriceGp: null, marketListedAt: null, marketListedAtClient: null });
+          tx.delete(listingRef);
+        });
+        setGpMarketMsg("✅ İlan kaldırıldı. Eşyan yeniden kullanılabilir ve takas edilebilir.", true);
+      } catch (err) {
+        setGpMarketMsg(err?.message || "İlan kaldırılamadı.");
+      }
+    }
+
+    async function buyGpMarketListing(listingId) {
+      if (!currentUser || isAdmin || !listingId) return;
+      const cached = gpMarketListings.find((entry) => entry.id === listingId);
+      if (!cached) return setGpMarketMsg("Bu ilan artık mevcut değil. Liste güncellendiğinde tekrar dene.");
+      const cachedSellerKey = cached.sellerKey || normalizeKey(cached.seller || "");
+      if (cachedSellerKey === normalizeKey(currentUser)) return setGpMarketMsg("Kendi ilanını satın alamazsın.");
+      const cachedPrice = normalizeGpNumber(cached.priceGp, 0);
+      if (!Number.isSafeInteger(cachedPrice) || cachedPrice < 5 || cachedPrice > 500000) return setGpMarketMsg("İlan fiyatı geçersiz.");
+      if (currentGp < cachedPrice) return setGpMarketMsg(`Yetersiz GP. Bakiyen: ${formatGp(currentGp)}, gereken: ${formatGp(cachedPrice)}.`);
+      if (!confirm(`“${cached.title || "Eşya"}” ürününü ${formatGp(cachedPrice)} karşılığında satın al? GP satıcıya aktarılacak.`)) return;
+
+      try {
+        let paidPrice = 0;
+        let sellerName = "";
+        const buyer = currentUser;
+        const buyerKey = normalizeKey(buyer);
+        const listingRef = doc(db, "gpPlayerMarketListings", listingId);
+        const inventoryRef = doc(db, "gpInventory", listingId);
+        const buyerBalanceRef = doc(db, "gpBalances", gpDocId(buyer));
+        await runTransaction(db, async (tx) => {
+          const listingSnap = await tx.get(listingRef);
+          if (!listingSnap.exists()) throw new Error("Bu ilan başka bir oyuncu tarafından alınmış veya kaldırılmış.");
+          const liveListing = listingSnap.data() || {};
+          const seller = String(liveListing.seller || "");
+          const sellerKey = liveListing.sellerKey || normalizeKey(seller);
+          const itemId = String(liveListing.itemId || listingId);
+          if (itemId !== listingId) throw new Error("İlan ve eşya kimliği eşleşmiyor.");
+          if (!seller || !sellerKey || sellerKey === buyerKey) throw new Error("Kendi ilanını satın alamazsın.");
+          const priceGp = normalizeGpNumber(liveListing.priceGp, 0);
+          if (!Number.isSafeInteger(priceGp) || priceGp < 5 || priceGp > 500000) throw new Error("İlanın fiyatı geçersiz.");
+          const sellerBalanceRef = doc(db, "gpBalances", gpDocId(seller));
+          const itemSnap = await tx.get(inventoryRef);
+          const buyerBalanceSnap = await tx.get(buyerBalanceRef);
+          const sellerBalanceSnap = await tx.get(sellerBalanceRef);
+          if (!itemSnap.exists()) throw new Error("Satılacak eşya bulunamadı; ilan geçersiz.");
+          const liveItem = itemSnap.data() || {};
+          if (liveItem.ownerKey !== sellerKey || liveItem.marketListed !== true) throw new Error("Eşyanın sahibi veya satış durumu değişmiş. Liste yenilendiğinde tekrar dene.");
+          const buyerGp = buyerBalanceSnap.exists() ? normalizeGpNumber(buyerBalanceSnap.data()?.gp, 0) : 0;
+          const sellerGp = sellerBalanceSnap.exists() ? normalizeGpNumber(sellerBalanceSnap.data()?.gp, 0) : 0;
+          if (buyerGp < priceGp) throw new Error(`Yetersiz GP. Bakiyen: ${formatGp(buyerGp)}.`);
+          if (buyerKey === sellerKey || buyerBalanceRef.path === sellerBalanceRef.path) throw new Error("Kullanıcı kendi eşyasını satın alamaz.");
+
+          // Bakiye transferi, eşya sahipliği ve ilanı kaldırma tek atomik işlemde gerçekleşir.
+          tx.set(buyerBalanceRef, { username: buyer, usernameKey: buyerKey, gp: buyerGp - priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(sellerBalanceRef, { username: seller, usernameKey: sellerKey, gp: sellerGp + priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.update(inventoryRef, {
+            owner: buyer,
+            ownerKey: buyerKey,
+            acquiredAt: serverTimestamp(),
+            acquiredAtClient: Date.now(),
+            marketListed: false,
+            marketPriceGp: null,
+            marketListedAt: null,
+            marketListedAtClient: null
+          });
+          tx.delete(listingRef);
+          paidPrice = priceGp;
+          sellerName = seller;
+        });
+        setGpMarketMsg(`✅ Satın alma tamamlandı! ${cached.title || "Eşya"} envanterine geçti; ${formatGp(paidPrice)} GP ${sellerName} kullanıcısına aktarıldı.`, true);
+      } catch (err) {
+        setGpMarketMsg(err?.message || "Satın alma başarısız. Listeyi yenileyip tekrar dene.");
+      }
+    }
+
     function renderInventoryAndTradeSelection() {
       const invBox = document.getElementById("myInventoryList");
       const tradeSelectBox = document.getElementById("tradeSelectItemsList");
       if (!invBox) return;
+      renderGpPlayerMarket();
 
       if (!userInventory.length) {
         invBox.innerHTML = `<div class="empty" style="padding:18px;">Envanterin henüz boş.</div>`;
@@ -3523,7 +4432,7 @@
                 <span class="gp-badge val">💎 Değer: ${formatGp(gpVal)}</span>
                 <span class="muted">${item.consumeOnUse !== false ? "Tek Kullanımlık" : "Kalıcı"}</span>
               </div>
-              <button class="btn" type="button" style="padding:8px 12px; font-size:12px; margin-top:4px;" data-inv-use="${escapeHtml(item.id)}">✨ Kullan</button>
+              ${item.marketListed ? `<div class="gp-market-status">🛒 Satışta — kullanılamaz / takas edilemez</div>` : `<button class="btn" type="button" style="padding:8px 12px; font-size:12px; margin-top:4px;" data-inv-use="${escapeHtml(item.id)}">✨ Kullan</button>`}
             </div>
           </article>
         `;
@@ -3546,13 +4455,20 @@
       const titleEl = document.getElementById("itemUseTitle");
       const bodyEl = document.getElementById("itemUseBody");
 
-      if (item.consumeOnUse !== false) {
-        if (!confirm(`${item.title} eşyasını kullanmak istiyor musun? (Kullandıktan sonra envanterden silinir)`)) return;
-        try {
-          await deleteDoc(doc(db, "gpInventory", item.id));
-        } catch (err) {
-          return alert("Eşya kullanılamadı: " + err.message);
-        }
+      if (item.marketListed) {
+        return setGpUserMsg("🛒 Bu eşya oyuncu pazarında satışta. Önce ilandan çekmelisin.");
+      }
+      if (item.consumeOnUse !== false && !confirm(`${item.title} eşyasını kullanmak istiyor musun? (Kullandıktan sonra envanterden silinir)`)) return;
+      try {
+        await runTransaction(db, async (tx) => {
+          const inventoryRef = doc(db, "gpInventory", item.id);
+          const inventorySnap = await tx.get(inventoryRef);
+          if (!inventorySnap.exists() || inventorySnap.data()?.ownerKey !== normalizeKey(currentUser)) throw new Error("Eşya artık envanterinde değil.");
+          if (inventorySnap.data()?.marketListed === true) throw new Error("Bu eşya satışta. Önce oyuncu pazarından satıştan çek.");
+          if (item.consumeOnUse !== false) tx.delete(inventoryRef);
+        });
+      } catch (err) {
+        return setGpUserMsg("Eşya kullanılamadı: " + (err?.message || "işlem reddedildi."));
       }
 
       const actionType = item.actionType || "text";
@@ -3742,7 +4658,7 @@
     function renderTradeRoomSummary() {
       const mySummary = document.getElementById("tradeRoomMySummary");
       if (!mySummary) return;
-      const chosen = userInventory.filter((item) => tradeDraftItems.includes(item.id));
+      const chosen = userInventory.filter((item) => item.marketListed !== true && tradeDraftItems.includes(item.id));
       const totalItemGp = chosen.reduce((sum, item) => sum + getItemGpValue(item), 0);
       mySummary.textContent = `Teklifin: ${formatGp(tradeDraftGp)} + ${chosen.length} ürün (ürün değeri ${formatGp(totalItemGp)})`;
     }
@@ -3773,10 +4689,11 @@
       gpInput.disabled = myOffer.confirmed;
 
       const myItemsEl = document.getElementById("tradeRoomMyItems");
-      if (!userInventory.length) {
-        myItemsEl.innerHTML = `<div class="trade-room-empty">Envanterin boş. GP ekleyerek de takas yapabilirsin.</div>`;
+      const tradeableInventory = userInventory.filter((item) => item.marketListed !== true);
+      if (!tradeableInventory.length) {
+        myItemsEl.innerHTML = `<div class="trade-room-empty">Takas edilebilir eşyan yok. Satıştaki eşyalar önce pazardan çekilmeli. GP ekleyerek de takas yapabilirsin.</div>`;
       } else {
-        myItemsEl.innerHTML = userInventory.map((item) => `
+        myItemsEl.innerHTML = tradeableInventory.map((item) => `
           <div class="trade-room-item">
             <label><input type="checkbox" data-trade-room-item="${escapeHtml(item.id)}" ${tradeDraftItems.includes(item.id) ? "checked" : ""} ${myOffer.confirmed ? "disabled" : ""}/><strong>${escapeHtml(item.title || "Eşya")}</strong></label>
             <span class="gp-badge val">${formatGp(getItemGpValue(item))}</span>
@@ -3840,7 +4757,7 @@
         tradeSaveInFlight = false;
         return false;
       }
-      const items = userInventory.filter((item) => wantedIds.includes(item.id)).map((item) => ({
+      const items = userInventory.filter((item) => item.marketListed !== true && wantedIds.includes(item.id)).map((item) => ({
         id: item.id,
         productId: item.productId || "",
         title: item.title || "Eşya",
@@ -3955,12 +4872,12 @@
           const toItemSnaps = [];
           for (const entry of fromItemRefs) {
             const itemSnap = await tx.get(entry.ref);
-            if (!itemSnap.exists() || itemSnap.data()?.ownerKey !== fromKey) throw new Error(`${entry.item.title || "Ürün"} artık ${fromUser} envanterinde değil.`);
+            if (!itemSnap.exists() || itemSnap.data()?.ownerKey !== fromKey || itemSnap.data()?.marketListed === true) throw new Error(`${entry.item.title || "Ürün"} artık ${fromUser} envanterinde değil veya oyuncu pazarında satışta.`);
             fromItemSnaps.push({ ...entry, data: itemSnap.data() });
           }
           for (const entry of toItemRefs) {
             const itemSnap = await tx.get(entry.ref);
-            if (!itemSnap.exists() || itemSnap.data()?.ownerKey !== toKey) throw new Error(`${entry.item.title || "Ürün"} artık ${toUser} envanterinde değil.`);
+            if (!itemSnap.exists() || itemSnap.data()?.ownerKey !== toKey || itemSnap.data()?.marketListed === true) throw new Error(`${entry.item.title || "Ürün"} artık ${toUser} envanterinde değil veya oyuncu pazarında satışta.`);
             toItemSnaps.push({ ...entry, data: itemSnap.data() });
           }
 
@@ -4564,10 +5481,12 @@
     async function openGpPanel() {
       setGpPanelOpen(true);
       clearGpMessages();
+      setGpMarketMsg("");
       updateGpStatusText();
       updateGpBonusText();
       listenGpProducts();
       listenInventoryAndTrades();
+      listenGpPlayerMarket();
       if (isAdmin) {
         listenGpAdminUsers();
         listenGpAdminCodes();
@@ -4749,6 +5668,73 @@
       setGpPanelOpen(false);
     }
 
+    let registrationInProgress = false;
+    async function registerAccount() {
+      if (registrationInProgress) return;
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+      if (!username || !password) return setLoginError("Kayıt için kullanıcı adı ve şifre gir.");
+      if (username.length < 3 || username.length > 32) return setLoginError("Kullanıcı adı 3–32 karakter olmalı.");
+      if (/\s/.test(username)) return setLoginError("Kullanıcı adında boşluk kullanma.");
+      if (password.length < 6 || password.length > 128) return setLoginError("Şifre 6–128 karakter arasında olmalı.");
+      if (normalizeKey(username) === normalizeKey(ADMIN_USER)) return setLoginError("Bu kullanıcı adı yöneticiye ayrılmıştır.");
+
+      registrationInProgress = true;
+      registerBtn.disabled = true;
+      loginBtn.disabled = true;
+      setLoginError("");
+      try {
+        const accountId = await getAccountDocumentId(username);
+        const accountRef = doc(db, PASSWORD_CREDENTIALS_COLLECTION, accountId);
+        const before = await getDoc(accountRef);
+        if (before.exists()) throw new Error("Bu kullanıcı adı zaten kayıtlı. Giriş yap veya hesabını yöneticiye doğrulat.");
+
+        // Eski kullanıcı verileri olan bir adı yeni kişinin üstlenmesini önle.
+        const legacyRefs = [
+          doc(db, "presence", safeDocId(username)),
+          doc(db, "gpBalances", gpDocId(username)),
+          doc(db, "plusMembers", plusDocId(username)),
+          doc(db, "proMembers", plusDocId(username)),
+          doc(db, "ultraMembers", plusDocId(username))
+        ];
+        const legacySnaps = await Promise.all(legacyRefs.map(ref => getDoc(ref)));
+        if (legacySnaps.some(snap => snap.exists())) {
+          throw new Error("Bu kullanıcı adının eski verileri var ancak şifre kaydı bulunamadı. Güvenlik için Tickets bölümünden yöneticiyle hesap kurtarma işlemi yap.");
+        }
+
+        const salt = createPasswordSalt();
+        const passwordHash = await derivePasswordHash(password, salt, PASSWORD_HASH_ITERATIONS);
+        await runTransaction(db, async transaction => {
+          const fresh = await transaction.get(accountRef);
+          if (fresh.exists()) throw new Error("Bu kullanıcı adı az önce kaydedildi. Başka bir ad seç.");
+          transaction.set(accountRef, {
+            username,
+            usernameKey: normalizeKey(username),
+            passwordHash,
+            passwordSalt: salt,
+            passwordIterations: PASSWORD_HASH_ITERATIONS,
+            credentialVersion: 1,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        });
+
+        currentUser = username;
+        isAdmin = false;
+        saveSession();
+        passwordInput.value = "";
+        setLoginError("");
+        showApp();
+      } catch (err) {
+        console.error("Hesap oluşturma hatası:", err);
+        setLoginError(err?.message || "Kayıt yapılamadı. Firestore izinlerini kontrol et.");
+      } finally {
+        registrationInProgress = false;
+        registerBtn.disabled = false;
+        loginBtn.disabled = false;
+      }
+    }
+
     let loginInProgress = false;
     async function login() {
       if (loginInProgress) return;
@@ -4801,6 +5787,8 @@
     }
 
     async function logout() {
+      await closeWorkshopGame();
+      setWorkshopOpen(false);
       if (unsubscribeMessages) unsubscribeMessages();
       if (unsubscribeThreads) unsubscribeThreads();
       if (unsubscribeStatus) unsubscribeStatus();
@@ -5747,10 +6735,24 @@
 
     document.getElementById("giftBtn")?.addEventListener("click", sendGpGift);
     loginBtn.addEventListener("click", login);
+    registerBtn?.addEventListener("click", () => void registerAccount());
     document.getElementById("legacyPasswordCreateBtn")?.addEventListener("click", () => void adminSaveUserPassword(false));
     document.getElementById("legacyPasswordResetBtn")?.addEventListener("click", () => void adminSaveUserPassword(true));
     passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") void login(); });
     usernameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+    workshopOpenBtn?.addEventListener("click", () => setWorkshopOpen(true));
+    workshopCloseBtn?.addEventListener("click", () => { void closeWorkshopGame(); setWorkshopOpen(false); });
+    workshopForm?.addEventListener("submit", event => void submitWorkshopForm(event));
+    workshopCancelEditBtn?.addEventListener("click", resetWorkshopForm);
+    workshopRefreshBtn?.addEventListener("click", () => void loadWorkshopView());
+    workshopSearchInput?.addEventListener("input", () => renderWorkshopItems(workshopView === "market" ? workshopItemsCache : workshopCurrentDataView, workshopView));
+    document.querySelectorAll("[data-workshop-view]").forEach(btn => btn.addEventListener("click", () => setWorkshopView(btn.dataset.workshopView)));
+    workshopForSaleInput?.addEventListener("change", () => { if (workshopPriceInput) workshopPriceInput.disabled = !workshopForSaleInput.checked; });
+    workshopPriceInput && (workshopPriceInput.disabled = !workshopForSaleInput.checked);
+    workshopCreateRoomBtn?.addEventListener("click", () => void workshopCreateRoom());
+    workshopJoinRoomBtn?.addEventListener("click", () => void workshopJoinRoom());
+    workshopJoinCodeInput?.addEventListener("keydown", event => { if (event.key === "Enter") void workshopJoinRoom(); });
+    workshopCloseGameBtn?.addEventListener("click", () => void closeWorkshopGame());
     logoutBtn.addEventListener("click", logout);
 
     proChatBtn?.addEventListener("click", () => { proChatPanel.classList.remove("hidden"); listenProChat(); });
@@ -5772,6 +6774,13 @@
     gpClaimBtn.addEventListener("click", () => void claimDailyBonuses());
     gpSpinBtn?.addEventListener("click", spinDailyWheel);
     gpRedeemBtn.addEventListener("click", redeemGpPromoCode);
+    gpMarketListBtn?.addEventListener("click", () => void createGpMarketListing());
+    gpPlayerMarketList?.addEventListener("click", (event) => {
+      const buyButton = event.target.closest("[data-market-buy]");
+      const withdrawButton = event.target.closest("[data-market-withdraw]");
+      if (buyButton) void buyGpMarketListing(buyButton.dataset.marketBuy);
+      else if (withdrawButton) void withdrawGpMarketListing(withdrawButton.dataset.marketWithdraw);
+    });
     gpSaveProductBtn.addEventListener("click", saveGpProduct);
     gpClearProductBtn.addEventListener("click", clearGpProductForm);
     gpAdjustSetBtn.addEventListener("click", () => void adjustUserGp('set'));
@@ -5888,7 +6897,11 @@
       saveVoiceSetting();
       updateVoiceToggleUI();
     });
-    scrollBottomBtn.addEventListener("click", scrollToBottomFast);
+    scrollBottomBtn?.addEventListener("click", () => {
+      settingsModal?.classList.add("hidden");
+      settingsModal?.setAttribute("aria-hidden", "true");
+      setTimeout(scrollToBottomFast, 50);
+    });
     statusToggleBtn.addEventListener("click", toggleChatStatus);
 
     imageBtn.addEventListener("click", () => { if (!imageBtn.disabled) imageInput.click(); });
