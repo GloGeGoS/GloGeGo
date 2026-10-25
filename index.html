@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GloGeGo</title>
+  <title>GloGeGo | ULTRA</title>
   <style>
     :root {
       --bg: #0f1115;
@@ -22,6 +23,19 @@
       --bad: #f87171;
     }
 
+    :root[data-ultra-theme="gold"] { --accent:#fbbf24; --accent2:#d97706; --bubble2:#332813; --line:#574323; }
+    :root[data-ultra-theme="ice"] { --accent:#67e8f9; --accent2:#3b82f6; --bubble2:#142b39; --line:#264b60; }
+    :root[data-ultra-theme="ruby"] { --accent:#fb7185; --accent2:#be123c; --bubble2:#351b29; --line:#5b2d3e; }
+    :root[data-ultra-theme="violet"] { --accent:#c084fc; --accent2:#7c3aed; --bubble2:#29203d; --line:#49335e; }
+    .ultra-member-frame { border:1px solid rgba(216,180,254,.85) !important; box-shadow:0 0 0 1px rgba(192,132,252,.18), 0 0 16px rgba(139,92,246,.15); }
+    #userPill.ultra-member-frame { color:#f3e8ff; background:linear-gradient(135deg,#34204e,#21152f); border-color:#c084fc !important; }
+    .ultra-badge { background:linear-gradient(135deg,#4c1d95,#a16207); border:1px solid #d8b4fe; color:#fff7d6; }
+    .message-search-bar { flex-shrink:0; display:flex; align-items:center; gap:8px; padding:8px 14px; border-bottom:1px solid var(--line); background:rgba(18,22,32,.72); }
+    .message-search-bar input { min-width:0; flex:1; border:1px solid var(--line); border-radius:10px; padding:9px 11px; background:#0c111c; color:var(--text); outline:none; font-size:13px; }
+    .message-search-count { color:var(--muted); font-size:11px; white-space:nowrap; }
+    .ultra-composer-tools { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+    .ultra-composer-tools button { border:1px solid rgba(192,132,252,.3); border-radius:9px; padding:6px 9px; background:#211631; color:#f3e8ff; font-size:11px; font-weight:800; cursor:pointer; }
+    .ultra-composer-tools .tool-label { color:#c4b5fd; font-size:11px; font-weight:900; margin-right:3px; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body {
       height: 100%;
@@ -1446,13 +1460,14 @@
                 <span id="gpPill" class="gp-pill hidden"></span>
                 <span id="plusPill" class="pill hidden"></span>
                 <span id="proPill" class="pill hidden"></span>
+                <span id="ultraPill" class="pill ultra-badge hidden">👑 ULTRA</span>
                 <span id="threadStatusPill" class="pill hidden"></span>
                 <span id="modePill" class="pill hidden"></span>
               </div>
             </div>
 
             <div class="top-actions">
-              <button id="proChatBtn" class="live-btn hidden" style="background:#4c1d95; border-color:#7c3aed; color:#f3e8ff;">PRO Sohbet</button>
+              <button id="proChatBtn" class="live-btn hidden" style="background:#4c1d95; border-color:#7c3aed; color:#f3e8ff;">PRO / ULTRA Sohbet</button>
               <button id="plusBtn" class="live-btn">Tickets</button>
               <button id="gpBtn" class="live-btn">GP Mağaza</button>
               <button id="topInvBtn" class="live-btn" style="background:#1e293b; border-color:#3b82f6; color:#93c5fd;">🎒 Envanter & Takas</button>
@@ -1461,6 +1476,10 @@
               <button id="scrollBottomBtn" class="scroll-bottom-btn">⬇ En Alta</button>
               <button id="settingsBtn" class="live-btn">⚙ Ayarlar</button>
             </div>
+          </div>
+          <div id="messageSearchBar" class="message-search-bar hidden">
+            <input id="messageSearchInput" type="search" maxlength="120" placeholder="🔎 ULTRA: Bu sohbette mesaj ara..." aria-label="Sohbet mesajlarında ara" />
+            <span id="messageSearchCount" class="message-search-count">Tüm mesajlar</span>
           </div>
 
           <!-- PRO SOHBET PANELİ -->
@@ -1488,7 +1507,7 @@
               <div class="plus-head">
                 <div>
                   <div class="plus-title">GloGeGo Tickets</div>
-                  <div id="plusStatusText" class="plus-status">Plus ve PRO durumunu burada görürsün.</div>
+                  <div id="plusStatusText" class="plus-status">Plus, PRO ve ULTRA durumunu burada görürsün.</div>
                 </div>
                 <button id="plusCloseBtn" class="plus-close" type="button">Kapat</button>
               </div>
@@ -1522,6 +1541,33 @@
                   <div class="plus-feature">👑 PRO Özel Sohbet Odası & %5 Mağaza İndirimi</div>
                   <div class="plus-feature">🎁 Günlük +2 GP Ekstra Bonus</div>
                   <div class="plus-feature">🧠 Düşünme & Analiz hakları 6 saatte bir yenilenir (10 Hak)</div>
+                </div>
+
+                <div class="plus-box" style="border-color:#a78bfa;background:linear-gradient(145deg,#171126,#20172e);">
+                  <div class="plus-box-title" style="color:#e9d5ff;font-size:18px;">👑 ULTRA Ticket Kodunu Gir</div>
+                  <input id="ultraCodeInput" class="plus-input" type="password" maxlength="100" placeholder="ULTRA aktivasyon kodu" autocomplete="one-time-code" />
+                  <button id="ultraActivateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">ULTRA Aktifleştir</button>
+                  <div id="ultraMsg" class="msg"></div>
+                </div>
+
+                <div class="plus-box" style="border-color:#a78bfa;background:#171126;">
+                  <div class="plus-box-title" style="color:#e9d5ff;">👑 ULTRA Özellikleri</div>
+                  <div class="plus-feature">✅ PRO'nun tüm özellikleri dahildir: özel sohbet, gelişmiş zeka, görsel/video ve kodlama</div>
+                  <div class="plus-feature">🧠 25 Düşünme + 25 Analiz hakkı (12 saatte bir yenilenir)</div>
+                  <div class="plus-feature">🎁 Günlük +2 GP ULTRA ekstra bonusu (PRO +2 GP dahil toplam +4 GP)</div>
+                  <div class="plus-feature">🛍️ Mağazada %8 indirim</div>
+                  <div class="plus-feature">🪪 Özel ULTRA profil çerçevesi ve mor/altın/mavi/kırmızı temalar</div>
+                  <div class="plus-feature">✍️ Yazı alanı araçları: temizle, düzenle ve kopyala</div>
+                  <div class="plus-feature">🔎 Sohbet geçmişinde arama (ek Firestore sorgusu olmadan)</div>
+                  <div class="plus-feature">🎁 Sadece ULTRA üyelerine özel ödül kodları</div>
+                </div>
+
+                <div class="plus-box" style="border-color:#7c3aed;background:#12101b;">
+                  <div class="plus-box-title" style="color:#e9d5ff;">🎁 ULTRA Ödül Kodunu Kullan</div>
+                  <div class="muted">ULTRA ÖDÜLLER.</div>
+                  <input id="ultraRewardCodeInput" class="plus-input" type="text" maxlength="100" placeholder="ULTRA ödül kodu" autocomplete="off" />
+                  <button id="ultraRewardRedeemBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">Ödül Kodunu Kullan</button>
+                  <div id="ultraRewardMsg" class="msg"></div>
                 </div>
               </div>
 
@@ -1564,6 +1610,42 @@
                 <div>
                   <div class="plus-box-title" style="margin-bottom:8px; color:#c4b5fd;">PRO Kodları</div>
                   <div id="proCodeAdminList" class="plus-admin-list"></div>
+                </div>
+
+                <div class="plus-admin-create" style="border-color:#a78bfa;background:#171126;">
+                  <div class="plus-box-title" style="color:#e9d5ff;">👑 ULTRA Aktivasyon Kodu Oluştur</div>
+                  <div class="plus-admin-note" style="grid-column:auto;">Gün süresini ve kodu kullanabilecek toplam hesap sayısını belirle. Her hesap aynı ULTRA kodunu yalnızca bir kez kullanabilir.</div>
+                  <div class="plus-admin-create-grid">
+                    <input id="ultraCreateCodeInput" class="plus-input" type="text" maxlength="100" placeholder="Yeni ULTRA kodu" autocomplete="off" />
+                    <input id="ultraCreateDaysInput" class="plus-input" type="number" min="1" max="3650" value="30" placeholder="Gün" />
+                    <input id="ultraCreateUsesInput" class="plus-input" type="number" min="1" max="10000" value="1" placeholder="Kişi limiti" />
+                    <button id="ultraCreateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">ULTRA Kodu Oluştur</button>
+                  </div>
+                  <div id="ultraCreateMsg" class="msg"></div>
+                </div>
+                <div>
+                  <div class="plus-box-title" style="margin-bottom:8px;color:#e9d5ff;">Aktif ULTRA Kullanıcılar</div>
+                  <div id="ultraAdminList" class="plus-admin-list"></div>
+                </div>
+                <div>
+                  <div class="plus-box-title" style="margin-bottom:8px;color:#e9d5ff;">ULTRA Aktivasyon Kodları</div>
+                  <div id="ultraCodeAdminList" class="plus-admin-list"></div>
+                </div>
+
+                <div class="plus-admin-create" style="border-color:#a78bfa;background:#171126;">
+                  <div class="plus-box-title" style="color:#e9d5ff;">🎁 ULTRA GP Ödül Kodu Oluştur</div>
+                  <div class="plus-admin-note" style="grid-column:auto;">Yönetici bir GP ödülü tanımlar. Kod her hesap tarafından en fazla bir kez kullanılabilir; toplam kullanım limiti dolunca kapanır.</div>
+                  <div class="plus-admin-create-grid">
+                    <input id="ultraRewardCreateCodeInput" class="plus-input" type="text" maxlength="100" placeholder="Ödül kodu" autocomplete="off" />
+                    <input id="ultraRewardCreateGpInput" class="plus-input" type="number" min="1" max="1000000" value="10" placeholder="GP ödülü" />
+                    <input id="ultraRewardCreateUsesInput" class="plus-input" type="number" min="1" max="10000" value="1" placeholder="Toplam kullanım" />
+                    <button id="ultraRewardCreateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">Ödül Kodu Oluştur</button>
+                  </div>
+                  <div id="ultraRewardCreateMsg" class="msg"></div>
+                </div>
+                <div>
+                  <div class="plus-box-title" style="margin-bottom:8px;color:#e9d5ff;">ULTRA Ödül Kodları</div>
+                  <div id="ultraRewardAdminList" class="plus-admin-list"></div>
                 </div>
 
                 <div class="plus-admin-create" style="border-color:rgba(110,168,254,.35);">
@@ -1753,6 +1835,12 @@
           <!-- MESAJ YAZMA ALANI (SES KALDIRILDI, DOSYA EKLENDİ) -->
           <div class="composer">
             <div class="composer-box">
+              <div id="ultraComposerTools" class="ultra-composer-tools hidden" aria-label="ULTRA yazı araçları">
+              <span class="tool-label">👑 ULTRA Araçları</span>
+                <button type="button" id="ultraTextCleanBtn">Temizle</button>
+                <button type="button" id="ultraTextFormatBtn">Satırları düzenle</button>
+                <button type="button" id="ultraTextCopyBtn">Metni kopyala</button>
+              </div>
               <div class="composer-top">
                 <textarea id="messageInput" maxlength="500000" placeholder="Mesaj yaz..."></textarea>
                 <div class="button-stack">
@@ -1789,6 +1877,17 @@
         <div class="field" style="margin:0;">
           <label for="setVolume">GloGeGo Okuma Sesi Seviyesi</label>
           <input type="range" id="setVolume" min="0" max="1" step="0.1" value="1" />
+        </div>
+
+        <div id="ultraThemeSection" class="plus-box hidden" style="background:#171126;border-color:#7c3aed;">
+          <div class="plus-box-title" style="color:#e9d5ff;">👑 ULTRA Tema Seçimi</div>
+          <label for="ultraThemeSelect" class="muted">Arayüz rengini seç. Seçimin bu tarayıcıda saklanır.</label>
+          <select id="ultraThemeSelect" class="plus-input">
+            <option value="violet">ULTRA Mor</option>
+            <option value="gold">Altın</option>
+            <option value="ice">Buz Mavisi</option>
+            <option value="ruby">Kırmızı</option>
+          </select>
         </div>
 
         <div class="plus-box" style="background:#131826;">
@@ -2012,6 +2111,35 @@
     const proAdminList = document.getElementById("proAdminList");
     const proCodeAdminList = document.getElementById("proCodeAdminList");
     const proPill = document.getElementById("proPill");
+    const ultraPill = document.getElementById("ultraPill");
+    const ultraCodeInput = document.getElementById("ultraCodeInput");
+    const ultraActivateBtn = document.getElementById("ultraActivateBtn");
+    const ultraMsg = document.getElementById("ultraMsg");
+    const ultraCreateCodeInput = document.getElementById("ultraCreateCodeInput");
+    const ultraCreateDaysInput = document.getElementById("ultraCreateDaysInput");
+    const ultraCreateUsesInput = document.getElementById("ultraCreateUsesInput");
+    const ultraCreateBtn = document.getElementById("ultraCreateBtn");
+    const ultraCreateMsg = document.getElementById("ultraCreateMsg");
+    const ultraAdminList = document.getElementById("ultraAdminList");
+    const ultraCodeAdminList = document.getElementById("ultraCodeAdminList");
+    const ultraRewardCodeInput = document.getElementById("ultraRewardCodeInput");
+    const ultraRewardRedeemBtn = document.getElementById("ultraRewardRedeemBtn");
+    const ultraRewardMsg = document.getElementById("ultraRewardMsg");
+    const ultraRewardCreateCodeInput = document.getElementById("ultraRewardCreateCodeInput");
+    const ultraRewardCreateGpInput = document.getElementById("ultraRewardCreateGpInput");
+    const ultraRewardCreateUsesInput = document.getElementById("ultraRewardCreateUsesInput");
+    const ultraRewardCreateBtn = document.getElementById("ultraRewardCreateBtn");
+    const ultraRewardCreateMsg = document.getElementById("ultraRewardCreateMsg");
+    const ultraRewardAdminList = document.getElementById("ultraRewardAdminList");
+    const ultraThemeSection = document.getElementById("ultraThemeSection");
+    const ultraThemeSelect = document.getElementById("ultraThemeSelect");
+    const ultraComposerTools = document.getElementById("ultraComposerTools");
+    const ultraTextCleanBtn = document.getElementById("ultraTextCleanBtn");
+    const ultraTextFormatBtn = document.getElementById("ultraTextFormatBtn");
+    const ultraTextCopyBtn = document.getElementById("ultraTextCopyBtn");
+    const messageSearchBar = document.getElementById("messageSearchBar");
+    const messageSearchInput = document.getElementById("messageSearchInput");
+    const messageSearchCount = document.getElementById("messageSearchCount");
 
     const proChatBtn = document.getElementById("proChatBtn");
     const proChatPanel = document.getElementById("proChatPanel");
@@ -2108,6 +2236,11 @@
     const plusCodeCollectionRef = collection(db, "plusCodes");
     const proCollectionRef = collection(db, "proMembers");
     const proCodeCollectionRef = collection(db, "proCodes");
+    const ultraCollectionRef = collection(db, "ultraMembers");
+    const ultraCodeCollectionRef = collection(db, "ultraCodes");
+    const ultraRewardCodeCollectionRef = collection(db, "ultraRewardCodes");
+    const ultraRewardClaimsCollectionRef = collection(db, "ultraRewardClaims");
+    const ultraCodeClaimsCollectionRef = collection(db, "ultraCodeClaims");
 
     let currentUser = null;
     let isAdmin = false;
@@ -2124,6 +2257,10 @@
     let unsubscribeProSelf = null;
     let unsubscribeProAdmin = null;
     let unsubscribeProCodesAdmin = null;
+    let unsubscribeUltraSelf = null;
+    let unsubscribeUltraAdmin = null;
+    let unsubscribeUltraCodesAdmin = null;
+    let unsubscribeUltraRewardCodesAdmin = null;
     let unsubscribeGpProducts = null;
     let unsubscribeGpAdminUsers = null;
     let unsubscribeGpAdminCodes = null;
@@ -2143,8 +2280,12 @@
     let plusCodeMap = new Map();
     let proMap = new Map();
     let proCodeMap = new Map();
+    let ultraMap = new Map();
+    let ultraCodeMap = new Map();
+    let ultraRewardCodeMap = new Map();
     let currentPlus = null;
     let currentPro = null;
+    let currentUltra = null;
     let plusPanelOpen = false;
 
     let currentGp = 0;
@@ -2160,6 +2301,7 @@
     let gpProductImageMime = "image/jpeg";
     let gpSelfClaimedToday = false;
     let proSelfClaimedToday = false;
+    let ultraSelfClaimedToday = false;
     let spinClaimedToday = false;
 
     let userInventory = [];
@@ -2522,6 +2664,50 @@
       return getProRemainingMs(data) > 0;
     }
 
+    function getUltraRemainingMs(data) {
+      const raw = data?.ultraUntil;
+      const d = raw?.toDate ? raw.toDate() : (raw ? new Date(raw) : null);
+      if (!d || isNaN(d.getTime())) return 0;
+      return d.getTime() - Date.now();
+    }
+
+    function isUltraActive(data) {
+      return getUltraRemainingMs(data) > 0;
+    }
+
+    function hasProAccess() {
+      return isUltraActive(currentUltra) || isProActive(currentPro);
+    }
+
+    function getMembershipDiscountRate() {
+      if (isUltraActive(currentUltra)) return 0.08;
+      if (isProActive(currentPro)) return 0.05;
+      return 0;
+    }
+
+    function getMembershipDiscountLabel() {
+      return isUltraActive(currentUltra) ? "ULTRA %8" : (isProActive(currentPro) ? "PRO %5" : "");
+    }
+
+    function getRightsLimits() {
+      if (isUltraActive(currentUltra)) return { thinking: 25, analysis: 25, cycleHours: 12, tier: "ultra" };
+      if (isProActive(currentPro)) return { thinking: 10, analysis: 10, cycleHours: 6, tier: "pro" };
+      return { thinking: 5, analysis: 10, cycleHours: 24, tier: "standard" };
+    }
+
+    function normalizeUltraCode(value = "") {
+      return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+    }
+
+    function applyUltraTheme() {
+      const active = isUltraActive(currentUltra);
+      const theme = ["violet", "gold", "ice", "ruby"].includes(localStorage.getItem("glogego_ultra_theme"))
+        ? localStorage.getItem("glogego_ultra_theme") : "violet";
+      if (ultraThemeSelect && ultraThemeSelect.value !== theme) ultraThemeSelect.value = theme;
+      if (active) document.documentElement.dataset.ultraTheme = theme;
+      else delete document.documentElement.dataset.ultraTheme;
+    }
+
     function formatDaysLeft(ms) {
       if (ms <= 0) return "Bitti";
       return `${Math.ceil(ms / DAY_MS)} gün`;
@@ -2770,8 +2956,14 @@
       return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
     }
 
+    function isUltraSender(docData, mine) {
+      if (isAdmin) return isUltraActive(ultraMap.get(plusDocId(docData.sender)));
+      return !!mine && isUltraActive(currentUltra);
+    }
+
     function renderMessage(docData, isNew = false) {
       const mine = docData.sender === currentUser;
+      const ultraFrameClass = isUltraSender(docData, mine) ? "ultra-member-frame" : "";
       const kind = docData.kind || (docData.videoStatus ? "video" : ((docData.imageDataUrl || docData.imageName) ? "image" : "text"));
       const textValue = docData.text || "";
       const imageDataUrl = docData.imageDataUrl || "";
@@ -2786,7 +2978,7 @@
 
       if (kind === "mode_request") {
         return `
-          <div class="bubble ${mine ? "me" : ""} request-bubble ${animClass}" data-message-id="${messageId}">
+          <div class="bubble ${mine ? "me" : ""} ${ultraFrameClass} request-bubble ${animClass}" data-message-id="${messageId}">
             <div class="meta"><span>${escapeHtml(docData.sender || "")}</span><span>${created}</span></div>
             <div class="request-title">${escapeHtml(getModeLabel(docData.mode || "normal"))}</div>
             <div class="text">${escapeHtml(textValue)}</div>
@@ -2800,7 +2992,7 @@
         const fName = escapeHtml(docData.fileName || "dosya");
         const fSize = formatBytes(docData.fileSize || 0);
         return `
-          <div class="bubble ${mine ? "me" : ""} ${animClass}" data-file-message-id="${messageId}" data-file-name="${fName}" data-file-mime="${escapeHtml(docData.fileMime || "application/octet-stream")}">
+          <div class="bubble ${mine ? "me" : ""} ${ultraFrameClass} ${animClass}" data-file-message-id="${messageId}" data-file-name="${fName}" data-file-mime="${escapeHtml(docData.fileMime || "application/octet-stream")}">
             <div class="meta"><span>${escapeHtml(docData.sender || "")}</span><span>${created}</span></div>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:#0c1018; border:1px solid rgba(255,255,255,.08); padding:12px 14px; border-radius:14px; flex-wrap:wrap;">
               <div>
@@ -2817,7 +3009,7 @@
         const status = docData.videoStatus || "uploading";
         const cachedUrl = videoObjectUrls.get(docData.id);
         return `
-          <div class="bubble ${mine ? "me" : ""} ${animClass}" data-video-message-id="${messageId}" data-video-name="${escapeHtml(docData.videoName || "video.mp4")}" data-video-mime="${escapeHtml(docData.videoMime || "video/mp4")}">
+          <div class="bubble ${mine ? "me" : ""} ${ultraFrameClass} ${animClass}" data-video-message-id="${messageId}" data-video-name="${escapeHtml(docData.videoName || "video.mp4")}" data-video-mime="${escapeHtml(docData.videoMime || "video/mp4")}">
             <div class="meta"><span>${escapeHtml(docData.sender || "")}</span><span>${created}</span></div>
             <div class="video-upload-card">
               <div class="video-upload-loading" data-video-loading>${status !== "ready" ? "Video yükleniyor..." : (cachedUrl ? "Video hazır." : "İzlemek için yükleyin.")}</div>
@@ -2833,7 +3025,7 @@
       }
 
       return `
-        <div class="bubble ${mine ? "me" : ""} ${animClass}" data-message-id="${messageId}">
+        <div class="bubble ${mine ? "me" : ""} ${ultraFrameClass} ${animClass}" data-message-id="${messageId}">
           <div class="meta"><span>${escapeHtml(docData.sender || "")}</span><span>${created}</span></div>
           ${textValue ? `<div class="text">${formatMarkdown(textValue)}</div>` : ""}
           ${imageDataUrl ? `
@@ -3204,8 +3396,11 @@
       }
       let texts = [];
       texts.push(dailySelfClaimedToday ? "Günlük 10 GP alındı" : "Günlük bonus: +10 GP");
-      if (currentPlus && isPlusActive(currentPlus)) texts.push(gpSelfClaimedToday ? "Plus +5 GP alındı" : "Plus ekstra: +5 GP");
-      if (currentPro && isProActive(currentPro)) texts.push(proSelfClaimedToday ? "PRO +2 GP alındı" : "PRO ekstra: +2 GP");
+      if (isUltraActive(currentUltra)) texts.push(ultraSelfClaimedToday ? "ULTRA +4 GP alındı" : "ULTRA ekstra: +4 GP (PRO +2 GP dahil)");
+      else {
+        if (currentPlus && isPlusActive(currentPlus)) texts.push(gpSelfClaimedToday ? "Plus +5 GP alındı" : "Plus ekstra: +5 GP");
+        if (currentPro && isProActive(currentPro)) texts.push(proSelfClaimedToday ? "PRO +2 GP alındı" : "PRO ekstra: +2 GP");
+      }
       texts.push(spinClaimedToday ? "Bugünkü Çark Çevrildi" : "🎡 Günlük Şans Çarkı Hazır!");
       gpBonusText.textContent = texts.join(" | ");
       if (gpClaimBtn) gpClaimBtn.textContent = dailySelfClaimedToday ? "✅ Günlük Bonus Alındı" : "🎁 Günlük Bonus Al";
@@ -3883,13 +4078,14 @@
 
     function renderGpProducts() {
       if (!gpProductsList) return;
-      const isPro = currentUser && !isAdmin && currentPro && isProActive(currentPro);
+      const discountRate = currentUser && !isAdmin ? getMembershipDiscountRate() : 0;
+      const isPro = discountRate > 0;
       const items = gpProducts.map((item) => {
         const basePrice = normalizeGpNumber(item.priceGp, 0);
         const discounted = !!item.discounted;
         const discountPrice = normalizeGpNumber(item.discountPriceGp, basePrice);
         const finalPrice = discounted ? Math.max(0, discountPrice) : basePrice;
-        const userFinalPrice = isPro ? Math.floor(finalPrice * 0.95) : finalPrice;
+        const userFinalPrice = isPro ? Math.floor(finalPrice * (1 - discountRate)) : finalPrice;
         const shortDesc = String(item.description || "").trim().slice(0, 180) || "Açıklamayı ürün detayında aç.";
         const hasImage = !!item.imageDataUrl;
         const currentStock = item.stock !== undefined ? item.stock : 5;
@@ -3908,7 +4104,7 @@
               <div class="gp-price-row">
                 <span class="gp-price">${escapeHtml(formatGp(userFinalPrice))}</span>
                 ${(discounted && discountPrice !== basePrice) || isPro ? `<span class="gp-old-price">${escapeHtml(formatGp(finalPrice === userFinalPrice && discounted ? basePrice : finalPrice))}</span>` : ''}
-                ${isPro ? `<span class="gp-badge discount" style="background:#4c1d95;border-color:#7c3aed;">PRO %5</span>` : (discounted ? `<span class="gp-badge discount">İndirimli</span>` : `<span class="gp-badge">Normal</span>`)}
+                ${isPro ? `<span class="gp-badge discount" style="background:#4c1d95;border-color:#c084fc;">${getMembershipDiscountLabel()}</span>` : (discounted ? `<span class="gp-badge discount">İndirimli</span>` : `<span class="gp-badge">Normal</span>`)}
               </div>
               <div class="gp-product-actions">
                 <button class="img-action-btn" type="button" data-gp-open="${escapeHtml(item.id)}">Göz At</button>
@@ -4001,8 +4197,9 @@
       const basePrice = normalizeGpNumber(item.priceGp, 0);
       const finalPrice = item.discounted ? Math.max(0, normalizeGpNumber(item.discountPriceGp, basePrice)) : basePrice;
       const currentStock = item.stock !== undefined ? item.stock : 5;
-      const isPro = currentUser && !isAdmin && currentPro && isProActive(currentPro);
-      const userFinalPrice = isPro ? Math.floor(finalPrice * 0.95) : finalPrice;
+      const discountRate = currentUser && !isAdmin ? getMembershipDiscountRate() : 0;
+      const isPro = discountRate > 0;
+      const userFinalPrice = isPro ? Math.floor(finalPrice * (1 - discountRate)) : finalPrice;
 
       gpModalMeta.innerHTML = `
         <span class="gp-badge">Fiyat: ${escapeHtml(formatGp(userFinalPrice))}</span>
@@ -4240,6 +4437,7 @@
 
     async function claimDailyBonuses() {
       if (!currentUser || isAdmin) return;
+      const ultraActive = isUltraActive(currentUltra);
       const plusActive = !!(currentPlus && isPlusActive(currentPlus));
       const proActive = !!(currentPro && isProActive(currentPro));
       if (gpClaimBtn) { gpClaimBtn.disabled = true; }
@@ -4254,12 +4452,17 @@
           const dailyClaimed = claimData?.lastDailyBonusKey === dayKey;
           const claimedPlus = claimData?.lastGrantKey === dayKey && !!claimData?.plusClaimed;
           const claimedPro = claimData?.lastGrantKey === dayKey && !!claimData?.proClaimed;
+          const claimedUltra = claimData?.lastGrantKey === dayKey && !!claimData?.ultraClaimed;
           spinClaimedToday = claimData?.lastSpinServerDay === dayKey;
 
           let pointsToAdd = 0;
           if (!dailyClaimed) pointsToAdd += 10;
-          if (plusActive && !claimedPlus) pointsToAdd += 5;
-          if (proActive && !claimedPro) pointsToAdd += 2;
+          if (ultraActive) {
+            if (!claimedUltra) pointsToAdd += 4;
+          } else {
+            if (plusActive && !claimedPlus) pointsToAdd += 5;
+            if (proActive && !claimedPro) pointsToAdd += 2;
+          }
 
           const balanceRef = doc(db, "gpBalances", gpDocId(currentUser));
           if (pointsToAdd > 0) {
@@ -4279,17 +4482,19 @@
             username: currentUser,
             lastDailyBonusKey: dailyClaimed ? (claimData.lastDailyBonusKey || dayKey) : dayKey,
             lastGrantKey: dayKey,
-            plusClaimed: claimedPlus || plusActive,
-            proClaimed: claimedPro || proActive,
+            plusClaimed: claimedPlus || plusActive || ultraActive,
+            proClaimed: claimedPro || proActive || ultraActive,
+            ultraClaimed: claimedUltra || ultraActive,
             updatedAt: serverTimestamp()
           }, { merge: true });
           dailySelfClaimedToday = true;
-          gpSelfClaimedToday = claimedPlus || plusActive;
-          proSelfClaimedToday = claimedPro || proActive;
+          gpSelfClaimedToday = claimedPlus || plusActive || ultraActive;
+          proSelfClaimedToday = claimedPro || proActive || ultraActive;
+          ultraSelfClaimedToday = claimedUltra || ultraActive;
           lastBonusDayKey = dayKey;
         });
         updateGpBonusText();
-        if (granted > 0) setGpUserMsg(`🎁 Günlük bonus alındı: +${granted} GP${plusActive || proActive ? " (üyelik bonusları dahil)" : ""}!`, true);
+        if (granted > 0) setGpUserMsg(`🎁 Günlük bonus alındı: +${granted} GP${plusActive || proActive || ultraActive ? " (üyelik bonusları dahil)" : ""}!`, true);
         else setGpUserMsg("✅ Bugünün günlük GP bonusunu zaten aldın.", true);
       } catch (err) {
         setGpUserMsg(`Günlük bonus alınamadı: ${err?.message || "Firebase bağlantısı veya izinleri kontrol et."}`, false);
@@ -4303,8 +4508,9 @@
       const basePrice = normalizeGpNumber(item.priceGp, 0);
       const finalPrice = item.discounted ? Math.max(0, normalizeGpNumber(item.discountPriceGp, basePrice)) : basePrice;
       const currentStock = item.stock !== undefined ? item.stock : 5;
-      const isPro = currentUser && !isAdmin && currentPro && isProActive(currentPro);
-      const userFinalPrice = isPro ? Math.floor(finalPrice * 0.95) : finalPrice;
+      const discountRate = currentUser && !isAdmin ? getMembershipDiscountRate() : 0;
+      const isPro = discountRate > 0;
+      const userFinalPrice = isPro ? Math.floor(finalPrice * (1 - discountRate)) : finalPrice;
 
       if (currentStock <= 0) return alert("Bu ürünün stoku tükendi!");
       if (!confirm(`${item.title || 'Ürün'} için ${formatGp(userFinalPrice)} harcansın mı?`)) return;
@@ -4461,7 +4667,7 @@
     }
 
     async function sendProChatMessage() {
-      if (!isAdmin && !isProActive(currentPro)) return;
+      if (!isAdmin && !hasProAccess()) return;
       const text = proChatMessageInput.value.trim();
       if (!text) return;
       proChatSendBtn.disabled = true;
@@ -4517,6 +4723,7 @@
       listenPresence();
       listenPlusStatus();
       listenProStatus();
+      listenUltraStatus();
       listenGpStatus();
       listenGifts();
 
@@ -4600,6 +4807,7 @@
       if (unsubscribePresence) unsubscribePresence();
       if (unsubscribePlusSelf) unsubscribePlusSelf();
       if (unsubscribeProSelf) unsubscribeProSelf();
+      if (unsubscribeUltraSelf) { unsubscribeUltraSelf(); unsubscribeUltraSelf = null; }
       if (unsubscribeGifts) unsubscribeGifts();
       if (unsubscribeProChat) unsubscribeProChat();
       stopPlusAdminListeners();
@@ -4615,6 +4823,9 @@
 
       currentUser = null;
       isAdmin = false;
+      currentUltra = null;
+      currentPro = null;
+      currentPlus = null;
       selectedThread = null;
       chatOpen = true;
 
@@ -4631,6 +4842,19 @@
       showLogin();
     }
 
+    function applyMessageSearch() {
+      if (!messagesEl) return;
+      const term = String(messageSearchInput?.value || "").trim().toLocaleLowerCase("tr-TR");
+      const messageNodes = Array.from(messagesEl.querySelectorAll(".bubble[data-message-id], .bubble[data-video-message-id], .bubble[data-file-message-id]"));
+      let visible = 0;
+      for (const node of messageNodes) {
+        const match = !term || String(node.textContent || "").toLocaleLowerCase("tr-TR").includes(term);
+        node.style.display = match ? "" : "none";
+        if (match) visible++;
+      }
+      if (messageSearchCount) messageSearchCount.textContent = term ? `${visible} sonuç` : `${messageNodes.length} mesaj`;
+    }
+
     function renderEmpty(text) {
       messagesEl.innerHTML = `<div class="empty">${escapeHtml(text)}</div>`;
     }
@@ -4642,50 +4866,56 @@
     }
 
     function updatePlusPill() {
-      if (!plusPill || !proPill) return;
-      let hasActiveSub = false;
-
-      if (currentUser && !isAdmin && isProActive(currentPro)) {
+      if (!plusPill || !proPill || !ultraPill) return;
+      const ultraActive = currentUser && !isAdmin && isUltraActive(currentUltra);
+      const proActive = currentUser && !isAdmin && isProActive(currentPro);
+      const plusActive = currentUser && !isAdmin && isPlusActive(currentPlus);
+      ultraPill.classList.toggle("hidden", !ultraActive);
+      proPill.classList.toggle("hidden", ultraActive || !proActive);
+      if (ultraActive) {
+        ultraPill.textContent = "👑 ULTRA";
+        ultraPill.className = "pill ultra-badge";
+      } else if (proActive) {
         proPill.textContent = "PRO";
         proPill.className = "pill pro-active-tag";
-        proPill.classList.remove("hidden");
-        hasActiveSub = true;
-      } else {
-        proPill.classList.add("hidden");
       }
-
-      if (currentUser && !isAdmin && isPlusActive(currentPlus)) {
+      if (plusActive) {
         plusPill.textContent = "Plus";
         plusPill.className = "pill plus-active-tag";
         plusPill.classList.remove("hidden");
-        hasActiveSub = true;
-      } else {
-        plusPill.classList.add("hidden");
-      }
-
-      if (currentUser && !isAdmin && !hasActiveSub) {
+      } else if (!ultraActive && !proActive && currentUser && !isAdmin) {
         plusPill.textContent = "Standart";
         plusPill.className = "pill";
         plusPill.classList.remove("hidden");
+      } else {
+        plusPill.classList.add("hidden");
       }
-
-      if (proChatBtn) {
-        proChatBtn.classList.toggle("hidden", !(isAdmin || isProActive(currentPro)));
+      userPill?.classList.toggle("ultra-member-frame", !!ultraActive);
+      ultraComposerTools?.classList.toggle("hidden", !ultraActive);
+      ultraThemeSection?.classList.toggle("hidden", !ultraActive);
+      messageSearchBar?.classList.toggle("hidden", !(isAdmin || ultraActive));
+      if (!ultraActive && !isAdmin && messageSearchInput && messageSearchInput.value) {
+        messageSearchInput.value = "";
+        applyMessageSearch();
       }
+      applyUltraTheme();
+      if (proChatBtn) proChatBtn.classList.toggle("hidden", !(isAdmin || proActive || ultraActive));
     }
 
     function updatePlusStatusText() {
       if (!plusStatusText) return;
       if (isAdmin) {
-        plusStatusText.textContent = "Admin olarak kod oluşturabilir, Plus ve PRO listelerini görebilirsin.";
+        plusStatusText.textContent = "Admin: Plus, PRO, ULTRA aktivasyon ve ULTRA GP ödül kodlarını yönetebilirsin.";
         return;
       }
       const plusMs = getPlusRemainingMs(currentPlus);
       const proMs = getProRemainingMs(currentPro);
-      let text = [];
-      if (plusMs > 0) text.push(`Plus: ${formatDaysLeft(plusMs)}`);
-      if (proMs > 0) text.push(`PRO: ${formatDaysLeft(proMs)}`);
-      plusStatusText.textContent = text.length > 0 ? `Aktif: ${text.join(' | ')}` : "Sadece kod girmen yeterli.";
+      const ultraMs = getUltraRemainingMs(currentUltra);
+      const texts = [];
+      if (ultraMs > 0) texts.push(`ULTRA: ${formatDaysLeft(ultraMs)}`);
+      else if (proMs > 0) texts.push(`PRO: ${formatDaysLeft(proMs)}`);
+      if (plusMs > 0) texts.push(`Plus: ${formatDaysLeft(plusMs)}`);
+      plusStatusText.textContent = texts.length ? `Aktif: ${texts.join(" | ")}` : "Ticket kodunu girerek üyeliği aktifleştirebilirsin.";
     }
 
     async function ensureDefaultPlusCode() {
@@ -4748,6 +4978,29 @@
       proCodeAdminList.innerHTML = rows.length ? rows.join("") : '<div class="empty" style="padding:18px;">PRO kodu yok.</div>';
     }
 
+    function renderUltraAdminList() {
+      if (!ultraAdminList || !isAdmin) return;
+      const rows = Array.from(ultraMap.values())
+        .sort((a, b) => getUltraRemainingMs(b) - getUltraRemainingMs(a))
+        .map((data) => {
+          const ms = getUltraRemainingMs(data);
+          return `<div class="plus-row ultra-member-frame"><div><strong style="color:#e9d5ff;">👑 ${escapeHtml(data.username || "Bilinmeyen")}</strong><div class="muted">${ms > 0 ? "Aktif ULTRA" : "Süresi bitti"}</div></div><div style="text-align:right"><strong>${escapeHtml(formatDaysLeft(ms))}</strong></div></div>`;
+        });
+      ultraAdminList.innerHTML = rows.length ? rows.join("") : '<div class="empty" style="padding:18px;">ULTRA kullanıcısı yok.</div>';
+    }
+
+    function renderUltraCodeAdminList() {
+      if (!ultraCodeAdminList || !isAdmin) return;
+      const rows = Array.from(ultraCodeMap.values()).map((data) => `<div class="plus-row"><div><strong style="color:#e9d5ff;">${escapeHtml(data.code || data.id)}</strong><div class="muted">${Number(data.daysGranted) || 30} gün · ${Number(data.usedCount) || 0}/${Number(data.maxUses) || 1} kullanım</div></div></div>`);
+      ultraCodeAdminList.innerHTML = rows.length ? rows.join("") : '<div class="empty" style="padding:18px;">ULTRA aktivasyon kodu yok.</div>';
+    }
+
+    function renderUltraRewardCodeAdminList() {
+      if (!ultraRewardAdminList || !isAdmin) return;
+      const rows = Array.from(ultraRewardCodeMap.values()).map((data) => `<div class="plus-row"><div><strong style="color:#e9d5ff;">${escapeHtml(data.code || data.id)}</strong><div class="muted">${Number(data.rewardGp) || 0} GP · ${Number(data.usedCount) || 0}/${Number(data.maxUses) || 1} kullanım</div></div></div>`);
+      ultraRewardAdminList.innerHTML = rows.length ? rows.join("") : '<div class="empty" style="padding:18px;">ULTRA ödül kodu yok.</div>';
+    }
+
     function startPlusAdminListeners() {
       if (!isAdmin) return;
       if (!unsubscribePlusAdmin) {
@@ -4778,6 +5031,27 @@
           renderProCodeAdminList();
         });
       }
+      if (!unsubscribeUltraAdmin) {
+        unsubscribeUltraAdmin = onSnapshot(ultraCollectionRef, (snap) => {
+          ultraMap = new Map();
+          snap.forEach((d) => ultraMap.set(d.id, { id: d.id, ...d.data() }));
+          renderUltraAdminList();
+        });
+      }
+      if (!unsubscribeUltraCodesAdmin) {
+        unsubscribeUltraCodesAdmin = onSnapshot(ultraCodeCollectionRef, (snap) => {
+          ultraCodeMap = new Map();
+          snap.forEach((d) => ultraCodeMap.set(d.id, { id: d.id, ...d.data() }));
+          renderUltraCodeAdminList();
+        });
+      }
+      if (!unsubscribeUltraRewardCodesAdmin) {
+        unsubscribeUltraRewardCodesAdmin = onSnapshot(ultraRewardCodeCollectionRef, (snap) => {
+          ultraRewardCodeMap = new Map();
+          snap.forEach((d) => ultraRewardCodeMap.set(d.id, { id: d.id, ...d.data() }));
+          renderUltraRewardCodeAdminList();
+        });
+      }
     }
 
     function stopPlusAdminListeners() {
@@ -4785,6 +5059,9 @@
       if (unsubscribePlusCodesAdmin) { unsubscribePlusCodesAdmin(); unsubscribePlusCodesAdmin = null; }
       if (unsubscribeProAdmin) { unsubscribeProAdmin(); unsubscribeProAdmin = null; }
       if (unsubscribeProCodesAdmin) { unsubscribeProCodesAdmin(); unsubscribeProCodesAdmin = null; }
+      if (unsubscribeUltraAdmin) { unsubscribeUltraAdmin(); unsubscribeUltraAdmin = null; }
+      if (unsubscribeUltraCodesAdmin) { unsubscribeUltraCodesAdmin(); unsubscribeUltraCodesAdmin = null; }
+      if (unsubscribeUltraRewardCodesAdmin) { unsubscribeUltraRewardCodesAdmin(); unsubscribeUltraRewardCodesAdmin = null; }
     }
 
     async function createPlusCode() {
@@ -4812,6 +5089,132 @@
       });
       setProCreateMsg(`PRO Kodu oluşturuldu: ${code}`, true);
       if (proCreateCodeInput) proCreateCodeInput.value = "";
+    }
+
+    async function createUltraCode() {
+      if (!isAdmin) return;
+      const code = normalizeUltraCode(ultraCreateCodeInput?.value || "");
+      const days = Math.max(1, Math.min(3650, Number.parseInt(ultraCreateDaysInput?.value || "30", 10) || 30));
+      const maxUses = Math.max(1, Math.min(10000, Number.parseInt(ultraCreateUsesInput?.value || "1", 10) || 1));
+      if (!code) return setUltraCreateMsg("ULTRA kodu gir.");
+      if (!/^[A-Z0-9_-]{3,100}$/.test(code)) return setUltraCreateMsg("Kod 3-100 karakter olmalı; yalnızca A-Z, 0-9, - ve _ kullan.");
+      ultraCreateBtn.disabled = true;
+      try {
+        const codeRef = doc(db, "ultraCodes", code);
+        if ((await getDoc(codeRef)).exists()) throw new Error("Bu ULTRA kodu zaten var.");
+        await setDoc(codeRef, { code, daysGranted: days, maxUses, usedCount: 0, createdBy: currentUser, createdAt: serverTimestamp(), createdAtClient: Date.now() });
+        setUltraCreateMsg(`ULTRA kodu oluşturuldu: ${code} · ${days} gün · ${maxUses} hesap`, true);
+        ultraCreateCodeInput.value = "";
+      } catch (err) { setUltraCreateMsg(err?.message || "ULTRA kodu oluşturulamadı."); }
+      finally { ultraCreateBtn.disabled = false; }
+    }
+
+    function setUltraMsg(text, ok = false) {
+      if (!ultraMsg) return;
+      ultraMsg.textContent = text || "";
+      ultraMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
+
+    function setUltraCreateMsg(text, ok = false) {
+      if (!ultraCreateMsg) return;
+      ultraCreateMsg.textContent = text || "";
+      ultraCreateMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
+
+    function setUltraRewardMsg(text, ok = false) {
+      if (!ultraRewardMsg) return;
+      ultraRewardMsg.textContent = text || "";
+      ultraRewardMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
+
+    function setUltraRewardCreateMsg(text, ok = false) {
+      if (!ultraRewardCreateMsg) return;
+      ultraRewardCreateMsg.textContent = text || "";
+      ultraRewardCreateMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
+
+    async function createUltraRewardCode() {
+      if (!isAdmin) return;
+      const code = normalizeUltraCode(ultraRewardCreateCodeInput?.value || "");
+      const rewardGp = Math.max(1, Math.min(1000000, Number.parseInt(ultraRewardCreateGpInput?.value || "10", 10) || 10));
+      const maxUses = Math.max(1, Math.min(10000, Number.parseInt(ultraRewardCreateUsesInput?.value || "1", 10) || 1));
+      if (!code) return setUltraRewardCreateMsg("Ödül kodu gir.");
+      if (!/^[A-Z0-9_-]{3,100}$/.test(code)) return setUltraRewardCreateMsg("Kod 3-100 karakter olmalı; yalnızca A-Z, 0-9, - ve _ kullan.");
+      ultraRewardCreateBtn.disabled = true;
+      try {
+        const codeRef = doc(db, "ultraRewardCodes", code);
+        if ((await getDoc(codeRef)).exists()) throw new Error("Bu ödül kodu zaten var.");
+        await setDoc(codeRef, { code, rewardGp, maxUses, usedCount: 0, createdBy: currentUser, createdAt: serverTimestamp(), createdAtClient: Date.now() });
+        setUltraRewardCreateMsg(`ULTRA ödül kodu oluşturuldu: ${code} · ${rewardGp} GP · ${maxUses} hesap`, true);
+        ultraRewardCreateCodeInput.value = "";
+      } catch (err) { setUltraRewardCreateMsg(err?.message || "Ödül kodu oluşturulamadı."); }
+      finally { ultraRewardCreateBtn.disabled = false; }
+    }
+
+    async function activateUltra() {
+      if (!currentUser || isAdmin) return;
+      const code = normalizeUltraCode(ultraCodeInput?.value || "");
+      if (!code) return setUltraMsg("ULTRA kodunu gir.");
+      ultraActivateBtn.disabled = true;
+      try {
+        const result = await runTransaction(db, async (tx) => {
+          const codeRef = doc(db, "ultraCodes", code);
+          const codeSnap = await tx.get(codeRef);
+          if (!codeSnap.exists()) throw new Error("ULTRA kodu bulunamadı.");
+          const codeData = codeSnap.data();
+          if ((Number(codeData.usedCount) || 0) >= (Number(codeData.maxUses) || 1)) throw new Error("ULTRA kodunun kullanım limiti dolmuş.");
+          const claimRef = doc(db, "ultraCodeClaims", encodeURIComponent(`${code}__${normalizeKey(currentUser)}`));
+          const claimSnap = await tx.get(claimRef);
+          if (claimSnap.exists()) throw new Error("Bu hesap bu ULTRA kodunu daha önce kullanmış.");
+          const memberRef = doc(db, "ultraMembers", plusDocId(currentUser));
+          const memberSnap = await tx.get(memberRef);
+          const currentUntil = memberSnap.exists() && memberSnap.data()?.ultraUntil?.toDate ? memberSnap.data().ultraUntil.toDate() : null;
+          const base = currentUntil ? Math.max(Date.now(), currentUntil.getTime()) : Date.now();
+          const days = Math.max(1, Math.min(3650, Number.parseInt(String(codeData.daysGranted ?? 30), 10) || 30));
+          const ultraUntil = new Date(base + days * DAY_MS);
+          tx.set(codeRef, { usedCount: (Number(codeData.usedCount) || 0) + 1, lastUsedBy: currentUser, updatedAt: serverTimestamp() }, { merge: true });
+          tx.set(claimRef, { code, username: currentUser, claimedAt: serverTimestamp() });
+          tx.set(memberRef, { username: currentUser, usernameKey: normalizeKey(currentUser), ultraUntil: Timestamp.fromDate(ultraUntil), isActive: true, updatedAt: serverTimestamp() }, { merge: true });
+          return { days };
+        });
+        setUltraMsg(`👑 ULTRA aktifleştirildi (${result.days} gün). PRO özellikleri de açıldı!`, true);
+        ultraCodeInput.value = "";
+      } catch (err) { setUltraMsg(err?.message || "ULTRA aktifleştirilemedi."); }
+      finally { ultraActivateBtn.disabled = false; }
+    }
+
+    async function redeemUltraRewardCode() {
+      if (!currentUser || isAdmin) return;
+      if (!isUltraActive(currentUltra)) return setUltraRewardMsg("ULTRA ödül kodlarını kullanmak için aktif ULTRA üyeliğin olmalı.");
+      const code = normalizeUltraCode(ultraRewardCodeInput?.value || "");
+      if (!code) return setUltraRewardMsg("Ödül kodunu gir.");
+      ultraRewardRedeemBtn.disabled = true;
+      try {
+        const result = await runTransaction(db, async (tx) => {
+          const codeRef = doc(db, "ultraRewardCodes", code);
+          const codeSnap = await tx.get(codeRef);
+          if (!codeSnap.exists()) throw new Error("ULTRA ödül kodu bulunamadı.");
+          const codeData = codeSnap.data();
+          const maxUses = Math.max(1, Number(codeData.maxUses) || 1);
+          const usedCount = Math.max(0, Number(codeData.usedCount) || 0);
+          if (usedCount >= maxUses) throw new Error("Bu ödül kodunun kullanım limiti dolmuş.");
+          const claimRef = doc(db, "ultraRewardClaims", encodeURIComponent(`${code}__${normalizeKey(currentUser)}`));
+          const claimSnap = await tx.get(claimRef);
+          if (claimSnap.exists()) throw new Error("Bu hesabın bu ödül kodunu kullanma hakkı zaten kullanılmış.");
+          const balanceRef = doc(db, "gpBalances", gpDocId(currentUser));
+          const balanceSnap = await tx.get(balanceRef);
+          const current = balanceSnap.exists() ? normalizeGpNumber(balanceSnap.data()?.gp, 0) : 0;
+          const rewardGp = Math.max(1, Math.min(1000000, Number.parseInt(String(codeData.rewardGp ?? 0), 10) || 0));
+          if (!rewardGp) throw new Error("Ödül kodunun GP miktarı geçersiz.");
+          tx.set(balanceRef, { username: currentUser, usernameKey: normalizeKey(currentUser), gp: current + rewardGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(codeRef, { usedCount: usedCount + 1, lastUsedBy: currentUser, updatedAt: serverTimestamp() }, { merge: true });
+          tx.set(claimRef, { code, username: currentUser, rewardGp, claimedAt: serverTimestamp() });
+          return { rewardGp };
+        });
+        setUltraRewardMsg(`🎁 Ödül alındı: +${result.rewardGp} GP`, true);
+        ultraRewardCodeInput.value = "";
+      } catch (err) { setUltraRewardMsg(err?.message || "Ödül kodu kullanılamadı."); }
+      finally { ultraRewardRedeemBtn.disabled = false; }
     }
 
     async function activatePlus() {
@@ -4951,14 +5354,21 @@
 
     function checkAndResetRights() {
       const now = Date.now();
-      let resetTime = parseInt(localStorage.getItem("glogego_rights_reset_time") || "0");
-      const cycleMs = (isProActive(currentPro) ? 6 : 24) * 60 * 60 * 1000;
-      if (resetTime === 0 || now >= resetTime) {
+      const limits = getRightsLimits();
+      let resetTime = parseInt(localStorage.getItem("glogego_rights_reset_time") || "0", 10);
+      const storedTier = localStorage.getItem("glogego_rights_reset_tier") || "";
+      const cycleMs = limits.cycleHours * 60 * 60 * 1000;
+      if (!resetTime || now >= resetTime) {
         localStorage.setItem("glogego_used_thinking", "0");
         localStorage.setItem("glogego_used_analysis", "0");
         resetTime = now + cycleMs;
-        localStorage.setItem("glogego_rights_reset_time", resetTime);
+        localStorage.setItem("glogego_rights_reset_time", String(resetTime));
+      } else if (storedTier !== limits.tier) {
+        // Plan değişince mevcut kullanılan hakları koru; yalnızca yeni planın yenilenme penceresini uygula.
+        resetTime = now + cycleMs;
+        localStorage.setItem("glogego_rights_reset_time", String(resetTime));
       }
+      localStorage.setItem("glogego_rights_reset_tier", limits.tier);
       return resetTime;
     }
 
@@ -4981,15 +5391,18 @@
     function updateSettingsUI() {
       if (isAdmin) return;
       checkAndResetRights();
-      const maxThinking = isProActive(currentPro) ? 10 : 5;
-      const usedThinking = parseInt(localStorage.getItem("glogego_used_thinking") || "0");
-      const usedAnalysis = parseInt(localStorage.getItem("glogego_used_analysis") || "0");
-      const thRem = Math.max(0, maxThinking - usedThinking);
-      const anRem = Math.max(0, 10 - usedAnalysis);
+      const limits = getRightsLimits();
+      const usedThinking = Math.max(0, parseInt(localStorage.getItem("glogego_used_thinking") || "0", 10) || 0);
+      const usedAnalysis = Math.max(0, parseInt(localStorage.getItem("glogego_used_analysis") || "0", 10) || 0);
+      const thRem = Math.max(0, limits.thinking - usedThinking);
+      const anRem = Math.max(0, limits.analysis - usedAnalysis);
       const thEl = document.getElementById("thinkingRightsTxt");
       const anEl = document.getElementById("analysisRightsTxt");
       if (thEl) thEl.textContent = thRem;
       if (anEl) anEl.textContent = anRem;
+      const modeTitle = document.querySelector('#settingsModal .image-modal-title');
+      if (modeTitle) modeTitle.textContent = isUltraActive(currentUltra) ? "Ayarlar · ULTRA" : (isProActive(currentPro) ? "Ayarlar · PRO" : "Ayarlar");
+      applyUltraTheme();
     }
 
     async function sendMessage() {
@@ -5003,16 +5416,17 @@
       if (!isAdmin) {
         checkAndResetRights();
         if (setThinking?.checked) {
-          const maxThinking = isProActive(currentPro) ? 10 : 5;
-          let usedThinking = parseInt(localStorage.getItem("glogego_used_thinking") || "0");
+          const maxThinking = getRightsLimits().thinking;
+          let usedThinking = parseInt(localStorage.getItem("glogego_used_thinking") || "0", 10) || 0;
           if (usedThinking >= maxThinking) return alert("Düşünme modu hakkınız bitti!");
           localStorage.setItem("glogego_used_thinking", usedThinking + 1);
           updateSettingsUI();
           return sendModeRequest("thinking", text);
         }
         if (setAnalysis?.checked) {
-          let usedAnalysis = parseInt(localStorage.getItem("glogego_used_analysis") || "0");
-          if (usedAnalysis >= 10) return alert("Analiz modu hakkınız bitti!");
+          const maxAnalysis = getRightsLimits().analysis;
+          let usedAnalysis = parseInt(localStorage.getItem("glogego_used_analysis") || "0", 10) || 0;
+          if (usedAnalysis >= maxAnalysis) return alert("Analiz modu hakkınız bitti!");
           localStorage.setItem("glogego_used_analysis", usedAnalysis + 1);
           updateSettingsUI();
           return sendModeRequest("analysis", text);
@@ -5225,6 +5639,7 @@
           img.addEventListener("click", () => openImageModal(img.dataset.imageUrl || "", img.dataset.imageName || "Resim"));
         });
 
+        applyMessageSearch();
         renderTypingIndicator();
         setTimeout(scrollToBottomFast, 50);
       });
@@ -5270,6 +5685,20 @@
         updatePlusPill();
         updateGpBonusText();
         updateSettingsUI();
+      });
+    }
+
+    function listenUltraStatus() {
+      if (unsubscribeUltraSelf) unsubscribeUltraSelf();
+      if (!currentUser || isAdmin) return;
+      unsubscribeUltraSelf = onSnapshot(doc(db, "ultraMembers", plusDocId(currentUser)), (snap) => {
+        currentUltra = snap.exists() ? { id: snap.id, ...snap.data() } : null;
+        checkAndResetRights();
+        updatePlusStatusText();
+        updatePlusPill();
+        updateGpBonusText();
+        updateSettingsUI();
+        applyUltraTheme();
       });
     }
 
@@ -5424,6 +5853,34 @@
     proActivateBtn.addEventListener("click", activatePro);
     plusCreateBtn?.addEventListener("click", createPlusCode);
     proCreateBtn?.addEventListener("click", createProCode);
+    ultraActivateBtn?.addEventListener("click", () => void activateUltra());
+    ultraCreateBtn?.addEventListener("click", () => void createUltraCode());
+    ultraRewardCreateBtn?.addEventListener("click", () => void createUltraRewardCode());
+    ultraRewardRedeemBtn?.addEventListener("click", () => void redeemUltraRewardCode());
+    ultraCodeInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") void activateUltra(); });
+    ultraRewardCodeInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") void redeemUltraRewardCode(); });
+    ultraThemeSelect?.addEventListener("change", () => {
+      if (!isUltraActive(currentUltra)) return;
+      localStorage.setItem("glogego_ultra_theme", ultraThemeSelect.value);
+      applyUltraTheme();
+    });
+    ultraTextCleanBtn?.addEventListener("click", () => {
+      messageInput.value = String(messageInput.value || "").replace(/[ \t]+/g, " ").trim();
+      charCount.textContent = String(messageInput.value.length);
+      messageInput.dispatchEvent(new Event("input", { bubbles: true }));
+      messageInput.focus();
+    });
+    ultraTextFormatBtn?.addEventListener("click", () => {
+      messageInput.value = String(messageInput.value || "").replace(/\r/g, "").split("\n").map(line => line.trim()).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+      charCount.textContent = String(messageInput.value.length);
+      messageInput.dispatchEvent(new Event("input", { bubbles: true }));
+      messageInput.focus();
+    });
+    ultraTextCopyBtn?.addEventListener("click", () => {
+      if (!String(messageInput.value || "").trim()) return alert("Önce kopyalanacak bir metin yaz.");
+      void copyText(messageInput.value, ultraTextCopyBtn);
+    });
+    messageSearchInput?.addEventListener("input", applyMessageSearch);
 
     sendBtn.addEventListener("click", sendMessage);
     voiceToggleBtn?.addEventListener("click", () => {
