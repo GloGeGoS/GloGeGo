@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -255,17 +256,6 @@
       white-space: nowrap;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: inline-block;
-      background: #94a3b8;
-    }
-    .status-dot.online { background: var(--good); }
-    .status-dot.offline { background: var(--bad); }
-
     .chat {
       display: flex;
       flex-direction: column;
@@ -325,8 +315,6 @@
       font-weight: 700;
       white-space: nowrap;
     }
-    .pill.online { background: #16341f; border-color: #2b6a3e; color: #d7ffe0; }
-    .pill.offline { background: #3a1a1a; border-color: #7b3434; color: #ffd7d7; }
 
     .status-btn, .scroll-bottom-btn, .img-action-btn, .live-btn {
       cursor: pointer;
@@ -369,6 +357,8 @@
     .scroll-bottom-btn:hover, .status-btn:hover, .img-action-btn:hover, .live-btn:hover {
       filter: brightness(1.1);
     }
+
+    .load-older-messages { align-self: center; flex: 0 0 auto; margin-bottom: 4px; max-width: 100%; }
 
     .messages {
       flex: 1;
@@ -649,22 +639,6 @@
     .message-animated {
       animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
-    .typing-wrapper .bubble {
-      display: flex; gap: 6px; padding: 12px 18px; background: var(--bubble);
-      align-items: center; border-radius: 16px; width: fit-content;
-    }
-    .dot {
-      width: 8px; height: 8px; background: #9aa6bd; border-radius: 50%;
-      animation: typingPulse 1.4s infinite both;
-    }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typingPulse {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-      40% { transform: scale(1); opacity: 1; }
-    }
-
     /* Tam Ekran Paneller (Plus, PRO, GP Mağaza, Envanter) */
     .plus-panel, .gp-panel {
       position: fixed;
@@ -1492,8 +1466,6 @@
     .workshop-admin-counts label { display:grid; gap:4px; min-width:0; color:#c4b5fd; font-size:11px; font-weight:800; }
     .workshop-admin-counts input { width:100%; min-width:0; background:#0b111d; color:var(--text); border:1px solid #4c3472; border-radius:8px; padding:8px; }
     .workshop-admin-counts button { grid-column:1/-1; min-height:36px; padding:8px; font-size:12px; }
-    .workshop-api-help { font-size:11px; color:var(--muted); line-height:1.4; }
-    .workshop-api-help code { color:#ddd6fe; overflow-wrap:anywhere; }
     .workshop-top-btn { background:linear-gradient(135deg,#4c1d95,#7c3aed)!important; border-color:#8b5cf6!important; color:#f3e8ff!important; }
     @media(max-width:900px) {
       .workshop-panel { padding:0; }
@@ -1570,7 +1542,6 @@
                 <span id="plusPill" class="pill hidden"></span>
                 <span id="proPill" class="pill hidden"></span>
                 <span id="ultraPill" class="pill ultra-badge hidden">👑 ULTRA</span>
-                <span id="threadStatusPill" class="pill hidden"></span>
                 <span id="modePill" class="pill hidden"></span>
               </div>
             </div>
@@ -2033,12 +2004,7 @@
             <button id="workshopCancelEditBtn" class="btn secondary hidden" type="button">Düzenlemeyi iptal et</button>
             <div id="workshopFormMsg" class="workshop-status" role="status"></div>
           </form>
-          <div class="workshop-api-help" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px;">
-            <strong>Multiplayer notu:</strong> Odanın kodunu arkadaşlarınla paylaş. Yüklenen oyunların çok oyunculu çalışması için oyunun aşağıdaki ortak durumu kullanacak şekilde yazılması gerekir:
-            <br><code>GloGeGoWorkshop.onState(state =&gt; { /* durumu işle */ });</code>
-            <br><code>GloGeGoWorkshop.setState({ turn: 1 });</code>
-            <br>Durum eşitleme kota için oyuncu başına yaklaşık 2,5 saniyede bir sınırlandırılır. Yalnızca tur/durum değişince setState çağır; her karede çağırma. Hızlı aksiyon oyunları için uygun olmayabilir.
-          </div>
+        </aside>          </div>
         </aside>
         <main class="workshop-list-card">
           <div class="workshop-section-title" id="workshopListTitle">🎮 Son eklenen oyunlar</div>
@@ -2052,12 +2018,9 @@
         <div class="workshop-player-head">
           <div>
             <div id="workshopGameTitle" class="workshop-player-name">Oyun</div>
-            <div id="workshopRoomStatus" class="workshop-subtitle">Tek oyunculu oyun</div>
+            <div id="workshopGameStatus" class="workshop-subtitle">Tek oyunculu oyun</div>
           </div>
           <div class="workshop-player-controls">
-            <button id="workshopCreateRoomBtn" class="btn" type="button">🌐 Oda oluştur</button>
-            <input id="workshopJoinCodeInput" type="text" maxlength="8" placeholder="ODA KODU" aria-label="Katılınacak oda kodu" />
-            <button id="workshopJoinRoomBtn" class="btn secondary" type="button">Katıl</button>
             <button id="workshopOpenNewTabBtn" class="btn secondary" type="button">↗ Yeni sekmede aç</button>
             <button id="workshopCloseGameBtn" class="btn danger" type="button">Oyundan çık</button>
           </div>
@@ -2238,6 +2201,7 @@
       where,
       orderBy,
       limit,
+      startAfter,
       onSnapshot,
       doc,
       getDocs,
@@ -2273,8 +2237,7 @@
     const START_JPEG_QUALITY = 0.82;
     const MAX_DATAURL_LENGTH = 850000;
     const FILE_MAX_SIZE = 25 * 1024 * 1024;
-    const PRESENCE_ONLINE_MS = 130 * 1000;
-    const PRESENCE_HEARTBEAT_MS = 60 * 1000;
+    // Kota tasarrufu: kalp atisi 3 dakikada bir; gecikmede cevrimici durumu hemen kaybolmaz.
 
     const loginScreen = document.getElementById("loginScreen");
     const appScreen = document.getElementById("appScreen");
@@ -2282,7 +2245,6 @@
     const threadList = document.getElementById("threadList");
     const messagesEl = document.getElementById("messages");
     const userPill = document.getElementById("userPill");
-    const threadStatusPill = document.getElementById("threadStatusPill");
     const voiceToggleBtn = document.getElementById("voiceToggleBtn");
     const scrollBottomBtn = document.getElementById("scrollBottomBtn");
     const statusToggleBtn = document.getElementById("statusToggleBtn");
@@ -2365,10 +2327,7 @@
     const workshopPlayer = document.getElementById("workshopPlayer");
     const workshopGameFrame = document.getElementById("workshopGameFrame");
     const workshopGameTitle = document.getElementById("workshopGameTitle");
-    const workshopRoomStatus = document.getElementById("workshopRoomStatus");
-    const workshopCreateRoomBtn = document.getElementById("workshopCreateRoomBtn");
-    const workshopJoinCodeInput = document.getElementById("workshopJoinCodeInput");
-    const workshopJoinRoomBtn = document.getElementById("workshopJoinRoomBtn");
+    const workshopGameStatus = document.getElementById("workshopGameStatus");
     const workshopOpenNewTabBtn = document.getElementById("workshopOpenNewTabBtn");
     const workshopCloseGameBtn = document.getElementById("workshopCloseGameBtn");
     let workshopItemsCache = [];
@@ -2376,12 +2335,6 @@
     let workshopEditingId = null;
     let workshopCurrentGame = null;
     let workshopCurrentHtml = "";
-    let workshopRoomCode = null;
-    let workshopRoomUnsubscribe = null;
-    let workshopQueuedState = null;
-    let workshopStateWriteTimer = null;
-    let workshopLatestState = null;
-    let workshopFrameIsReady = false;
     let workshopCurrentDataView = [];
 
     const proChatBtn = document.getElementById("proChatBtn");
@@ -2499,7 +2452,6 @@
     let unsubscribeMessages = null;
     let unsubscribeThreads = null;
     let unsubscribeStatus = null;
-    let unsubscribePresence = null;
     let unsubscribePlusSelf = null;
     let unsubscribePlusAdmin = null;
     let unsubscribePlusCodesAdmin = null;
@@ -2520,11 +2472,9 @@
     let unsubscribeTradesOut = null;
 
     let cleanupTimer = null;
-    let presenceTimer = null;
     let currentModalImageUrl = "";
     let currentModalImageName = "";
     let lastThreadsCache = [];
-    let presenceMap = new Map();
     let plusMap = new Map();
     let plusCodeMap = new Map();
     let proMap = new Map();
@@ -2577,8 +2527,14 @@
 
     let messagesHydrated = false;
     let seenMessageIds = new Set();
-    let typingTimer = null;
-    let isCurrentlyTyping = false;
+    let messageCache = new Map();
+    let activeMessagesThreadId = null;
+    let olderMessagesCursor = null;
+    let olderMessagesHasMore = false;
+    let olderMessagesLoading = false;
+    let olderMessagesPagesLoaded = 0;
+    const LIVE_MESSAGES_LIMIT = 100;
+    const OLDER_MESSAGES_PAGE_SIZE = 50;
 
     let utteranceVoice = null;
     let voiceReady = false;
@@ -2588,16 +2544,28 @@
     let fileObjectUrls = new Map();
     let settingsInterval = null;
 
-    // GERÇEK SUNUCU SAATİ ALMA FONKSİYONU
+    // GERCEK SUNUCU SAATI: ayni oturumda 5 dakika onbellek kullan.
+    // Boylece GP panelini tekrar tekrar acmak gereksiz saat-kontrol yazimi olusturmaz.
+    let serverClockCache = null;
+    const SERVER_CLOCK_CACHE_MS = 5 * 60 * 1000;
     async function getServerDayAndTime() {
+      const perfNow = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+      if (serverClockCache && perfNow >= serverClockCache.perfAt && (perfNow - serverClockCache.perfAt) < SERVER_CLOCK_CACHE_MS) {
+        const serverMs = serverClockCache.serverMs + (perfNow - serverClockCache.perfAt);
+        const serverDate = new Date(serverMs);
+        return { serverMs, dayKey: serverDate.toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }), claimData: null };
+      }
       const ref = doc(db, "gpDailyClaims", gpDocId(currentUser));
       await setDoc(ref, { serverClockCheck: serverTimestamp() }, { merge: true });
       const snap = await getDoc(ref);
       const data = snap.data() || {};
       const ts = data.serverClockCheck;
       const serverDate = ts?.toDate ? ts.toDate() : new Date();
+      const serverMs = serverDate.getTime();
+      const freshPerfNow = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+      serverClockCache = { serverMs, perfAt: freshPerfNow };
       const dayKey = serverDate.toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
-      return { serverMs: serverDate.getTime(), dayKey, claimData: data };
+      return { serverMs, dayKey, claimData: data };
     }
 
     function escapeHtml(str = "") {
@@ -2614,8 +2582,6 @@
     const WORKSHOP_MAX_FILE_BYTES = 450000;
     const WORKSHOP_MIN_PRICE = 5;
     const WORKSHOP_MAX_PRICE = 100000;
-    const WORKSHOP_STATE_MAX_CHARS = 16000;
-    const WORKSHOP_STATE_WRITE_INTERVAL = 2500;
 
     function setWorkshopStatus(message, ok = false) {
       if (!workshopFormMsg) return;
@@ -2968,12 +2934,8 @@
         setWorkshopListStatus("Dosya indirilmeye başlandı.", true);
       } catch (err) { setWorkshopListStatus(err?.message || "Dosya indirilemedi."); }
     }
-    function workshopBuildSrcDoc(html, roomCode = "") {
-      const safeJson = value => JSON.stringify(value ?? "").replace(/</g, "\\u003c");
-      const bridge = `(()=>{const MARK="glogego-workshop-bridge";const roomId=${safeJson(roomCode)};const playerId=${safeJson(gpDocId(currentUser || "guest"))};const playerName=${safeJson(currentUser || "Oyuncu")};const callbacks=new Set();let latestState=null;const api={roomId,playerId,playerName,onState(fn){if(typeof fn!=="function")return()=>{};callbacks.add(fn);if(latestState!==null){try{fn(latestState)}catch(_){}}return()=>callbacks.delete(fn)},getState(){return latestState},setState(state){let raw="";try{raw=JSON.stringify(state)}catch(_){return false}if(raw.length>${WORKSHOP_STATE_MAX_CHARS})return false;parent.postMessage({[MARK]:true,type:"state-set",state},"*");return true}};Object.defineProperty(window,"GloGeGoWorkshop",{value:api,writable:false,configurable:false});addEventListener("message",event=>{const d=event.data;if(!d||d[MARK]!==true||d.type!=="state")return;latestState=d.state;for(const fn of callbacks){try{fn(latestState)}catch(_){}}});parent.postMessage({[MARK]:true,type:"ready"},"*")})();`;
+    function workshopBuildSrcDoc(html) {
       const fitCss = `<style id="glogego-workshop-fit">html{width:100%;min-width:0;min-height:100%;-webkit-text-size-adjust:100%;}body{max-width:100%;min-width:0;min-height:100%;margin:0;overflow:auto;}*,*::before,*::after{box-sizing:border-box;}img,video,svg,iframe{max-width:100%;}canvas{max-width:100vw!important;max-height:calc(100dvh - 4px)!important;object-fit:contain;}input,button,textarea,select{max-width:100%;}@media(max-width:600px){body{max-width:100vw;}main,section,header,footer,.game-container,#game-container,#game,.container,.app{max-width:100vw;min-width:0;}}</style>`;
-      // No fullscreen request and no screen-orientation lock; the game stays in this page's iframe.
-      const scriptTag = "<scr" + "ipt>" + bridge + "</scr" + "ipt>";
       const responsiveViewport = `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`;
       const hasHead = /<head[^>]*>/i.test(html);
       const viewportPattern = /<meta\b(?=[^>]*\bname\s*=\s*["']viewport["'])[^>]*>/i;
@@ -2984,96 +2946,17 @@
         responsiveHtml = responsiveHtml.replace(/<head[^>]*>/i, match => match + responsiveViewport);
       }
       if (hasHead) {
-        return responsiveHtml.replace(/<head[^>]*>/i, match => match + fitCss + scriptTag);
+        return responsiveHtml.replace(/<head[^>]*>/i, match => match + fitCss);
       }
-      return `<!doctype html><html><head><meta charset="utf-8">${responsiveViewport}${fitCss}${scriptTag}</head><body>${responsiveHtml}</body></html>`;
+      return `<!doctype html><html><head><meta charset="utf-8">${responsiveViewport}${fitCss}</head><body>${responsiveHtml}</body></html>`;
     }
-    function workshopSendStateToFrame(state) {
-      workshopLatestState = state;
-      try { workshopGameFrame?.contentWindow?.postMessage({ "glogego-workshop-bridge": true, type: "state", state }, "*"); } catch {}
+
+    function setWorkshopGameStatus(message, ok = false) {
+      if (!workshopGameStatus) return;
+      workshopGameStatus.textContent = message || "";
+      workshopGameStatus.style.color = ok ? "#86efac" : "var(--muted)";
     }
-    async function workshopQueueRoomState(state) {
-      if (!workshopRoomCode) return;
-      let serialized = "";
-      try { serialized = JSON.stringify(state); } catch { return; }
-      if (serialized.length > WORKSHOP_STATE_MAX_CHARS) return setWorkshopRoomStatus("Oyun verisi 16 KB sınırını aştı; durum kaydedilmedi.");
-      workshopQueuedState = state;
-      if (workshopStateWriteTimer) return;
-      workshopStateWriteTimer = setTimeout(async () => {
-        workshopStateWriteTimer = null;
-        const queued = workshopQueuedState;
-        workshopQueuedState = null;
-        if (!workshopRoomCode || !queued) return;
-        try {
-          await setDoc(doc(db, "workshopRooms", workshopRoomCode), { state: queued, stateUpdatedAtClient: Date.now() }, { merge: true });
-        } catch (err) { console.warn("Atölye oda durumu kaydedilemedi:", err); }
-      }, WORKSHOP_STATE_WRITE_INTERVAL);
-    }
-    function setWorkshopRoomStatus(message, ok = false) {
-      if (!workshopRoomStatus) return;
-      workshopRoomStatus.textContent = message || "";
-      workshopRoomStatus.style.color = ok ? "#86efac" : "var(--muted)";
-    }
-    function attachWorkshopRoom(roomCode) {
-      if (workshopRoomUnsubscribe) { workshopRoomUnsubscribe(); workshopRoomUnsubscribe = null; }
-      workshopRoomCode = roomCode;
-      workshopLatestState = null;
-      const roomRef = doc(db, "workshopRooms", roomCode);
-      workshopRoomUnsubscribe = onSnapshot(roomRef, snap => {
-        if (!snap.exists()) { setWorkshopRoomStatus("Oda bulunamadı veya kapatıldı."); return; }
-        const data = snap.data() || {};
-        if (data.itemId !== workshopCurrentGame?.id) { setWorkshopRoomStatus("Oda başka bir oyuna ait."); return; }
-        workshopSendStateToFrame(data.state ?? null);
-      }, err => setWorkshopRoomStatus("Oda bağlantısı kesildi. Firestore izinlerini kontrol et."));
-      workshopGameFrame.srcdoc = workshopBuildSrcDoc(workshopCurrentHtml, roomCode);
-      setWorkshopRoomStatus(`Oda kodu: ${roomCode} · Bu kodu arkadaşlarınla paylaş.`, true);
-      workshopCreateRoomBtn.disabled = true;
-      workshopJoinRoomBtn.disabled = true;
-    }
-    async function workshopCreateRoom() {
-      if (!currentUser || !workshopCurrentGame) return;
-      if (isAdmin) return setWorkshopRoomStatus("Oda açmak için normal kullanıcı hesabıyla giriş yap.");
-      if (workshopRoomCode) return setWorkshopRoomStatus(`Zaten bir odadasın: ${workshopRoomCode}`);
-      workshopCreateRoomBtn.disabled = true;
-      try {
-        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        let code = "";
-        for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
-        const roomRef = doc(db, "workshopRooms", code);
-        if ((await getDoc(roomRef)).exists()) throw new Error("Oda kodu çakıştı. Tekrar dene.");
-        await setDoc(roomRef, { roomCode: code, itemId: workshopCurrentGame.id, itemTitle: workshopCurrentGame.title || "Oyun", host: currentUser, state: null, createdAt: serverTimestamp(), createdAtClient: Date.now() });
-        await setDoc(doc(db, "workshopRooms", code, "players", gpDocId(currentUser)), { username: currentUser, usernameKey: normalizeKey(currentUser), joinedAtClient: Date.now() });
-        attachWorkshopRoom(code);
-      } catch (err) { setWorkshopRoomStatus(err?.message || "Oda oluşturulamadı."); workshopCreateRoomBtn.disabled = false; }
-    }
-    async function workshopJoinRoom() {
-      if (!currentUser || !workshopCurrentGame) return;
-      if (isAdmin) return setWorkshopRoomStatus("Odaya katılmak için normal kullanıcı hesabıyla giriş yap.");
-      const code = String(workshopJoinCodeInput.value || "").trim().toUpperCase();
-      if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) return setWorkshopRoomStatus("6 karakterli geçerli oda kodu gir.");
-      workshopJoinRoomBtn.disabled = true;
-      try {
-        const roomRef = doc(db, "workshopRooms", code);
-        const snap = await getDoc(roomRef);
-        if (!snap.exists()) throw new Error("Bu oda kodu bulunamadı.");
-        if (snap.data()?.itemId !== workshopCurrentGame.id) throw new Error("Oda bu oyuna ait değil. Aynı oyun kartından aç.");
-        await setDoc(doc(db, "workshopRooms", code, "players", gpDocId(currentUser)), { username: currentUser, usernameKey: normalizeKey(currentUser), joinedAtClient: Date.now() });
-        attachWorkshopRoom(code);
-      } catch (err) { setWorkshopRoomStatus(err?.message || "Odaya katılınamadı."); workshopJoinRoomBtn.disabled = false; }
-    }
-    async function leaveWorkshopRoom() {
-      if (workshopStateWriteTimer) { clearTimeout(workshopStateWriteTimer); workshopStateWriteTimer = null; }
-      workshopQueuedState = null;
-      const oldRoom = workshopRoomCode;
-      if (workshopRoomUnsubscribe) { workshopRoomUnsubscribe(); workshopRoomUnsubscribe = null; }
-      workshopRoomCode = null;
-      if (oldRoom && currentUser) {
-        try { await deleteDoc(doc(db, "workshopRooms", oldRoom, "players", gpDocId(currentUser))); } catch {}
-      }
-      workshopCreateRoomBtn.disabled = false;
-      workshopJoinRoomBtn.disabled = false;
-      if (workshopJoinCodeInput) workshopJoinCodeInput.value = "";
-    }
+
     async function playWorkshopItem(item) {
       if (!currentUser) return;
       try {
@@ -3081,15 +2964,13 @@
         if (!fileSnap.exists()) throw new Error("Oyun dosyası bulunamadı. Yapımcı veya yöneticiyle iletişime geç.");
         const fileData = fileSnap.data();
         if (typeof fileData.htmlContent !== "string" || fileData.htmlContent.length > WORKSHOP_MAX_FILE_BYTES) throw new Error("Oyun dosyası geçersiz.");
-        await leaveWorkshopRoom();
         workshopCurrentGame = item;
         workshopCurrentHtml = fileData.htmlContent;
-        workshopLatestState = null;
         workshopGameTitle.textContent = item.title || "Atölye oyunu";
-        setWorkshopRoomStatus("Tek oyunculu oyun. Multiplayer için oda oluştur veya oda koduyla katıl.");
+        setWorkshopGameStatus("Tek oyunculu oyun.");
         workshopPlayer.classList.remove("hidden");
         workshopPlayer.setAttribute("aria-hidden", "false");
-        workshopGameFrame.srcdoc = workshopBuildSrcDoc(workshopCurrentHtml, "");
+        workshopGameFrame.srcdoc = workshopBuildSrcDoc(workshopCurrentHtml);
         const itemRef = doc(db, "workshopItems", item.id);
         await runTransaction(db, async transaction => {
           const latest = await transaction.get(itemRef);
@@ -3104,43 +2985,30 @@
       } catch (err) { setWorkshopListStatus(err?.message || "Oyun açılamadı."); }
     }
     function openWorkshopGameInNewTab() {
-      if (!workshopCurrentHtml) return setWorkshopRoomStatus("Önce bir oyun aç.");
+      if (!workshopCurrentHtml) return setWorkshopGameStatus("Önce bir oyun aç.");
       let objectUrl = "";
       try {
         objectUrl = URL.createObjectURL(new Blob([workshopCurrentHtml], { type: "text/html;charset=utf-8" }));
         const opened = window.open(objectUrl, "_blank");
         if (!opened) {
           URL.revokeObjectURL(objectUrl);
-          return setWorkshopRoomStatus("Yeni sekme engellendi. Tarayıcıda açılır pencere iznini kontrol et.");
+          return setWorkshopGameStatus("Yeni sekme engellendi. Tarayıcıda açılır pencere iznini kontrol et.");
         }
         try { opened.opener = null; } catch {}
         setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-        setWorkshopRoomStatus("Oyun yeni sekmede açıldı. Çok oyunculu oda bağlantısı bu pencerede kalır.", true);
+        setWorkshopGameStatus("Oyun yeni sekmede açıldı.", true);
       } catch (err) {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
-        setWorkshopRoomStatus(err?.message || "Oyun yeni sekmede açılamadı.");
+        setWorkshopGameStatus(err?.message || "Oyun yeni sekmede açılamadı.");
       }
     }
-    async function closeWorkshopGame() {
-      await leaveWorkshopRoom();
+    function closeWorkshopGame() {
       workshopPlayer?.classList.add("hidden");
       workshopPlayer?.setAttribute("aria-hidden", "true");
       if (workshopGameFrame) workshopGameFrame.srcdoc = "";
       workshopCurrentGame = null;
       workshopCurrentHtml = "";
     }
-
-    window.addEventListener("message", event => {
-      if (!workshopGameFrame || event.source !== workshopGameFrame.contentWindow) return;
-      const data = event.data;
-      if (!data || data["glogego-workshop-bridge"] !== true) return;
-      if (data.type === "ready") {
-        workshopFrameIsReady = true;
-        if (workshopLatestState !== null) workshopSendStateToFrame(workshopLatestState);
-      } else if (data.type === "state-set") {
-        if (workshopRoomCode) void workshopQueueRoomState(data.state);
-      }
-    });
 
     function formatMarkdown(text) {
       if (!text) return "";
@@ -3370,27 +3238,6 @@
       }
     }
 
-    function isUserOnline(data) {
-      const last = Number(data?.lastSeenClient || 0);
-      const age = Date.now() - last;
-      return data?.isOnline !== false && last > 0 && age < PRESENCE_ONLINE_MS;
-    }
-
-    function formatRelativeSeen(data) {
-      const last = Number(data?.lastSeenClient || 0);
-      if (!last) return "çevrimdışı";
-      const diff = Date.now() - last;
-      if (isUserOnline(data)) return "çevrimiçi";
-      if (diff < 60 * 1000) return "az önce";
-      if (diff < 60 * 60 * 1000) return `${Math.max(1, Math.floor(diff / 60000))} dk önce`;
-      if (diff < 24 * 60 * 60 * 1000) return `${Math.max(1, Math.floor(diff / 3600000))} saat önce`;
-      return new Date(last).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" });
-    }
-
-    function getPresenceData(username = "") {
-      return presenceMap.get(normalizeKey(username));
-    }
-
     function setLoginError(text) {
       loginMsg.textContent = text;
     }
@@ -3596,45 +3443,21 @@
       }
     }
 
-    function updateThreadStatusPill() {
-      if (!isAdmin) {
-        threadStatusPill.classList.add("hidden");
-        return;
-      }
-      if (!selectedThread) {
-        threadStatusPill.textContent = "Sohbet seç";
-        threadStatusPill.className = "pill";
-        threadStatusPill.classList.remove("hidden");
-        return;
-      }
-      const data = getPresenceData(selectedThread);
-      const online = isUserOnline(data);
-      threadStatusPill.textContent = online ? "Aktif" : formatRelativeSeen(data);
-      threadStatusPill.className = `pill ${online ? "online" : "offline"}`;
-      threadStatusPill.classList.remove("hidden");
-    }
-
     function renderThreadList() {
       if (!isAdmin) return;
       const list = lastThreadsCache;
       if (!list.length) {
         threadList.innerHTML = `<div class="empty" style="padding:12px;">Henüz mesaj yok.</div>`;
-        updateThreadStatusPill();
         return;
       }
 
       threadList.innerHTML = list.map(({ thread, data }) => {
-        const p = getPresenceData(thread);
-        const online = isUserOnline(p);
-        const statusText = online ? "Aktif" : formatRelativeSeen(p);
-        const lastMsg = data.text || (data.imageDataUrl ? "Resim" : "");
+        const lastMsg = data.text || (data.imageDataUrl ? "Resim" : (data.kind === "video" ? "Video" : ""));
         return `
           <div class="thread ${selectedThread === thread ? "active" : ""}" data-thread="${escapeHtml(thread)}">
             <div class="name">${escapeHtml(thread)}</div>
             <div class="last">
-              <span class="status-dot ${online ? "online" : "offline"}"></span>
-              <span>${escapeHtml(statusText)}</span>
-              ${lastMsg ? `<span class="thread-preview">· ${escapeHtml(lastMsg)}</span>` : ""}
+              <span class="thread-preview">${escapeHtml(lastMsg || "Sohbet")}</span>
             </div>
           </div>
         `;
@@ -3645,11 +3468,8 @@
           selectedThread = el.dataset.thread;
           listenMessages();
           renderThreadList();
-          updateThreadStatusPill();
         });
       });
-
-      updateThreadStatusPill();
     }
 
     function openImageModal(url, name = "resim") {
@@ -5478,15 +5298,19 @@
             granted = pointsToAdd;
           }
 
-          tx.set(claimRef, {
-            username: currentUser,
-            lastDailyBonusKey: dailyClaimed ? (claimData.lastDailyBonusKey || dayKey) : dayKey,
-            lastGrantKey: dayKey,
-            plusClaimed: claimedPlus || plusActive || ultraActive,
-            proClaimed: claimedPro || proActive || ultraActive,
-            ultraClaimed: claimedUltra || ultraActive,
-            updatedAt: serverTimestamp()
-          }, { merge: true });
+          // Odul yoksa claim belgesini tekrar yazma. GP panelini sik acip kapatmak
+          // artik ayni gun icinde gereksiz yazma tuketimi olusturmaz.
+          if (pointsToAdd > 0) {
+            tx.set(claimRef, {
+              username: currentUser,
+              lastDailyBonusKey: dailyClaimed ? (claimData.lastDailyBonusKey || dayKey) : dayKey,
+              lastGrantKey: dayKey,
+              plusClaimed: claimedPlus || plusActive || ultraActive,
+              proClaimed: claimedPro || proActive || ultraActive,
+              ultraClaimed: claimedUltra || ultraActive,
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          }
           dailySelfClaimedToday = true;
           gpSelfClaimedToday = claimedPlus || plusActive || ultraActive;
           proSelfClaimedToday = claimedPro || proActive || ultraActive;
@@ -5561,12 +5385,8 @@
       }
     }
 
-    async function openGpPanel() {
-      setGpPanelOpen(true);
-      clearGpMessages();
-      setGpMarketMsg("");
-      updateGpStatusText();
-      updateGpBonusText();
+    function startGpPanelListeners() {
+      if (!currentUser || !gpPanelOpen || document.visibilityState !== "visible") return;
       listenGpProducts();
       listenInventoryAndTrades();
       listenGpPlayerMarket();
@@ -5574,6 +5394,15 @@
         listenGpAdminUsers();
         listenGpAdminCodes();
       }
+    }
+
+    async function openGpPanel() {
+      setGpPanelOpen(true);
+      clearGpMessages();
+      setGpMarketMsg("");
+      updateGpStatusText();
+      updateGpBonusText();
+      startGpPanelListeners();
       await claimDailyBonuses();
     }
 
@@ -5722,7 +5551,6 @@
 
       listenStatus();
       listenMessages();
-      listenPresence();
       listenPlusStatus();
       listenProStatus();
       listenUltraStatus();
@@ -5734,11 +5562,12 @@
         void ensureDefaultPlusCode();
         cleanupExpiredMessages();
         if (cleanupTimer) clearInterval(cleanupTimer);
-        cleanupTimer = setInterval(cleanupExpiredMessages, 30 * 60 * 1000);
+        cleanupTimer = setInterval(cleanupExpiredMessages, 2 * 60 * 60 * 1000);
       }
 
       updateSettingsUI();
-      startPresenceTracking();
+      document.removeEventListener("visibilitychange", handleVisibility);
+      document.addEventListener("visibilitychange", handleVisibility);
       updateComposerState();
       updateGpStatusText();
       updateGpBonusText();
@@ -5774,7 +5603,6 @@
 
         // Eski kullanıcı verileri olan bir adı yeni kişinin üstlenmesini önle.
         const legacyRefs = [
-          doc(db, "presence", safeDocId(username)),
           doc(db, "gpBalances", gpDocId(username)),
           doc(db, "plusMembers", plusDocId(username)),
           doc(db, "proMembers", plusDocId(username)),
@@ -5875,12 +5703,13 @@
       if (unsubscribeMessages) unsubscribeMessages();
       if (unsubscribeThreads) unsubscribeThreads();
       if (unsubscribeStatus) unsubscribeStatus();
-      if (unsubscribePresence) unsubscribePresence();
       if (unsubscribePlusSelf) unsubscribePlusSelf();
       if (unsubscribeProSelf) unsubscribeProSelf();
       if (unsubscribeUltraSelf) { unsubscribeUltraSelf(); unsubscribeUltraSelf = null; }
       if (unsubscribeGifts) unsubscribeGifts();
       if (unsubscribeProChat) unsubscribeProChat();
+      if (gpBalanceDoc?.unsubscribe) { try { gpBalanceDoc.unsubscribe(); } catch {} gpBalanceDoc = null; }
+      if (cleanupTimer) { clearInterval(cleanupTimer); cleanupTimer = null; }
       stopPlusAdminListeners();
       stopGpPanelListeners();
       if (tradeDraftTimer) { clearTimeout(tradeDraftTimer); tradeDraftTimer = null; }
@@ -5900,7 +5729,7 @@
       selectedThread = null;
       chatOpen = true;
 
-      stopPresenceTracking();
+      document.removeEventListener("visibilitychange", handleVisibility);
       stopSpeech();
       cleanupObjectUrls();
       pendingModeRequest = null;
@@ -6368,54 +6197,16 @@
       setPlusPanelOpen(false);
     }
 
-    async function markPresence(isOnline = true) {
-      if (!currentUser) return;
-      try {
-        await setDoc(doc(db, "presence", safeDocId(currentUser)), {
-          username: currentUser,
-          usernameKey: normalizeKey(currentUser),
-          isAdmin,
-          isOnline,
-          lastSeenClient: Date.now()
-        }, { merge: true });
-      } catch {}
-    }
-
-    async function markTyping(isTyping) {
-      if (!currentUser || isCurrentlyTyping === isTyping) return;
-      isCurrentlyTyping = isTyping;
-      try {
-        await setDoc(doc(db, "presence", safeDocId(currentUser)), {
-          isTyping,
-          typingTo: isAdmin ? selectedThread : ADMIN_USER,
-          lastSeenClient: Date.now()
-        }, { merge: true });
-      } catch {}
-    }
-
-    function startPresenceTracking() {
-      stopPresenceTracking();
-      void markPresence(true);
-      presenceTimer = setInterval(() => {
-        if (document.visibilityState === "visible") void markPresence(true);
-      }, PRESENCE_HEARTBEAT_MS);
-      window.addEventListener("beforeunload", handleLeave, { once: true });
-      document.addEventListener("visibilitychange", handleVisibility);
-    }
-
-    function stopPresenceTracking() {
-      if (presenceTimer) clearInterval(presenceTimer);
-      presenceTimer = null;
-      document.removeEventListener("visibilitychange", handleVisibility);
-    }
-
     function handleVisibility() {
       if (!currentUser) return;
-      void markPresence(document.visibilityState === "visible");
-    }
-
-    function handleLeave() {
-      void markPresence(false);
+      const visible = document.visibilityState === "visible";
+      if (!visible) {
+        if (gpPanelOpen) stopGpPanelListeners();
+        if (plusPanelOpen && isAdmin) stopPlusAdminListeners();
+        return;
+      }
+      if (gpPanelOpen) startGpPanelListeners();
+      if (plusPanelOpen && isAdmin) startPlusAdminListeners();
     }
 
     async function toggleChatStatus() {
@@ -6519,7 +6310,6 @@
           createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + DAY_MS))
         });
-        void markTyping(false);
         messageInput.value = "";
         charCount.textContent = "0";
         setTimeout(scrollToBottomFast, 10);
@@ -6574,50 +6364,47 @@
       } catch {}
     }
 
-    function renderTypingIndicator() {
-      const existing = document.getElementById("dynamicTyping");
-      if (existing) existing.remove();
-      if (!selectedThread && isAdmin) return;
-
-      let otherUser = isAdmin ? selectedThread : ADMIN_USER;
-      const pData = presenceMap.get(normalizeKey(otherUser));
-
-      if (pData && pData.isTyping && pData.typingTo === currentUser) {
-        messagesEl.insertAdjacentHTML("beforeend", `
-          <div id="dynamicTyping" class="typing-wrapper message-animated" style="align-self: flex-start; margin-top: 8px;">
-            <div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-          </div>
-        `);
-        scrollToBottomFast();
-      }
-    }
-
     function listenMessages() {
       if (unsubscribeMessages) unsubscribeMessages();
       messagesHydrated = false;
       seenMessageIds = new Set();
+      messageCache = new Map();
+      olderMessagesCursor = null;
+      olderMessagesHasMore = false;
+      olderMessagesLoading = false;
+      olderMessagesPagesLoaded = 0;
       messagesEl.innerHTML = `<div class="empty">Yükleniyor...</div>`;
 
       const threadId = isAdmin ? selectedThread : currentUser;
+      activeMessagesThreadId = threadId || null;
       if (!threadId) return renderEmpty("Bir sohbet seç.");
 
-      const q = query(collection(db, "messages"), where("threadId", "==", threadId));
+      // Canlı dinleyici yalnızca en yeni 100 mesajı izler. Daha eski kayıtlar
+      // kullanıcı istediğinde 50'şer belge olarak okunur; eski mesajlar silinmez.
+      const q = query(
+        collection(db, "messages"),
+        where("threadId", "==", threadId),
+        orderBy("createdAtClient", "desc"),
+        limit(LIVE_MESSAGES_LIMIT)
+      );
       unsubscribeMessages = onSnapshot(q, (snap) => {
-        const items = [];
-        snap.forEach((d) => items.push({ id: d.id, ...d.data() }));
-        items.sort((a, b) => (a.createdAtClient || 0) - (b.createdAtClient || 0));
-
-        if (!items.length) {
-          renderEmpty("Henüz mesaj yok.");
-          clearPendingModeRequest();
-          return;
+        const wasHydrated = messagesHydrated;
+        const distanceFromBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
+        const shouldScrollToBottom = !wasHydrated || distanceFromBottom < 140;
+        if (!olderMessagesCursor && snap.docs.length) {
+          olderMessagesCursor = snap.docs[snap.docs.length - 1];
+        }
+        if (olderMessagesPagesLoaded === 0) {
+          olderMessagesHasMore = snap.docs.length === LIVE_MESSAGES_LIMIT;
         }
 
+        const incoming = [];
+        snap.forEach((d) => incoming.push({ id: d.id, ...d.data() }));
         if (!messagesHydrated) {
-          items.forEach(item => seenMessageIds.add(item.id));
+          incoming.forEach(item => seenMessageIds.add(item.id));
           messagesHydrated = true;
         } else {
-          for (const item of items) {
+          for (const item of incoming) {
             if (!seenMessageIds.has(item.id)) {
               item.isNew = true;
               seenMessageIds.add(item.id);
@@ -6628,97 +6415,149 @@
           }
         }
 
-        if (!isAdmin) syncModeRequestState(items);
-
-        messagesEl.innerHTML = items.map(item => renderMessage(item, item.isNew)).join("");
-
-        messagesEl.querySelectorAll("[data-copy]").forEach((btn) => {
-          btn.addEventListener("click", () => copyText(decodeURIComponent(btn.dataset.copy || ""), btn));
-        });
-
-        messagesEl.querySelectorAll("[data-preview-code]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const rawCode = decodeURIComponent(btn.dataset.previewCode || "");
-            const modal = document.getElementById("codePreviewModal");
-            const frame = document.getElementById("codePreviewFrame");
-            if (modal && frame) {
-              frame.srcdoc = rawCode;
-              modal.classList.remove("hidden");
-            }
-          });
-        });
-
-        messagesEl.querySelectorAll("[data-open-image]").forEach((btn) => {
-          btn.addEventListener("click", () => openImageModal(btn.dataset.openImage || "", btn.dataset.imageName || "Resim"));
-        });
-
-        messagesEl.querySelectorAll("[data-download-image]").forEach((btn) => {
-          btn.addEventListener("click", () => downloadDataUrl(btn.dataset.downloadImage || "", btn.dataset.imageName || "resim.jpg"));
-        });
-
-        messagesEl.querySelectorAll("[data-download-file]").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const messageId = btn.dataset.downloadFile;
-            const card = btn.closest("[data-file-message-id]");
-            const mimeType = card?.dataset.fileMime || "application/octet-stream";
-            const fileName = btn.dataset.fileName || "dosya";
-            btn.disabled = true;
-            btn.textContent = "İndiriliyor...";
-            try {
-              const url = await loadFileBlob(messageId, mimeType);
-              await downloadDataUrl(url, fileName);
-              btn.textContent = "📥 Tekrar İndir";
-            } catch {
-              btn.textContent = "Hata";
-            } finally {
-              btn.disabled = false;
-            }
-          });
-        });
-
-        messagesEl.querySelectorAll("[data-load-video]").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const messageId = btn.dataset.loadVideo;
-            const card = btn.closest("[data-video-message-id]");
-            const mimeType = card?.dataset.videoMime || "video/mp4";
-            const videoEl = card?.querySelector("[data-video-player]");
-            const loadingEl = card?.querySelector("[data-video-loading]");
-            const fullBtn = card?.querySelector("[data-fullscreen-video]");
-            btn.disabled = true;
-            btn.textContent = "Yükleniyor...";
-            try {
-              const url = await loadVideoBlob(messageId, mimeType);
-              if (videoEl) { videoEl.src = url; videoEl.play().catch(() => {}); }
-              if (loadingEl) loadingEl.textContent = "Video hazır.";
-              if (fullBtn) fullBtn.disabled = false;
-              btn.remove();
-            } catch {
-              btn.textContent = "Hata";
-            }
-          });
-        });
-
-        messagesEl.querySelectorAll("[data-fullscreen-video]").forEach((btn) => {
-          btn.addEventListener("click", () => enterFullscreenForVideo(btn.dataset.fullscreenVideo));
-        });
-
-        messagesEl.querySelectorAll("[data-download-video]").forEach((btn) => {
-          btn.addEventListener("click", () => downloadVideoByMessageId(btn.dataset.downloadVideo, btn.dataset.videoName));
-        });
-
-        messagesEl.querySelectorAll(".message-image").forEach((img) => {
-          img.addEventListener("click", () => openImageModal(img.dataset.imageUrl || "", img.dataset.imageName || "Resim"));
-        });
-
-        applyMessageSearch();
-        renderTypingIndicator();
-        setTimeout(scrollToBottomFast, 50);
+        // Keep already-seen messages in local memory when they roll out of the
+        // 100-message live window. That avoids gaps while the user loads older pages.
+        for (const item of incoming) {
+          const previous = messageCache.get(item.id);
+          messageCache.set(item.id, { ...previous, ...item, isNew: Boolean(previous?.isNew || item.isNew) });
+        }
+        renderMessageItems(Array.from(messageCache.values()), { scrollToBottom: shouldScrollToBottom });
+      }, (err) => {
+        console.error("Sohbet mesajları yüklenemedi:", err);
+        const needsIndex = /index/i.test(String(err?.message || ""));
+        renderEmpty(needsIndex
+          ? "Sohbet sorgusu için Firestore bileşik indeksi gerekiyor. Tarayıcı konsolundaki Firebase hata bağlantısından indeksi oluşturup sayfayı yenile."
+          : "Mesajlar yüklenemedi. İnternet bağlantısını ve Firestore izinlerini kontrol et.");
       });
+    }
+
+    async function loadOlderMessages() {
+      if (!activeMessagesThreadId || !olderMessagesHasMore || olderMessagesLoading || !olderMessagesCursor) return;
+      olderMessagesLoading = true;
+      const button = messagesEl.querySelector("[data-load-older-messages]");
+      if (button) { button.disabled = true; button.textContent = "Yükleniyor..."; }
+      const requestedThreadId = activeMessagesThreadId;
+      const previousHeight = messagesEl.scrollHeight;
+      const previousTop = messagesEl.scrollTop;
+      try {
+        const q = query(
+          collection(db, "messages"),
+          where("threadId", "==", requestedThreadId),
+          orderBy("createdAtClient", "desc"),
+          startAfter(olderMessagesCursor),
+          limit(OLDER_MESSAGES_PAGE_SIZE)
+        );
+        const snap = await getDocs(q);
+        // The user may have switched chats while this page was loading.
+        if (activeMessagesThreadId !== requestedThreadId) return;
+        for (const d of snap.docs) {
+          const item = { id: d.id, ...d.data(), isNew: false };
+          const previous = messageCache.get(item.id);
+          messageCache.set(item.id, { ...previous, ...item, isNew: Boolean(previous?.isNew) });
+          seenMessageIds.add(item.id);
+        }
+        if (snap.docs.length) olderMessagesCursor = snap.docs[snap.docs.length - 1];
+        olderMessagesPagesLoaded += 1;
+        olderMessagesHasMore = snap.docs.length === OLDER_MESSAGES_PAGE_SIZE;
+        olderMessagesLoading = false;
+        renderMessageItems(Array.from(messageCache.values()), { preserveScroll: true, previousHeight, previousTop });
+      } catch (err) {
+        console.error("Eski mesajlar yüklenemedi:", err);
+        if (activeMessagesThreadId !== requestedThreadId) return;
+        olderMessagesLoading = false;
+        renderMessageItems(Array.from(messageCache.values()), { preserveScroll: true, previousHeight, previousTop, loadError: true });
+        return;
+      }
+    }
+
+    function renderMessageItems(items, options = {}) {
+      const previousHeight = options.previousHeight ?? messagesEl.scrollHeight;
+      const previousTop = options.previousTop ?? messagesEl.scrollTop;
+      const sortedItems = items.slice().sort((a, b) => (a.createdAtClient || 0) - (b.createdAtClient || 0));
+      if (!sortedItems.length) {
+        renderEmpty("Henüz mesaj yok.");
+        clearPendingModeRequest();
+        return;
+      }
+
+      const olderButton = olderMessagesHasMore
+        ? `<button class="btn secondary load-older-messages" type="button" data-load-older-messages ${olderMessagesLoading ? "disabled" : ""}>${olderMessagesLoading ? "Yükleniyor..." : "Daha eski 50 mesajı yükle"}</button>`
+        : "";
+      const loadError = options.loadError ? `<div class="muted" style="text-align:center;padding:4px;">Eski mesajlar yüklenemedi. Tekrar deneyebilirsin.</div>` : "";
+      messagesEl.innerHTML = `${olderButton}${loadError}${sortedItems.map(item => renderMessage(item, item.isNew)).join("")}`;
+      if (!isAdmin) syncModeRequestState(sortedItems);
+
+      messagesEl.querySelector("[data-load-older-messages]")?.addEventListener("click", () => void loadOlderMessages());
+      messagesEl.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", () => copyText(decodeURIComponent(btn.dataset.copy || ""), btn));
+      });
+      messagesEl.querySelectorAll("[data-preview-code]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const rawCode = decodeURIComponent(btn.dataset.previewCode || "");
+          const modal = document.getElementById("codePreviewModal");
+          const frame = document.getElementById("codePreviewFrame");
+          if (modal && frame) { frame.srcdoc = rawCode; modal.classList.remove("hidden"); }
+        });
+      });
+      messagesEl.querySelectorAll("[data-open-image]").forEach((btn) => {
+        btn.addEventListener("click", () => openImageModal(btn.dataset.openImage || "", btn.dataset.imageName || "Resim"));
+      });
+      messagesEl.querySelectorAll("[data-download-image]").forEach((btn) => {
+        btn.addEventListener("click", () => downloadDataUrl(btn.dataset.downloadImage || "", btn.dataset.imageName || "resim.jpg"));
+      });
+      messagesEl.querySelectorAll("[data-download-file]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const messageId = btn.dataset.downloadFile;
+          const card = btn.closest("[data-file-message-id]");
+          const mimeType = card?.dataset.fileMime || "application/octet-stream";
+          const fileName = btn.dataset.fileName || "dosya";
+          btn.disabled = true; btn.textContent = "İndiriliyor...";
+          try {
+            const url = await loadFileBlob(messageId, mimeType);
+            await downloadDataUrl(url, fileName);
+            btn.textContent = "📥 Tekrar İndir";
+          } catch { btn.textContent = "Hata"; }
+          finally { btn.disabled = false; }
+        });
+      });
+      messagesEl.querySelectorAll("[data-load-video]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const messageId = btn.dataset.loadVideo;
+          const card = btn.closest("[data-video-message-id]");
+          const mimeType = card?.dataset.videoMime || "video/mp4";
+          const videoEl = card?.querySelector("[data-video-player]");
+          const loadingEl = card?.querySelector("[data-video-loading]");
+          const fullBtn = card?.querySelector("[data-fullscreen-video]");
+          btn.disabled = true; btn.textContent = "Yükleniyor...";
+          try {
+            const url = await loadVideoBlob(messageId, mimeType);
+            if (videoEl) { videoEl.src = url; videoEl.play().catch(() => {}); }
+            if (loadingEl) loadingEl.textContent = "Video hazır.";
+            if (fullBtn) fullBtn.disabled = false;
+            btn.remove();
+          } catch { btn.textContent = "Hata"; }
+        });
+      });
+      messagesEl.querySelectorAll("[data-fullscreen-video]").forEach((btn) => {
+        btn.addEventListener("click", () => enterFullscreenForVideo(btn.dataset.fullscreenVideo));
+      });
+      messagesEl.querySelectorAll("[data-download-video]").forEach((btn) => {
+        btn.addEventListener("click", () => downloadVideoByMessageId(btn.dataset.downloadVideo, btn.dataset.videoName));
+      });
+      messagesEl.querySelectorAll(".message-image").forEach((img) => {
+        img.addEventListener("click", () => openImageModal(img.dataset.imageUrl || "", img.dataset.imageName || "Resim"));
+      });
+      applyMessageSearch();
+      if (options.preserveScroll) {
+        requestAnimationFrame(() => { messagesEl.scrollTop = Math.max(0, previousTop + (messagesEl.scrollHeight - previousHeight)); });
+      } else if (options.scrollToBottom) {
+        setTimeout(scrollToBottomFast, 50);
+      }
     }
 
     function listenThreads() {
       if (unsubscribeThreads) unsubscribeThreads();
-      const q = query(collection(db, "messages"), orderBy("createdAtClient", "desc"), limit(120));
+      const q = query(collection(db, "messages"), orderBy("createdAtClient", "desc"), limit(80));
       unsubscribeThreads = onSnapshot(q, (snap) => {
         const latestByUser = new Map();
         snap.forEach((d) => {
@@ -6773,30 +6612,6 @@
       });
     }
 
-    function listenPresence() {
-      if (unsubscribePresence) unsubscribePresence();
-      if (isAdmin) {
-        unsubscribePresence = onSnapshot(collection(db, "presence"), (snap) => {
-          const map = new Map();
-          snap.forEach((d) => {
-            const data = d.data() || {};
-            map.set(normalizeKey(data.username || d.id), { ...data, _id: d.id });
-          });
-          presenceMap = map;
-          renderThreadList();
-          updateThreadStatusPill();
-          renderTypingIndicator();
-        });
-      } else {
-        unsubscribePresence = onSnapshot(doc(db, "presence", safeDocId(ADMIN_USER)), (snap) => {
-          const map = new Map();
-          if (snap.exists()) map.set(normalizeKey(ADMIN_USER), snap.data());
-          presenceMap = map;
-          renderTypingIndicator();
-        });
-      }
-    }
-
     function listenStatus() {
       if (unsubscribeStatus) unsubscribeStatus();
       unsubscribeStatus = onSnapshot(statusDocRef, (snap) => {
@@ -6832,10 +6647,7 @@
     document.querySelectorAll("[data-workshop-view]").forEach(btn => btn.addEventListener("click", () => setWorkshopView(btn.dataset.workshopView)));
     workshopForSaleInput?.addEventListener("change", () => { if (workshopPriceInput) workshopPriceInput.disabled = !workshopForSaleInput.checked; });
     workshopPriceInput && (workshopPriceInput.disabled = !workshopForSaleInput.checked);
-    workshopCreateRoomBtn?.addEventListener("click", () => void workshopCreateRoom());
-    workshopJoinRoomBtn?.addEventListener("click", () => void workshopJoinRoom());
     workshopOpenNewTabBtn?.addEventListener("click", () => openWorkshopGameInNewTab());
-    workshopJoinCodeInput?.addEventListener("keydown", event => { if (event.key === "Enter") void workshopJoinRoom(); });
     workshopCloseGameBtn?.addEventListener("click", () => void closeWorkshopGame());
     logoutBtn.addEventListener("click", logout);
 
@@ -7011,13 +6823,6 @@
 
     messageInput.addEventListener("input", () => {
       charCount.textContent = String(messageInput.value.length);
-      if (!currentUser) return;
-      if (!typingTimer) void markTyping(true);
-      else clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
-        void markTyping(false);
-        typingTimer = null;
-      }, 3500);
     });
 
     messageInput.addEventListener("keydown", (e) => {
