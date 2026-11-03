@@ -1002,6 +1002,41 @@
     .trade-room-confirm { width:100%; margin-top:auto; min-height:44px; }
     .trade-room-state { font-size:12px; padding:8px 10px; border-radius:10px; background:#0b111d; color:var(--muted); }
     .trade-room-state.confirmed { color:#bbf7d0; border:1px solid #166534; background:#10251a; }
+
+    /* Takas sohbeti: mevcut teklif alanına dokunmayan, isteğe bağlı mini pencere. */
+    .trade-room-shell { position:relative; }
+    .trade-chat-toggle { cursor:pointer; border:1px solid rgba(110,168,254,.3); border-radius:11px; padding:8px 12px; background:#18223b; color:#dbe5ff; font-size:12px; font-weight:850; white-space:nowrap; }
+    .trade-chat-drawer { position:absolute; z-index:20; right:16px; bottom:16px; width:min(390px,calc(100% - 32px)); height:min(460px,72%); min-height:260px; display:flex; flex-direction:column; gap:8px; padding:12px; border:1px solid rgba(110,168,254,.34); border-radius:17px; background:rgba(10,15,26,.98); box-shadow:0 18px 55px rgba(0,0,0,.6); }
+    .trade-chat-head { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-shrink:0; }
+    .trade-chat-title { font-size:14px; font-weight:900; }
+    .trade-chat-quota { color:#86efac; font-size:10px; margin-top:2px; }
+    .trade-chat-close { cursor:pointer; border:1px solid var(--line); border-radius:9px; padding:5px 9px; color:var(--text); background:#182236; }
+    .trade-chat-messages { min-height:0; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:7px; padding:7px; border:1px solid rgba(255,255,255,.07); border-radius:12px; background:#080d16; }
+    .trade-chat-empty { color:var(--muted); font-size:12px; text-align:center; margin:auto; padding:14px; }
+    .trade-chat-message { max-width:88%; align-self:flex-start; padding:8px 10px; border:1px solid rgba(110,168,254,.16); border-radius:12px 12px 12px 3px; background:#172238; overflow-wrap:anywhere; }
+    .trade-chat-message.mine { align-self:flex-end; background:#252044; border-color:rgba(167,139,250,.28); border-radius:12px 12px 3px 12px; }
+    .trade-chat-meta { display:flex; justify-content:space-between; gap:10px; margin-bottom:3px; color:#9aa6bd; font-size:10px; }
+    .trade-chat-text { color:#e8ecf5; font-size:13px; line-height:1.4; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .trade-chat-compose { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:7px; flex-shrink:0; }
+    .trade-chat-compose textarea { min-height:42px; max-height:76px; padding:9px 10px; font-size:13px; }
+    .trade-chat-send { min-width:66px; border:0; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; font-weight:850; padding:8px; }
+    .trade-chat-send:disabled { opacity:.55; }
+
+    .admin-gift-grid { display:grid; gap:10px; }
+    .admin-gift-two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .admin-gift-product-picker { display:grid; gap:7px; min-width:0; }
+    .admin-gift-product-dropdown { display:grid; gap:5px; padding:9px; border:1px solid rgba(167,139,250,.32); border-radius:12px; background:#0b1220; }
+    .admin-gift-product-list { display:grid; gap:7px; max-height:300px; overflow-y:auto; overflow-x:hidden; padding-right:3px; }
+    .admin-gift-product-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:9px; padding:9px 10px; border-radius:11px; border:1px solid rgba(110,168,254,.16); background:#111b2c; }
+    .admin-gift-product-row strong { display:block; overflow-wrap:anywhere; font-size:12px; }
+    .admin-gift-product-row .muted { margin-top:3px; }
+    .admin-gift-product-row button { min-width:100px; max-width:140px; white-space:normal; overflow-wrap:anywhere; }
+    @media(max-width:760px) {
+      .trade-chat-drawer { left:8px; right:8px; bottom:8px; width:auto; height:48%; min-height:230px; max-height:440px; padding:9px; }
+      .admin-gift-two { grid-template-columns:minmax(0,1fr); }
+      .admin-gift-product-row { grid-template-columns:minmax(0,1fr); }
+      .admin-gift-product-row button { width:100%; max-width:none; }
+    }
     @media(max-width:760px) {
       .trade-room-overlay { padding:0; }
       .trade-room-shell { width:100%; height:100dvh; border-radius:0; border:0; padding:10px; }
@@ -2040,6 +2075,7 @@
       </div>
       <div style="display:grid;gap:14px;">
         <button id="scrollBottomBtn" class="btn secondary" type="button">⬇ Sohbette En Alta Git</button>
+        <button id="adminGiftShortcut" class="btn hidden" type="button" style="background:linear-gradient(135deg,#6d28d9,#a78bfa);border:1px solid #c4b5fd;">🛠️ Kullanıcıya GP / Ürün / PRO / ULTRA Ver ↓</button>
         <div class="field" style="margin:0;">
           <label for="setVolume">GloGeGo Okuma Sesi Seviyesi</label>
           <input type="range" id="setVolume" min="0" max="1" step="0.1" value="1" />
@@ -2079,6 +2115,43 @@
           <button id="giftBtn" class="btn" type="button">GP Gönder</button>
           <div id="giftMsg" class="msg" style="margin:0;"></div>
         </div>
+
+        <section id="adminGiftCenter" class="plus-box hidden" style="background:#111a2a;border-color:#a78bfa;">
+          <div class="plus-box-title" style="color:#e9d5ff;">🛠️ Admin · Kullanıcıya Ödül Ver</div>
+          <div class="muted">Kullanıcı adını kendin yaz. GP, PRO/ULTRA süresi veya envanter ürünü verebilirsin.</div>
+          <input id="adminGiftTargetUser" class="gp-input" type="text" maxlength="32" autocomplete="off" spellcheck="false" placeholder="Kullanıcı adını yaz..." aria-label="Ödül verilecek kullanıcı adı" />
+          <div id="adminGiftTargetInfo" class="muted">Kullanıcı adı girilmedi. Hesap adı 3–32 karakter olmalı.</div>
+          <div class="admin-gift-two">
+            <div style="display:grid;gap:7px;padding:10px;border-radius:12px;background:#0c1422;border:1px solid var(--line);">
+              <strong style="color:#86efac;font-size:13px;">💎 GP Ekle</strong>
+              <input id="adminGiftGpAmount" class="gp-input" type="number" min="1" step="1" value="100" placeholder="GP miktarı" />
+              <button id="adminGiftGpBtn" class="btn" type="button">GP Ver</button>
+            </div>
+            <div style="display:grid;gap:7px;padding:10px;border-radius:12px;background:#0c1422;border:1px solid var(--line);">
+              <strong style="color:#c4b5fd;font-size:13px;">✨ PRO Süresi</strong>
+              <input id="adminGiftProDays" class="gp-input" type="number" min="1" max="3650" value="30" placeholder="Gün" />
+              <button id="adminGiftProBtn" class="btn" type="button" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">PRO Ver</button>
+            </div>
+            <div style="display:grid;gap:7px;padding:10px;border-radius:12px;background:#0c1422;border:1px solid var(--line);">
+              <strong style="color:#e9d5ff;font-size:13px;">👑 ULTRA Süresi</strong>
+              <input id="adminGiftUltraDays" class="gp-input" type="number" min="1" max="3650" value="30" placeholder="Gün" />
+              <button id="adminGiftUltraBtn" class="btn" type="button" style="background:linear-gradient(135deg,#7c3aed,#b45309);">ULTRA Ver</button>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px;">
+            <strong style="font-size:13px;color:#93c5fd;">🎒 Envanter Ürünü Seç</strong>
+            <div class="muted">Ürün alanına tıklayınca tüm mağaza ve arşiv ürünleri açılır. Arama kutusuna yazarak filtreleyebilirsin. “Stok kadar ver” mevcut stok kadar ürünü envantere ekler; mağaza stoğunu azaltmaz.</div>
+            <div class="admin-gift-product-picker">
+              <input id="adminGiftProductSearch" class="gp-input" type="search" autocomplete="off" placeholder="🔎 Ürün seçmek için tıkla veya ürün ara..." aria-label="Envanter ürünü ara" aria-haspopup="listbox" aria-expanded="false" />
+              <div id="adminGiftProductDropdown" class="admin-gift-product-dropdown hidden">
+                <div id="adminGiftProductCount" class="muted" style="padding:2px 3px 7px;">Ürünler yükleniyor...</div>
+                <div id="adminGiftProductList" class="admin-gift-product-list"><div class="trade-room-empty">Ürünler yükleniyor...</div></div>
+              </div>
+            </div>
+          </div>
+          <button id="adminGiftRefreshBtn" class="btn secondary" type="button">↻ Ürün kataloğunu yenile</button>
+          <div id="adminGiftCenterMsg" class="msg" style="margin:0;"></div>
+        </section>
 
         <button id="logoutBtn" class="btn danger">Hesaptan Çıkış Yap</button>
       </div>
@@ -2161,7 +2234,10 @@
           <div id="tradeRoomTitle" class="trade-room-title">🤝 Canlı Takas Odası</div>
           <div id="tradeRoomSubtitle" class="trade-room-subtitle">İki taraf da teklifini onaylayınca takas tamamlanır.</div>
         </div>
-        <button id="tradeRoomCloseBtn" class="plus-close" type="button">Odayı Gizle</button>
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+          <button id="tradeChatToggleBtn" class="trade-chat-toggle" type="button">💬 Takas Sohbeti</button>
+          <button id="tradeRoomCloseBtn" class="plus-close" type="button">Odayı Gizle</button>
+        </div>
       </header>
       <div id="tradeRoomNotice" class="trade-room-notice" role="status">Teklifler canlı olarak eşitleniyor.</div>
       <div class="trade-room-columns">
@@ -2188,6 +2264,22 @@
           <button id="tradeRoomCancelBtn" class="btn danger" type="button">✖ Takası İptal Et</button>
         </section>
       </div>
+      <section id="tradeChatDrawer" class="trade-chat-drawer hidden" aria-label="Takas sohbeti">
+        <div class="trade-chat-head">
+          <div>
+            <div class="trade-chat-title">💬 Takas Sohbeti</div>
+            <div id="tradeChatQuotaInfo" class="trade-chat-quota">Tasarruflu canlı bağlantı · yalnızca yeni mesajlar</div>
+          </div>
+          <button id="tradeChatCloseBtn" class="trade-chat-close" type="button" aria-label="Sohbeti kapat">×</button>
+        </div>
+        <div id="tradeChatMessages" class="trade-chat-messages">
+          <div class="trade-chat-empty">Sohbeti açınca mesajlar burada görünür.</div>
+        </div>
+        <div class="trade-chat-compose">
+          <textarea id="tradeChatInput" maxlength="500" placeholder="Takas hakkında mesaj yaz..." aria-label="Takas mesajı"></textarea>
+          <button id="tradeChatSendBtn" class="trade-chat-send" type="button">Gönder</button>
+        </div>
+      </section>
     </div>
   </section>
 
@@ -2209,6 +2301,7 @@
       setDoc,
       updateDoc,
       runTransaction,
+      writeBatch,
       serverTimestamp,
       Timestamp,
       deleteDoc
@@ -2493,6 +2586,10 @@
     let gpProducts = [];
     let gpAdminUsers = [];
     let gpAdminCodes = [];
+    let adminGiftProducts = [];
+    let adminGiftProductPickerOpen = false;
+    let adminGiftCenterLoaded = false;
+    let adminGiftCenterLoading = false;
     let currentGpProduct = null;
     let editingGpProductId = null;
     let gpProductImageDataUrl = "";
@@ -2515,6 +2612,11 @@
     let tradeDraftItems = [];
     let tradeDraftTimer = null;
     let tradeRoomVisible = false;
+    let unsubscribeTradeChat = null;
+    let tradeChatOpen = false;
+    let tradeChatMessages = [];
+    let tradeChatLastAt = 0;
+    let tradeChatSeenIds = new Set();
     let tradeSaveInFlight = false;
     let finalizingTradeIds = new Set();
     let dailySelfClaimedToday = false;
@@ -3490,6 +3592,11 @@
     function openSettingsModal() {
       checkAndResetRights();
       updateSettingsUI();
+      const adminGiftCenter = document.getElementById("adminGiftCenter");
+      const adminGiftShortcut = document.getElementById("adminGiftShortcut");
+      adminGiftCenter?.classList.toggle("hidden", !isAdmin);
+      adminGiftShortcut?.classList.toggle("hidden", !isAdmin);
+      if (isAdmin) void loadAdminGiftCenter(false);
       settingsModal.classList.remove("hidden");
       if (settingsInterval) clearInterval(settingsInterval);
       settingsInterval = setInterval(updateSettingsUITimer, 60000);
@@ -3503,8 +3610,226 @@
     }
 
     settingsBtn.addEventListener("click", openSettingsModal);
+    document.getElementById("adminGiftShortcut")?.addEventListener("click", () => {
+      const target = document.getElementById("adminGiftCenter");
+      if (target && isAdmin) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     settingsCloseBtn.addEventListener("click", closeSettingsModal);
     settingsModalBackdrop.addEventListener("click", closeSettingsModal);
+
+    function setAdminGiftMsg(message, ok = false) {
+      const el = document.getElementById("adminGiftCenterMsg");
+      if (!el) return;
+      el.textContent = message || "";
+      el.style.color = ok ? "#86efac" : (message ? "#ffb4b4" : "var(--muted)");
+    }
+
+    function getAdminGiftTargetUser() {
+      const input = document.getElementById("adminGiftTargetUser");
+      const user = String(input?.value || "").trim();
+      const info = document.getElementById("adminGiftTargetInfo");
+      if (!user) {
+        if (info) info.textContent = "Ödül vereceğin kullanıcı adını yaz.";
+        setAdminGiftMsg("Önce kullanıcı adını yaz.");
+        input?.focus();
+        return "";
+      }
+      if (user.length < 3 || user.length > 32 || /\s/.test(user)) {
+        if (info) info.textContent = "Kullanıcı adı 3–32 karakter olmalı ve boşluk içermemeli.";
+        setAdminGiftMsg("Geçerli bir kullanıcı adı yaz (3–32 karakter, boşluksuz).");
+        input?.focus();
+        return "";
+      }
+      if (normalizeKey(user) === normalizeKey(ADMIN_USER)) {
+        setAdminGiftMsg("Admin hesabına buradan ödül verilemez.");
+        return "";
+      }
+      if (info) info.textContent = `Hedef kullanıcı: ${user}`;
+      return user;
+    }
+
+    function setAdminGiftProductPicker(open) {
+      adminGiftProductPickerOpen = !!open;
+      const dropdown = document.getElementById("adminGiftProductDropdown");
+      const input = document.getElementById("adminGiftProductSearch");
+      dropdown?.classList.toggle("hidden", !adminGiftProductPickerOpen);
+      input?.setAttribute("aria-expanded", adminGiftProductPickerOpen ? "true" : "false");
+      if (adminGiftProductPickerOpen) renderAdminGiftProducts();
+    }
+
+    function renderAdminGiftProducts() {
+      const box = document.getElementById("adminGiftProductList");
+      if (!box || !isAdmin) return;
+      const input = document.getElementById("adminGiftProductSearch");
+      const count = document.getElementById("adminGiftProductCount");
+      const products = adminGiftProducts.filter((item) => item && item.isInventoryItem === true);
+      const term = String(input?.value || "").trim().toLocaleLowerCase("tr-TR");
+      const filtered = term ? products.filter((item) => {
+        const title = String(item.title || "").toLocaleLowerCase("tr-TR");
+        const description = String(item.description || "").toLocaleLowerCase("tr-TR");
+        return title.includes(term) || description.includes(term) || String(item.id || "").toLocaleLowerCase("tr-TR").includes(term);
+      }) : products;
+      if (count) count.textContent = `${filtered.length} / ${products.length} envanter ürünü${term ? ` · “${term}” araması` : " · tüm ürünler"}`;
+      if (!products.length) {
+        box.innerHTML = '<div class="trade-room-empty">Envantere eklenebilen ürün kaydı bulunamadı.</div>';
+        return;
+      }
+      if (!filtered.length) {
+        box.innerHTML = '<div class="trade-room-empty">Bu aramayla eşleşen ürün yok. Başka bir kelime dene.</div>';
+        return;
+      }
+      box.innerHTML = filtered.map((item) => {
+        const stock = Math.max(0, normalizeGpNumber(item.stock, item.stock === undefined ? 5 : 0));
+        const archived = item.isArchived === true || item.isActive === false;
+        return `<div class="admin-gift-product-row" role="option">
+          <div>
+            <strong>${escapeHtml(item.title || "İsimsiz ürün")}</strong>
+            <div class="muted">${stock} adet stok · ${archived ? "Mağazada değil / arşiv" : "Mağazada"} · ${escapeHtml(formatGp(item.priceGp || 0))}</div>
+          </div>
+          <button class="btn" type="button" data-admin-gift-product="${escapeHtml(item.id)}" ${stock < 1 ? "disabled" : ""}>🎁 ${stock > 0 ? `Stok kadar ver (${stock})` : "Stok yok"}</button>
+        </div>`;
+      }).join("");
+      box.querySelectorAll("[data-admin-gift-product]").forEach((button) => {
+        button.addEventListener("click", () => void grantAdminProductStock(button.dataset.adminGiftProduct, button));
+      });
+    }
+
+    async function loadAdminGiftCenter(force = false) {
+      if (!isAdmin) return;
+      if (adminGiftCenterLoading) return;
+      if (adminGiftCenterLoaded && !force) {
+        renderAdminGiftProducts();
+        return;
+      }
+      adminGiftCenterLoading = true;
+      setAdminGiftMsg("Ürün kataloğu yükleniyor...");
+      try {
+        // Kullanıcı listesi artık çekilmez; admin hedef kullanıcı adını doğrudan yazar.
+        // Böylece dört ayrı kullanıcı koleksiyonunu okumak yerine yalnızca ürün kataloğu okunur.
+        const snap = await getDocs(collection(db, "gpProducts"));
+        adminGiftProducts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        adminGiftCenterLoaded = true;
+        renderAdminGiftProducts();
+        setAdminGiftMsg(`${adminGiftProducts.filter((item) => item?.isInventoryItem === true).length} envanter ürünü yüklendi. Mağaza ve arşiv kayıtları dahil.`, true);
+      } catch (err) {
+        adminGiftProducts = gpProducts.slice();
+        renderAdminGiftProducts();
+        setAdminGiftMsg(err?.message || "Admin hediye kataloğu yüklenemedi.");
+      } finally {
+        adminGiftCenterLoading = false;
+      }
+    }
+
+    async function grantAdminGp() {
+      if (!isAdmin) return;
+      const user = getAdminGiftTargetUser();
+      const amount = normalizeGpNumber(document.getElementById("adminGiftGpAmount")?.value, 0);
+      if (!user) return;
+      if (amount <= 0) return setAdminGiftMsg("Verilecek GP miktarı 1 veya daha büyük olmalı.");
+      const btn = document.getElementById("adminGiftGpBtn");
+      if (btn) btn.disabled = true;
+      try {
+        const ref = doc(db, "gpBalances", gpDocId(user));
+        await runTransaction(db, async (tx) => {
+          const snap = await tx.get(ref);
+          const current = snap.exists() ? normalizeGpNumber(snap.data()?.gp, 0) : 0;
+          tx.set(ref, { username: user, usernameKey: normalizeKey(user), gp: current + amount, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+        });
+        setAdminGiftMsg(`✅ ${user} hesabına ${formatGp(amount)} eklendi.`, true);
+      } catch (err) {
+        setAdminGiftMsg(err?.message || "GP verilemedi.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function grantAdminMembership(tier) {
+      if (!isAdmin || !["pro", "ultra"].includes(tier)) return;
+      const user = getAdminGiftTargetUser();
+      const inputId = tier === "pro" ? "adminGiftProDays" : "adminGiftUltraDays";
+      const btnId = tier === "pro" ? "adminGiftProBtn" : "adminGiftUltraBtn";
+      const requestedDays = normalizeGpNumber(document.getElementById(inputId)?.value, 0);
+      if (!user) return;
+      if (requestedDays < 1) return setAdminGiftMsg("Gün sayısı en az 1 olmalı.");
+      const days = Math.min(3650, requestedDays);
+      const btn = document.getElementById(btnId);
+      if (btn) btn.disabled = true;
+      try {
+        const collectionName = tier === "pro" ? "proMembers" : "ultraMembers";
+        const fieldName = tier === "pro" ? "proUntil" : "ultraUntil";
+        const ref = doc(db, collectionName, plusDocId(user));
+        const until = await runTransaction(db, async (tx) => {
+          const snap = await tx.get(ref);
+          const raw = snap.exists() ? snap.data()?.[fieldName] : null;
+          const oldDate = raw?.toDate ? raw.toDate() : (raw ? new Date(raw) : null);
+          const base = oldDate && !Number.isNaN(oldDate.getTime()) ? Math.max(Date.now(), oldDate.getTime()) : Date.now();
+          const next = new Date(base + days * DAY_MS);
+          tx.set(ref, { username: user, usernameKey: normalizeKey(user), [fieldName]: Timestamp.fromDate(next), isActive: true, updatedAt: serverTimestamp() }, { merge: true });
+          return next;
+        });
+        const untilText = until.toLocaleDateString("tr-TR");
+        setAdminGiftMsg(`✅ ${user} hesabına ${days} günlük ${tier.toUpperCase()} verildi. Yeni bitiş: ${untilText}.`, true);
+      } catch (err) {
+        setAdminGiftMsg(err?.message || `${tier.toUpperCase()} verilemedi.`);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function grantAdminProductStock(productId, button) {
+      if (!isAdmin) return;
+      const user = getAdminGiftTargetUser();
+      const product = adminGiftProducts.find((item) => item.id === productId);
+      if (!user) return;
+      if (!product || product.isInventoryItem !== true) return setAdminGiftMsg("Bu kayıt envanter ürünü değil.");
+      const quantity = Math.max(0, normalizeGpNumber(product.stock, product.stock === undefined ? 5 : 0));
+      if (!quantity) return setAdminGiftMsg("Bu ürünün stoğu yok.");
+      if (button) { button.disabled = true; button.textContent = "Veriliyor..."; }
+      let granted = 0;
+      try {
+        let batch = writeBatch(db);
+        let pending = 0;
+        for (let i = 0; i < quantity; i++) {
+          const itemRef = doc(collection(db, "gpInventory"));
+          const basePrice = normalizeGpNumber(product.priceGp, 0);
+          const inventoryPrice = product.discounted ? Math.max(0, normalizeGpNumber(product.discountPriceGp, basePrice)) : basePrice;
+          batch.set(itemRef, {
+            owner: user,
+            ownerKey: normalizeKey(user),
+            productId: product.id,
+            title: product.title || "Eşya",
+            priceGp: inventoryPrice,
+            basePriceGp: basePrice,
+            imageDataUrl: product.imageDataUrl || "",
+            consumeOnUse: product.consumeOnUse !== false,
+            actionType: product.actionType || "text",
+            actionValue: product.actionValue || "Ürün başarıyla kullanıldı!",
+            rewardFileDataUrl: product.rewardFileDataUrl || "",
+            rewardFileName: product.rewardFileName || "",
+            adminGranted: true,
+            adminGrantedBy: currentUser,
+            acquiredAt: serverTimestamp(),
+            acquiredAtClient: Date.now() + i
+          });
+          pending++;
+          if (pending >= 450) {
+            await batch.commit();
+            granted += pending;
+            batch = writeBatch(db);
+            pending = 0;
+          }
+        }
+        if (pending) {
+          await batch.commit();
+          granted += pending;
+        }
+        setAdminGiftMsg(`✅ ${user} hesabına “${product.title || "Ürün"}” ürününden ${granted} adet verildi. Mağaza stoğu değişmedi.`, true);
+      } catch (err) {
+        setAdminGiftMsg(`${granted} adet eklendi; işlem kalan kısmında durdu: ${err?.message || "Firestore hatası"}`);
+      } finally {
+        if (button) { button.disabled = false; button.textContent = `🎁 Stok kadar ver (${quantity})`; }
+      }
+    }
 
     async function downloadDataUrl(dataUrl, filename) {
       try {
@@ -4031,6 +4356,12 @@
         snap.forEach((d) => gpProducts.push({ id: d.id, ...d.data() }));
         renderGpProducts();
         renderGpAdminProducts();
+        if (adminGiftCenterLoaded) {
+          const mergedCatalog = new Map(adminGiftProducts.map((item) => [item.id, item]));
+          gpProducts.forEach((item) => mergedCatalog.set(item.id, item));
+          adminGiftProducts = Array.from(mergedCatalog.values());
+          renderAdminGiftProducts();
+        }
         renderInventoryAndTradeSelection();
         renderActiveTrades();
       });
@@ -4479,11 +4810,114 @@
       el.style.borderColor = ok ? "rgba(74,222,128,.35)" : "rgba(110,168,254,.18)";
     }
 
+    function stopTradeChatListener() {
+      if (unsubscribeTradeChat) {
+        try { unsubscribeTradeChat(); } catch {}
+        unsubscribeTradeChat = null;
+      }
+    }
+
+    function renderTradeChat() {
+      const box = document.getElementById("tradeChatMessages");
+      if (!box) return;
+      const wasNearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 90;
+      const rows = tradeChatMessages.slice().sort((a, b) => (a.createdAtClient || 0) - (b.createdAtClient || 0));
+      if (!rows.length) {
+        box.innerHTML = '<div class="trade-chat-empty">Henüz mesaj yok. İlk mesajı sen gönder!</div>';
+        return;
+      }
+      box.innerHTML = rows.map((item) => {
+        const mine = normalizeKey(item.senderKey || item.sender) === normalizeKey(currentUser);
+        const time = item.createdAtClient ? new Date(item.createdAtClient).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }) : "";
+        return `<article class="trade-chat-message ${mine ? "mine" : ""}">
+          <div class="trade-chat-meta"><strong>${escapeHtml(item.sender || "Oyuncu")}</strong><span>${escapeHtml(time)}</span></div>
+          <div class="trade-chat-text">${escapeHtml(item.text || "")}</div>
+        </article>`;
+      }).join("");
+      if (wasNearBottom) box.scrollTop = box.scrollHeight;
+    }
+
+    function startTradeChatListener() {
+      if (!activeTradeRoomId || !tradeChatOpen || unsubscribeTradeChat) return;
+      const tradeId = activeTradeRoomId;
+      const messagesRef = collection(db, "gpTrades", tradeId, "chatMessages");
+      // İlk açılışta yalnızca son 30 mesaj; tekrar açıldığında yalnızca son görülen zamandan yenileri okur.
+      const chatQuery = tradeChatLastAt > 0
+        ? query(messagesRef, where("createdAtClient", ">", tradeChatLastAt), orderBy("createdAtClient", "asc"))
+        : query(messagesRef, orderBy("createdAtClient", "desc"), limit(30));
+      unsubscribeTradeChat = onSnapshot(chatQuery, (snap) => {
+        if (activeTradeRoomId !== tradeId) return;
+        for (const d of snap.docs) {
+          if (tradeChatSeenIds.has(d.id)) continue;
+          const data = { id: d.id, ...d.data() };
+          tradeChatSeenIds.add(d.id);
+          tradeChatMessages.push(data);
+          tradeChatLastAt = Math.max(tradeChatLastAt, Number(data.createdAtClient) || 0);
+        }
+        tradeChatMessages.sort((a, b) => (a.createdAtClient || 0) - (b.createdAtClient || 0));
+        if (tradeChatMessages.length > 60) tradeChatMessages = tradeChatMessages.slice(-60);
+        renderTradeChat();
+      }, (err) => {
+        const info = document.getElementById("tradeChatQuotaInfo");
+        if (info) info.textContent = `Sohbet bağlantısı kurulamadı: ${err?.message || "izinleri kontrol et"}`;
+      });
+    }
+
+    function toggleTradeChat() {
+      if (!activeTradeRoomId || !activeTradeRoomData || activeTradeRoomData.status !== "negotiating") return;
+      const drawer = document.getElementById("tradeChatDrawer");
+      if (!drawer) return;
+      tradeChatOpen = !tradeChatOpen;
+      drawer.classList.toggle("hidden", !tradeChatOpen);
+      if (tradeChatOpen) {
+        const info = document.getElementById("tradeChatQuotaInfo");
+        if (info) info.textContent = "Tasarruflu canlı bağlantı · geçmiş bir kez, yalnızca yeniler okunur";
+        renderTradeChat();
+        startTradeChatListener();
+        document.getElementById("tradeChatInput")?.focus();
+      } else {
+        stopTradeChatListener();
+      }
+    }
+
+    async function sendTradeChatMessage() {
+      const input = document.getElementById("tradeChatInput");
+      const button = document.getElementById("tradeChatSendBtn");
+      const message = String(input?.value || "").trim();
+      if (!activeTradeRoomId || !currentUser || !message) return;
+      if (message.length > 500) return;
+      if (activeTradeRoomData?.status !== "negotiating") return;
+      if (button) { button.disabled = true; button.textContent = "..."; }
+      try {
+        const sentAt = Math.max(Date.now(), tradeChatLastAt + 1);
+        await addDoc(collection(db, "gpTrades", activeTradeRoomId, "chatMessages"), {
+          sender: currentUser,
+          senderKey: normalizeKey(currentUser),
+          text: message,
+          createdAt: serverTimestamp(),
+          createdAtClient: sentAt
+        });
+        if (input) input.value = "";
+      } catch (err) {
+        const info = document.getElementById("tradeChatQuotaInfo");
+        if (info) info.textContent = `Mesaj gönderilemedi: ${err?.message || "Firestore izinlerini kontrol et"}`;
+      } finally {
+        if (button) { button.disabled = false; button.textContent = "Gönder"; }
+        input?.focus();
+      }
+    }
+
     function openTradeRoom(trade, showRoom = true) {
       if (!trade?.id) return;
       const isNewRoom = activeTradeRoomId !== trade.id;
       if (isNewRoom) {
         if (unsubscribeActiveTradeRoom) { unsubscribeActiveTradeRoom(); unsubscribeActiveTradeRoom = null; }
+        stopTradeChatListener();
+        tradeChatOpen = false;
+        tradeChatMessages = [];
+        tradeChatLastAt = 0;
+        tradeChatSeenIds = new Set();
+        document.getElementById("tradeChatDrawer")?.classList.add("hidden");
         if (tradeDraftTimer) { clearTimeout(tradeDraftTimer); tradeDraftTimer = null; }
         activeTradeRoomId = trade.id;
         activeTradeRoomData = trade;
@@ -4530,6 +4964,9 @@
 
     function closeTradeRoomView() {
       tradeRoomVisible = false;
+      tradeChatOpen = false;
+      stopTradeChatListener();
+      document.getElementById("tradeChatDrawer")?.classList.add("hidden");
       const overlay = document.getElementById("tradeRoomOverlay");
       overlay?.classList.add("hidden");
       overlay?.setAttribute("aria-hidden", "true");
@@ -4544,6 +4981,9 @@
       }
       if (tradeDraftTimer) { clearTimeout(tradeDraftTimer); tradeDraftTimer = null; }
       if (unsubscribeActiveTradeRoom) { unsubscribeActiveTradeRoom(); unsubscribeActiveTradeRoom = null; }
+      stopTradeChatListener();
+      tradeChatOpen = false;
+      document.getElementById("tradeChatDrawer")?.classList.add("hidden");
       activeTradeRoomId = null;
       activeTradeRoomData = null;
       tradeDraftGp = 0;
@@ -4900,7 +5340,7 @@
       if (!gpProductsList) return;
       const discountRate = currentUser && !isAdmin ? getMembershipDiscountRate() : 0;
       const isPro = discountRate > 0;
-      const items = gpProducts.map((item) => {
+      const items = gpProducts.filter((item) => item.isArchived !== true && item.isActive !== false).map((item) => {
         const basePrice = normalizeGpNumber(item.priceGp, 0);
         const discounted = !!item.discounted;
         const discountPrice = normalizeGpNumber(item.discountPriceGp, basePrice);
@@ -4956,14 +5396,16 @@
         const finalPrice = item.discounted ? Math.max(0, normalizeGpNumber(item.discountPriceGp, basePrice)) : basePrice;
         const currentStock = item.stock !== undefined ? item.stock : 5;
         return `
-          <div class="gp-row">
+          <div class="gp-row" style="${(item.isArchived === true || item.isActive === false) ? 'opacity:.72;border-style:dashed;' : ''}">
             <div>
               <strong>${escapeHtml(item.title || 'Ürün')} ${item.isInventoryItem ? '🎒' : ''}</strong>
-              <div class="muted">${escapeHtml(formatGp(finalPrice))} | Stok: ${currentStock}</div>
+              <div class="muted">${escapeHtml(formatGp(finalPrice))} | Stok: ${currentStock} ${(item.isArchived === true || item.isActive === false) ? '· Mağazadan kaldırıldı (arşivde)' : ''}</div>
             </div>
             <div class="gp-toolbar">
               <button class="img-action-btn" type="button" data-gp-edit="${escapeHtml(item.id)}">Düzenle</button>
-              <button class="img-action-btn" type="button" data-gp-delete="${escapeHtml(item.id)}">Sil</button>
+              ${(item.isArchived === true || item.isActive === false)
+                ? `<button class="img-action-btn" type="button" data-gp-restore="${escapeHtml(item.id)}">Mağazaya Ekle</button>`
+                : `<button class="img-action-btn" type="button" data-gp-delete="${escapeHtml(item.id)}">Mağazadan Kaldır</button>`}
             </div>
           </div>
         `;
@@ -4975,6 +5417,9 @@
       }));
       gpAdminProductsList.querySelectorAll('[data-gp-delete]').forEach((btn) => btn.addEventListener('click', () => {
         void deleteGpProduct(btn.dataset.gpDelete);
+      }));
+      gpAdminProductsList.querySelectorAll('[data-gp-restore]').forEach((btn) => btn.addEventListener('click', () => {
+        void restoreGpProduct(btn.dataset.gpRestore);
       }));
     }
 
@@ -5070,6 +5515,8 @@
           imageDataUrl: gpProductImageDataUrl || '',
           imageName: gpProductImageName || '',
           imageMime: gpProductImageMime || 'image/jpeg',
+          isArchived: false,
+          archivedAt: null,
           updatedAt: serverTimestamp(),
           updatedAtClient: Date.now(),
           updatedBy: currentUser,
@@ -5139,8 +5586,35 @@
     }
 
     async function deleteGpProduct(id) {
-      if (!isAdmin || !id || !confirm('Ürün silinsin mi?')) return;
-      await deleteDoc(doc(db, 'gpProducts', id));
+      if (!isAdmin || !id || !confirm('Ürün mağazadan kaldırılsın mı? Kayıt arşivde korunur ve admin hediye listesinden verilebilir.')) return;
+      try {
+        await updateDoc(doc(db, 'gpProducts', id), {
+          isArchived: true,
+          archivedAt: serverTimestamp(),
+          archivedAtClient: Date.now(),
+          archivedBy: currentUser,
+          updatedAt: serverTimestamp(),
+          updatedAtClient: Date.now()
+        });
+      } catch (err) {
+        setGpAdminProductMsg(err?.message || 'Ürün mağazadan kaldırılamadı.');
+      }
+    }
+
+    async function restoreGpProduct(id) {
+      if (!isAdmin || !id) return;
+      try {
+        await updateDoc(doc(db, 'gpProducts', id), {
+          isArchived: false,
+          archivedAt: null,
+          archivedAtClient: null,
+          updatedAt: serverTimestamp(),
+          updatedAtClient: Date.now()
+        });
+        setGpAdminProductMsg('Ürün tekrar mağazaya eklendi.', true);
+      } catch (err) {
+        setGpAdminProductMsg(err?.message || 'Ürün geri eklenemedi.');
+      }
     }
 
     async function adjustUserGp(mode) {
@@ -5348,7 +5822,9 @@
 
           const productRef = doc(db, 'gpProducts', item.id);
           const productSnap = await tx.get(productRef);
-          const pData = productSnap.exists() ? productSnap.data() : item;
+          if (!productSnap.exists()) throw new Error('Ürün artık mağazada bulunmuyor.');
+          const pData = productSnap.data();
+          if (pData.isArchived === true || pData.isActive === false) throw new Error('Bu ürün mağazadan kaldırılmış.');
           const latestStock = pData.stock !== undefined ? pData.stock : 5;
           if (latestStock <= 0) throw new Error('Bu ürünün stoku tükendi!');
 
@@ -5714,6 +6190,9 @@
       stopGpPanelListeners();
       if (tradeDraftTimer) { clearTimeout(tradeDraftTimer); tradeDraftTimer = null; }
       if (unsubscribeActiveTradeRoom) { unsubscribeActiveTradeRoom(); unsubscribeActiveTradeRoom = null; }
+      stopTradeChatListener();
+      tradeChatOpen = false;
+      document.getElementById("tradeChatDrawer")?.classList.add("hidden");
       activeTradeRoomId = null;
       activeTradeRoomData = null;
       tradeDraftGp = 0;
@@ -6650,6 +7129,26 @@
     workshopOpenNewTabBtn?.addEventListener("click", () => openWorkshopGameInNewTab());
     workshopCloseGameBtn?.addEventListener("click", () => void closeWorkshopGame());
     logoutBtn.addEventListener("click", logout);
+    document.getElementById("adminGiftGpBtn")?.addEventListener("click", () => void grantAdminGp());
+    document.getElementById("adminGiftProBtn")?.addEventListener("click", () => void grantAdminMembership("pro"));
+    document.getElementById("adminGiftUltraBtn")?.addEventListener("click", () => void grantAdminMembership("ultra"));
+    document.getElementById("adminGiftRefreshBtn")?.addEventListener("click", () => void loadAdminGiftCenter(true));
+    const adminGiftTargetInput = document.getElementById("adminGiftTargetUser");
+    adminGiftTargetInput?.addEventListener("input", () => {
+      const name = String(adminGiftTargetInput.value || "").trim();
+      const info = document.getElementById("adminGiftTargetInfo");
+      if (info) info.textContent = name ? `Hedef kullanıcı: ${name}` : "Kullanıcı adı girilmedi. Hesap adı 3–32 karakter olmalı.";
+    });
+    const adminGiftProductSearch = document.getElementById("adminGiftProductSearch");
+    adminGiftProductSearch?.addEventListener("focus", () => setAdminGiftProductPicker(true));
+    adminGiftProductSearch?.addEventListener("click", () => setAdminGiftProductPicker(true));
+    adminGiftProductSearch?.addEventListener("input", () => {
+      setAdminGiftProductPicker(true);
+      renderAdminGiftProducts();
+    });
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".admin-gift-product-picker")) setAdminGiftProductPicker(false);
+    });
 
     proChatBtn?.addEventListener("click", () => { proChatPanel.classList.remove("hidden"); listenProChat(); });
     proChatCloseBtn?.addEventListener("click", () => { proChatPanel.classList.add("hidden"); if (unsubscribeProChat) unsubscribeProChat(); });
@@ -6690,6 +7189,12 @@
 
     document.getElementById("sendTradeBtn")?.addEventListener("click", createTradeOffer);
     document.getElementById("tradeRoomCloseBtn")?.addEventListener("click", closeTradeRoomView);
+    document.getElementById("tradeChatToggleBtn")?.addEventListener("click", toggleTradeChat);
+    document.getElementById("tradeChatCloseBtn")?.addEventListener("click", toggleTradeChat);
+    document.getElementById("tradeChatSendBtn")?.addEventListener("click", sendTradeChatMessage);
+    document.getElementById("tradeChatInput")?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendTradeChatMessage(); }
+    });
     document.getElementById("tradeRoomConfirmBtn")?.addEventListener("click", () => void acceptLiveTradeOffer());
     document.getElementById("tradeRoomCancelBtn")?.addEventListener("click", async () => {
       if (!activeTradeRoomId) return;
