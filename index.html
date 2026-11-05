@@ -2112,7 +2112,7 @@
                 <div class="gp-box" style="grid-column: 1 / -1;">
                   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
                     <div class="gp-box-title" id="gpStoreSectionTitle">🛒 GloGeGo Mağazası (GP & UP)</div>
-                    <div class="muted">Ürünlerin hem Satış Fiyatı (GP/UP) hem de Takas Değeri (GP) üzerinde yazar.</div>
+                    <div class="muted">Ürünleri ve kutuları GP veya özel UP ile satın alabilirsin.</div>
                   </div>
                   <div class="store-subtabs" role="tablist">
                     <button type="button" id="storeTabProductsBtn" class="store-subtab active" data-store-tab="product">🛍️ Ürünler</button>
@@ -2157,7 +2157,7 @@
                     <div class="gp-box-title" style="color:#6ea8fe;">🎒 Envanterim</div>
                     <span id="myInventorySummaryTxt" class="muted">0 eşya</span>
                   </div>
-                  <div class="muted">Aldığın ürünler ve kutular (Satış ve Takas GP değerleriyle birlikte görünür).</div>
+                  <div class="muted">Aldığın ürünler ve kutular burada listelenir.</div>
                   <div class="inv-filter-bar">
                     <input id="invSearchInput" class="gp-input" type="search" placeholder="🔎 Envanterde ürün veya kutu ara..." aria-label="Envanterde ara" />
                     <select id="invCategoryFilter" class="gp-input" style="width:auto; min-width:125px;" aria-label="Envanter filtrele">
@@ -2193,7 +2193,7 @@
                 <div class="gp-admin-create">
                   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
                     <div class="gp-box-title" id="gpAdminFormTitle">🛍️ Ürün veya 🎁 Kutu Ekle / Düzenle</div>
-                    <span class="muted">GP veya özel UP para birimiyle satışa koyabilir, Takas GP değerini belirleyebilirsin.</span>
+                    <span class="muted">GP veya özel UP para birimiyle satışa koyabilirsin.</span>
                   </div>
                   <div class="store-subtabs" role="tablist">
                     <button type="button" id="adminTabProductBtn" class="store-subtab active" data-admin-item-type="product">🛍️ Ürün Ekleme Bölümü</button>
@@ -2209,7 +2209,6 @@
                     </select>
                     <input id="gpProductPriceInput" class="gp-input" type="number" min="0" placeholder="Satış Fiyatı (GP veya UP)" />
                     <input id="gpProductDiscountInput" class="gp-input" type="number" min="0" placeholder="İndirimli Satış Fiyatı" />
-                    <input id="gpProductTradeValueInput" class="gp-input" type="number" min="0" placeholder="🤝 Takas Değeri (Takas GP)" title="Takas odasında net değer hesaplayıcı bu Takas GP değerini kullanır" />
                     <input id="gpProductStockInput" class="gp-input" type="number" placeholder="Stok (Boşsa 5)" />
                   </div>
                   <label style="display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer;">
@@ -2221,7 +2220,7 @@
                   <!-- Kutu İçeriği Ayarları (Kutu seçildiğinde görünür) -->
                   <div id="gpBoxSettingsFields" class="hidden" style="border:1px solid rgba(245,158,11,.45); background:#171222; border-radius:14px; padding:12px; display:grid; gap:10px;">
                     <div style="font-size:14px; font-weight:900; color:#fde047;">🎁 Kutu Ödül Havuzu Ayarları</div>
-                    <div class="muted">Kullanıcı bu kutuyu envanterinde açtığında aşağıdaki ödüllerden rastgele biri çıkar (Her satıra bir ödül: <code>Ödül Adı | TakasGP | KodVeyaAçıklama</code> şeklinde yazabilir veya virgülle ayırabilirsin. Örn: <code>Elmas Kılıç | 250 | ELMAS-KILIC-01</code>).</div>
+                    <div class="muted">Kullanıcı bu kutuyu envanterinde açtığında aşağıdaki ödüllerden rastgele biri çıkar (Her satıra bir ödül: <code>Ödül Adı | FiyatGP | KodVeyaAçıklama</code> şeklinde yazabilirsin. Örn: <code>Elmas Kılıç | 250 | ELMAS-KILIC-01</code>).</div>
                     <textarea id="gpBoxRewardsInput" class="gp-textarea" style="min-height:80px;" placeholder="Örn:&#10;Altın Rozet | 150 | Özel Altın Rozet Kazandın!&#10;VIP Kodu | 400 | VIP-2026-X9&#10;Efsanevi Pelerin | 600 | Efsanevi Pelerin Envanterine Eklendi!"></textarea>
                   </div>
 
@@ -2261,19 +2260,6 @@
                     <span id="gpImageHint" class="gp-status"></span>
                   </div>
                   <div id="gpAdminProductMsg" class="msg"></div>
-                </div>
-
-                <!-- Önceki / Mevcut Ürünlere Hızlı Takas GP Değeri Atama -->
-                <div class="gp-box" style="border-color:rgba(16,185,129,.35);">
-                  <div class="gp-box-title" style="color:#6ee7b7;">🤝 Önceki Ürünlere Takas GP Değeri Yaz</div>
-                  <div class="muted">Daha önce mağazaya eklenmiş veya satılmış ürünlerin Takas GP değerini buradan anında güncelleyebilirsin (envanterdeki eski eşyalara da yansır).</div>
-                  <select id="gpQuickTradeProductSelect" class="gp-input" aria-label="Takas değeri güncellenecek ürün">
-                    <option value="">Ürün seçin...</option>
-                  </select>
-                  <div style="display:flex; gap:8px;">
-                    <input id="gpQuickTradeValueInput" class="gp-input" type="number" min="0" step="1" placeholder="Yeni Takas GP Değeri" />
-                    <button id="gpQuickTradeSaveBtn" class="btn" type="button" style="white-space:nowrap;">Değeri Kaydet</button>
-                  </div>
                 </div>
 
                 <div class="gp-box">
@@ -2577,23 +2563,42 @@
             </div>
           </div>
 
-          <!-- ADMİN PANEL AYARLARIN EN ALTI: YENİ MODEL EKLEME VE TICKET AYARLARI -->
+          <!-- ADMİN PANEL AYARLARIN EN ALTI: YENİ MODEL EKLEME, DEVRE DIŞI BIRAKMA VE PROMO KOD AYARLARI -->
           <div style="border-top:1px solid var(--line); padding-top:12px; display:grid; gap:8px;">
-            <strong style="font-size:14px; color:#a78bfa;">🤖 Admin · Yeni Model Ekle & Ticket / GP Ayarla</strong>
-            <div class="muted">Buradan yeni model ekleyebilir, hangi ticket gerektiğini (Standart, Plus, PRO, ULTRA) ve GP ile açma bedelini belirleyebilirsin.</div>
+            <strong style="font-size:14px; color:#a78bfa;">🤖 Admin · Model Ekle / Düzenle / Kullanım Dışı Yap</strong>
+            <div class="muted">Yeni model ekleyebilir veya mevcut modelleri düzenleyebilirsin. GP fiyatını girdiğinde otomatik kilitli olur (GP veya Ticket ile açılır). Modelleri kullanım dışı yapıp sadece belirli kişilere izin verebilir veya tek kullanımlık promosyon kodu tanımlayabilirsin.</div>
+            <input type="hidden" id="adminEditingModelIdInput" value="" />
             <input id="adminNewModelNameInput" class="gp-input" type="text" placeholder="Model adı (Örn: Glo 6.0 Max)" />
             <div class="admin-gift-two">
               <select id="adminNewModelTierSelect" class="gp-input">
-                <option value="standard">Standart (Herkese Açık)</option>
-                <option value="plus">Plus Ticket Gerekli</option>
-                <option value="pro">PRO / ULTRA Ticket Gerekli</option>
-                <option value="ultra">Sadece ULTRA Ticket Gerekli</option>
+                <option value="standard">Standart (GP &gt; 0 ise GP ile Açılır, 0 ise Ücretsiz)</option>
+                <option value="plus">Plus Ticket veya GP Gerekli</option>
+                <option value="pro">PRO / ULTRA Ticket veya GP Gerekli</option>
+                <option value="ultra">Sadece ULTRA Ticket veya GP Gerekli</option>
+                <option value="promo_only">🎟 Sadece Promosyon Kodu ile Aç</option>
               </select>
               <input id="adminNewModelGpCostInput" class="gp-input" type="number" min="0" step="1" value="250" placeholder="GP ile Açma Fiyatı (0=Kapalı)" />
             </div>
             <input id="adminNewModelDescInput" class="gp-input" type="text" placeholder="Kısa açıklama (Örn: Ultra hızlı akıl yürütme modeli)" />
-            <button id="adminAddModelBtn" class="btn" type="button" style="background:linear-gradient(135deg,#6d28d9,#9333ea);">➕ Yeni Modeli Kaydet</button>
-            <div id="adminCustomModelsList" class="gp-admin-list" style="max-height:180px;"></div>
+            <div style="border:1px solid rgba(167,139,250,.3); background:#0c1220; border-radius:12px; padding:10px; display:grid; gap:8px;">
+              <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#e9d5ff; font-weight:800; cursor:pointer;">
+                <input type="checkbox" id="adminNewModelPromoOnlyChk" style="width:17px; height:17px;" />
+                🎟 Sadece Promosyon Kodu ile Aç (Tek Kişilik / 1 Hak)
+              </label>
+              <input id="adminNewModelPromoCodeInput" class="gp-input" type="text" placeholder="Model açma promosyon kodu gir (Tek kullanımlık 1 kişi hak)" />
+            </div>
+            <div style="border:1px solid rgba(248,113,113,.35); background:#181019; border-radius:12px; padding:10px; display:grid; gap:8px;">
+              <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#fca5a5; font-weight:800; cursor:pointer;">
+                <input type="checkbox" id="adminNewModelDisabledChk" style="width:17px; height:17px;" />
+                🚫 Modeli Kullanım Dışı Yap (Sadece Belirli Kişiler Kullanabilir)
+              </label>
+              <input id="adminNewModelAllowedUsersInput" class="gp-input" type="text" placeholder="İzinli kullanıcı adları (virgülle ayır: ahmet, mehmet)" />
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="adminAddModelBtn" class="btn" type="button" style="flex:1; background:linear-gradient(135deg,#6d28d9,#9333ea);">➕ Yeni Modeli Kaydet</button>
+              <button id="adminClearModelFormBtn" class="btn secondary" type="button">Temizle</button>
+            </div>
+            <div id="adminCustomModelsList" class="gp-admin-list" style="max-height:280px;"></div>
           </div>
         </section>
 
@@ -2706,14 +2711,6 @@
         </div>
       </header>
       <div id="tradeRoomNotice" class="trade-room-notice" role="status">Teklifler canlı olarak eşitleniyor.</div>
-      <!-- NET DEĞER HESAPLAYICI (60 GP) -->
-      <div class="trade-calc-bar">
-        <div class="trade-calc-info">
-          <div class="trade-calc-title">⚖️ Net Takas Değer Hesaplayıcı (60 GP)</div>
-          <div id="tradeCalcResultText" class="trade-calc-result">Her takas için 60 GP vererek ürünlerin Takas GP değerlerine göre kazıklanıyor musun yoksa iyi teklif mi anında analiz et.</div>
-        </div>
-        <button id="tradeCalcRunBtn" class="trade-calc-btn" type="button">🧮 60 GP ile Net Değer Hesapla</button>
-      </div>
       <div class="trade-room-columns">
         <section class="trade-room-side">
           <h3>🎒 Benim Ürünlerim — <span id="tradeRoomMyName">Oyuncu</span></h3>
@@ -3985,11 +3982,33 @@
       return merged;
     }
 
+    function parseAllowedUsersList(raw) {
+      if (Array.isArray(raw)) return raw.map((u) => normalizeKey(u)).filter(Boolean);
+      return String(raw || "").split(/[,;\n]+/).map((u) => normalizeKey(u)).filter(Boolean);
+    }
+
+    function isUserAllowedForDisabledModel(model) {
+      if (!model || !model.disabled) return true;
+      if (isAdmin) return true;
+      const myKey = normalizeKey(currentUser || "");
+      if (!myKey) return false;
+      const allowed = parseAllowedUsersList(model.allowedUsers);
+      return allowed.includes(myKey);
+    }
+
     function isModelUnlockedForCurrentUser(model) {
       if (!model) return false;
       if (isAdmin) return true;
-      if (model.tier === "standard") return true;
+      if (model.disabled) {
+        if (!isUserAllowedForDisabledModel(model)) return false;
+        return true;
+      }
       if (Array.isArray(unlockedModels) && (unlockedModels.includes(model.id) || unlockedModels.includes(model.name))) return true;
+      if (model.promoOnly || model.tier === "promo_only") return false;
+      const gpCost = Math.max(0, normalizeGpNumber(model.gpCost, 0));
+      if (model.tier === "standard") {
+        return gpCost <= 0;
+      }
       if (model.tier === "plus" && (isPlusActive(currentPlus) || isProActive(currentPro) || isUltraActive(currentUltra))) return true;
       if (model.tier === "pro" && (isProActive(currentPro) || isUltraActive(currentUltra))) return true;
       if (model.tier === "ultra" && isUltraActive(currentUltra)) return true;
@@ -4000,7 +4019,8 @@
       const all = getAllModels();
       const found = all.find((m) => m.id === selectedModelId || m.name === selectedModelId);
       if (found && isModelUnlockedForCurrentUser(found)) return found;
-      const fallback = all[0] || DEFAULT_MODELS[0];
+      const unlockedFallback = all.find((m) => isModelUnlockedForCurrentUser(m));
+      const fallback = unlockedFallback || all[0] || DEFAULT_MODELS[0];
       selectedModelId = fallback.id;
       return fallback;
     }
@@ -4009,6 +4029,8 @@
       const model = getCurrentModelObject();
       const nameEl = document.getElementById("activeModelNameTxt");
       if (nameEl && model) nameEl.textContent = model.name;
+      const chipEl = document.getElementById("activeModelChip");
+      if (chipEl) chipEl.classList.toggle("hidden", !!isAdmin);
       populateModelSelectDropdowns();
     }
 
@@ -4562,7 +4584,8 @@
       const cancelled = !!docData.cancelled;
       const animClass = isNew ? "message-animated" : "";
 
-      const modelBadgeHtml = docData.modelName
+      const isSenderAdmin = normalizeKey(docData.sender || "") === normalizeKey(ADMIN_USER);
+      const modelBadgeHtml = (!isSenderAdmin && docData.modelName)
         ? `<span class="msg-model-badge" title="Kullanılan Model">🤖 ${escapeHtml(docData.modelName)}${docData.actionKind && isAdmin ? ` · ${escapeHtml(docData.actionKind)}` : ""}</span>`
         : "";
       const metaLeftHtml = `<span style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;"><strong>${escapeHtml(docData.sender || "")}</strong>${modelBadgeHtml}</span>`;
@@ -4789,8 +4812,8 @@
           sender: currentUser,
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "file",
-          modelId: activeModel.id,
-          modelName: activeModel.name,
+          modelId: isAdmin ? "" : activeModel.id,
+          modelName: isAdmin ? "" : activeModel.name,
           actionKind: "Dosya Gönderimi",
           text: `Dosya: ${file.name}`,
           fileName: file.name || "dosya",
@@ -4861,7 +4884,7 @@
         const ref = await addDoc(collection(db, "messages"), {
           threadId, sender: currentUser, recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "mode_request", mode, text: normalizedText, cancelled: false,
-          modelId: activeModel.id, modelName: activeModel.name,
+          modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name,
           actionKind: getModeLabel(mode),
           createdAt: serverTimestamp(), createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + 6 * 60 * 60 * 1000))
@@ -4892,7 +4915,7 @@
       try {
         await setDoc(messageRef, {
           threadId, sender: currentUser, recipient: isAdmin ? threadId : ADMIN_USER,
-          kind: "video", modelId: activeModel.id, modelName: activeModel.name, actionKind: "Video Gönderimi", text: file.name || "video", videoName: file.name || "video.mp4",
+          kind: "video", modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name, actionKind: "Video Gönderimi", text: file.name || "video", videoName: file.name || "video.mp4",
           videoMime: file.type || "video/mp4", videoSize: file.size, videoChunkCount: totalChunks,
           videoStatus: "uploading", createdAt: serverTimestamp(), createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + 6 * 60 * 60 * 1000))
@@ -4956,22 +4979,8 @@
       return 0;
     }
 
-    // ÜRÜN TAKAS GP DEĞERİ HESAPLAMA (Önceki GP ile satılan ürünlere admin takas değeri yazdığında anında yansır)
-    function getItemTradeGpValue(item) {
-      if (!item) return 0;
-      const matched = gpProducts.find((p) => p.id === item.productId || normalizeKey(p.title) === normalizeKey(item.title));
-      if (matched && matched.tradeValueGp !== undefined && Number.isFinite(Number(matched.tradeValueGp)) && Number(matched.tradeValueGp) >= 0) {
-        return Number(matched.tradeValueGp);
-      }
-      if (item.tradeValueGp !== undefined && Number.isFinite(Number(item.tradeValueGp)) && Number(item.tradeValueGp) >= 0) {
-        return Number(item.tradeValueGp);
-      }
-      return getItemSaleValue(item);
-    }
-
-    // Geriye dönük uyumluluk: getItemGpValue takas değerini döndürür
     function getItemGpValue(item) {
-      return getItemTradeGpValue(item);
+      return getItemSaleValue(item);
     }
 
     function clearGpMessages() {
@@ -5387,8 +5396,7 @@
         return true;
       });
 
-      const totalTradeVal = filteredInv.reduce((acc, it) => acc + getItemTradeGpValue(it), 0);
-      if (summaryEl) summaryEl.textContent = `${filteredInv.length} eşya · Toplam Takas Değeri: ${formatGp(totalTradeVal)}`;
+      if (summaryEl) summaryEl.textContent = `${filteredInv.length} eşya`;
 
       let displayEntries = [];
       if (invGroupingEnabled) {
@@ -5415,7 +5423,6 @@
 
       invBox.innerHTML = displayEntries.map(({ item, count }) => {
         const saleVal = getItemSaleValue(item);
-        const tradeVal = getItemTradeGpValue(item);
         const isBox = item.itemCategory === "box" || item.actionType === "box";
         const saleCurr = item.currency || "GP";
         return `
@@ -5427,8 +5434,7 @@
                 ${count > 1 ? `<span class="gp-badge box-badge">x${count} Adet</span>` : ""}
               </div>
               <div style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
-                <span class="gp-badge val">🏷️ Satış: ${formatPriceByCurrency(saleVal, saleCurr)}</span>
-                <span class="gp-badge trade-val">🤝 Takas: ${formatGp(tradeVal)}</span>
+                <span class="gp-badge val">🏷️ Fiyat: ${formatPriceByCurrency(saleVal, saleCurr)}</span>
                 <span class="muted">${isBox ? "Kutu" : (item.consumeOnUse !== false ? "Tek Kullanımlık" : "Kalıcı")}</span>
               </div>
               ${item.marketListed
@@ -5509,7 +5515,6 @@
               currency: "GP",
               priceGp: chosenReward.tradeValueGp || 150,
               basePriceGp: chosenReward.tradeValueGp || 150,
-              tradeValueGp: chosenReward.tradeValueGp || 150,
               imageDataUrl: item.imageDataUrl || "",
               consumeOnUse: true,
               actionType: "code",
@@ -5529,7 +5534,6 @@
           <div style="font-size:13px; color:#fde047; font-weight:800;">🎉 Kutudan Çıkan Eşya Envanterine Eklendi:</div>
           <div style="background:linear-gradient(145deg,#2e1065,#422006); border:1px solid #f59e0b; padding:16px; border-radius:14px; display:grid; gap:6px;">
             <div style="font-size:18px; font-weight:950; color:#fff;">✨ ${escapeHtml(chosenReward.title)}</div>
-            <div style="font-size:13px; color:#a7f3d0; font-weight:800;">🤝 Takas Değeri: ${formatGp(chosenReward.tradeValueGp || 150)}</div>
             <div style="font-size:13px; color:#e8ecf5; margin-top:4px;">${escapeHtml(chosenReward.rewardText || "")}</div>
           </div>
         `;
@@ -5834,8 +5838,7 @@
       const mySummary = document.getElementById("tradeRoomMySummary");
       if (!mySummary) return;
       const chosen = userInventory.filter((item) => item.marketListed !== true && tradeDraftItems.includes(item.id));
-      const totalItemTradeGp = chosen.reduce((sum, item) => sum + getItemTradeGpValue(item), 0);
-      mySummary.textContent = `Teklifin: ${formatGp(tradeDraftGp)} + ${chosen.length} ürün (Takas GP değeri: ${formatGp(totalItemTradeGp)})`;
+      mySummary.textContent = `Teklifin: ${formatGp(tradeDraftGp)} + ${chosen.length} ürün`;
     }
 
     function renderTradeRoom() {
@@ -5870,13 +5873,11 @@
       } else {
         myItemsEl.innerHTML = tradeableInventory.map((item) => {
           const saleV = getItemSaleValue(item);
-          const tradeV = getItemTradeGpValue(item);
           return `
           <div class="trade-room-item">
             <label><input type="checkbox" data-trade-room-item="${escapeHtml(item.id)}" ${tradeDraftItems.includes(item.id) ? "checked" : ""} ${myOffer.confirmed ? "disabled" : ""}/><strong>${escapeHtml(item.title || "Eşya")}</strong></label>
             <div style="display:flex; gap:5px; flex-wrap:wrap;">
-              <span class="gp-badge val">Satış: ${formatGp(saleV)}</span>
-              <span class="gp-badge trade-val">Takas: ${formatGp(tradeV)}</span>
+              <span class="gp-badge val">${formatGp(saleV)}</span>
             </div>
           </div>
         `;
@@ -5885,14 +5886,12 @@
 
       const otherItemsEl = document.getElementById("tradeRoomOtherItems");
       otherItemsEl.innerHTML = otherOffer.items.length ? otherOffer.items.map((item) => {
-        const tradeV = getItemTradeGpValue(item);
         const saleV = item.salePriceGp !== undefined ? item.salePriceGp : (item.priceGp || 0);
         return `
         <div class="trade-room-item">
           <strong>🎒 ${escapeHtml(item.title || "Eşya")}</strong>
           <div style="display:flex; gap:5px; flex-wrap:wrap;">
-            <span class="gp-badge val">Satış: ${formatGp(saleV)}</span>
-            <span class="gp-badge trade-val">Takas: ${formatGp(tradeV)}</span>
+            <span class="gp-badge val">${formatGp(saleV)}</span>
           </div>
         </div>
       `;
@@ -5954,8 +5953,7 @@
         productId: item.productId || "",
         title: item.title || "Eşya",
         salePriceGp: getItemSaleValue(item),
-        tradeValueGp: getItemTradeGpValue(item),
-        priceGp: getItemTradeGpValue(item)
+        priceGp: getItemSaleValue(item)
       }));
       try {
         await runTransaction(db, async (tx) => {
@@ -5985,77 +5983,6 @@
         return false;
       } finally {
         tradeSaveInFlight = false;
-      }
-    }
-
-    async function calculateTradeNetValueWith60Gp() {
-      const resultEl = document.getElementById("tradeCalcResultText");
-      const btn = document.getElementById("tradeCalcRunBtn");
-      if (!activeTradeRoomId || !activeTradeRoomData || !currentUser) return;
-      if (!checkUserQuotaOrBlock()) return;
-      const COST = 60;
-      if (currentGp < COST) {
-        if (resultEl) {
-          resultEl.textContent = `❌ Net değer hesaplayıcı için ${COST} GP gerekli. Mevcut bakiyen: ${formatGp(currentGp)}.`;
-          resultEl.style.color = "#f87171";
-        }
-        return;
-      }
-      if (btn) { btn.disabled = true; btn.textContent = "Hesaplanıyor..."; }
-      try {
-        const balanceRef = doc(db, "gpBalances", gpDocId(currentUser));
-        await runTransaction(db, async (tx) => {
-          const snap = await tx.get(balanceRef);
-          const cur = snap.exists() ? normalizeGpNumber(snap.data()?.gp, 0) : 0;
-          if (cur < COST) throw new Error(`Yetersiz GP! Net değer hesaplamak için 60 GP gerekiyor.`);
-          tx.set(balanceRef, {
-            username: currentUser,
-            usernameKey: normalizeKey(currentUser),
-            gp: cur - COST,
-            updatedAt: serverTimestamp(),
-            updatedAtClient: Date.now()
-          }, { merge: true });
-        });
-
-        const trade = activeTradeRoomData;
-        const myKey = normalizeKey(currentUser);
-        const fromKey = trade.fromKey || normalizeKey(trade.fromUser);
-        const toKey = trade.toKey || normalizeKey(trade.toUser);
-        const otherKey = myKey === fromKey ? toKey : fromKey;
-
-        const chosenMyItems = userInventory.filter((item) => item.marketListed !== true && tradeDraftItems.includes(item.id));
-        const myItemsTradeVal = chosenMyItems.reduce((sum, item) => sum + getItemTradeGpValue(item), 0);
-        const myTotalGiven = Math.max(0, normalizeGpNumber(tradeDraftGp, 0)) + myItemsTradeVal;
-
-        const otherOffer = getTradeOffer(trade, otherKey);
-        const otherItemsTradeVal = otherOffer.items.reduce((sum, item) => sum + getItemTradeGpValue(item), 0);
-        const otherTotalGiven = Math.max(0, normalizeGpNumber(otherOffer.gp, 0)) + otherItemsTradeVal;
-
-        const netDiff = otherTotalGiven - myTotalGiven;
-        let verdict = "";
-        let color = "#fde047";
-        if (netDiff > 0) {
-          verdict = `✅ İYİ TEKLİF (KÂRDASIN)! Net +${formatGp(netDiff)} takas değeri kazanıyorsun. (Senin verdiğin: ${formatGp(myTotalGiven)} vs Alacağın: ${formatGp(otherTotalGiven)})`;
-          color = "#4ade80";
-        } else if (netDiff < 0) {
-          verdict = `⚠️ DİKKAT: KAZIKLANIYORSUN / ZARARDASIN! Net -${formatGp(Math.abs(netDiff))} takas değeri kaybın var. (Senin verdiğin: ${formatGp(myTotalGiven)} vs Alacağın: ${formatGp(otherTotalGiven)})`;
-          color = "#f87171";
-        } else {
-          verdict = `⚖️ TAM DENGELİ TAKAS! İki tarafın da toplam takas değeri eşit (${formatGp(myTotalGiven)}).`;
-          color = "#93c5fd";
-        }
-        if (resultEl) {
-          resultEl.textContent = verdict;
-          resultEl.style.color = color;
-        }
-        setTradeRoomNotice("🧮 60 GP ödendi ve takas net değeri hesaplandı.", true);
-      } catch (err) {
-        if (resultEl) {
-          resultEl.textContent = err?.message || "Hesaplama yapılamadı.";
-          resultEl.style.color = "#f87171";
-        }
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = "🧮 60 GP ile Net Değer Hesapla"; }
       }
     }
 
@@ -6276,7 +6203,6 @@
         const discountPrice = normalizeGpNumber(item.discountPriceGp, basePrice);
         const finalPrice = discounted ? Math.max(0, discountPrice) : basePrice;
         const userFinalPrice = (isPro && currency === "GP") ? Math.floor(finalPrice * (1 - discountRate)) : finalPrice;
-        const tradeVal = getItemTradeGpValue(item);
         const shortDesc = String(item.description || "").trim().slice(0, 180) || "Açıklamayı ürün detayında aç.";
         const hasImage = !!item.imageDataUrl;
         const currentStock = item.stock !== undefined ? item.stock : 5;
@@ -6296,7 +6222,6 @@
                 <span class="gp-price" style="${currency === "UP" ? "color:#fde047;" : ""}">${escapeHtml(formatPriceByCurrency(userFinalPrice, currency))}</span>
                 ${((discounted && discountPrice !== basePrice) || (isPro && currency === "GP")) ? `<span class="gp-old-price">${escapeHtml(formatPriceByCurrency(finalPrice === userFinalPrice && discounted ? basePrice : finalPrice, currency))}</span>` : ''}
                 ${currency === "UP" ? `<span class="gp-badge up-badge">💎 Özel UP</span>` : ""}
-                <span class="gp-badge trade-val">🤝 Takas: ${escapeHtml(formatGp(tradeVal))}</span>
               </div>
               <div class="gp-product-actions">
                 <button class="img-action-btn" type="button" data-gp-open="${escapeHtml(item.id)}">Göz At</button>
@@ -6323,28 +6248,18 @@
 
     function renderGpAdminProducts() {
       if (!gpAdminProductsList || !isAdmin) return;
-      const quickSel = document.getElementById("gpQuickTradeProductSelect");
-      if (quickSel) {
-        const prev = quickSel.value;
-        quickSel.innerHTML = `<option value="">Ürün veya Kutu seçin...</option>` + gpProducts.map((item) => {
-          const tv = getItemTradeGpValue(item);
-          return `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title || "Ürün")} (Mevcut Takas: ${formatGp(tv)})</option>`;
-        }).join("");
-        if (prev && gpProducts.some((p) => p.id === prev)) quickSel.value = prev;
-      }
 
       const rows = gpProducts.map((item) => {
         const currency = String(item.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
         const isBox = item.itemCategory === "box";
         const basePrice = normalizeGpNumber(item.priceGp, 0);
         const finalPrice = item.discounted ? Math.max(0, normalizeGpNumber(item.discountPriceGp, basePrice)) : basePrice;
-        const tradeVal = getItemTradeGpValue(item);
         const currentStock = item.stock !== undefined ? item.stock : 5;
         return `
           <div class="gp-row" style="${(item.isArchived === true || item.isActive === false) ? 'opacity:.72;border-style:dashed;' : ''}">
             <div>
               <strong>${isBox ? '🎁 [KUTU]' : '🛍️ [ÜRÜN]'} ${escapeHtml(item.title || 'Ürün')} ${item.isInventoryItem || isBox ? '🎒' : ''}</strong>
-              <div class="muted">Satış: ${escapeHtml(formatPriceByCurrency(finalPrice, currency))} | 🤝 Takas Değeri: ${escapeHtml(formatGp(tradeVal))} | Stok: ${currentStock} ${(item.isArchived === true || item.isActive === false) ? '· Mağazadan kaldırıldı (arşivde)' : ''}</div>
+              <div class="muted">Satış: ${escapeHtml(formatPriceByCurrency(finalPrice, currency))} | Stok: ${currentStock} ${(item.isArchived === true || item.isActive === false) ? '· Mağazadan kaldırıldı (arşivde)' : ''}</div>
             </div>
             <div class="gp-toolbar">
               <button class="img-action-btn" type="button" data-gp-edit="${escapeHtml(item.id)}">Düzenle</button>
@@ -6424,11 +6339,9 @@
       const discountRate = currentUser && !isAdmin ? getMembershipDiscountRate() : 0;
       const isPro = discountRate > 0;
       const userFinalPrice = (isPro && currency === "GP") ? Math.floor(finalPrice * (1 - discountRate)) : finalPrice;
-      const tradeVal = getItemTradeGpValue(item);
 
       gpModalMeta.innerHTML = `
         <span class="gp-badge ${currency === "UP" ? "up-badge" : ""}">Satış Fiyatı: ${escapeHtml(formatPriceByCurrency(userFinalPrice, currency))}</span>
-        <span class="gp-badge trade-val">🤝 Takas Değeri: ${escapeHtml(formatGp(tradeVal))}</span>
         <span class="gp-badge">Stok: ${currentStock}</span>
         ${item.isInventoryItem || isBox ? `<span class="gp-badge discount">🎒 Envantere Eklenecek</span>` : ""}
       `;
@@ -6472,11 +6385,6 @@
       const priceGp = normalizeGpNumber(gpProductPriceInput?.value, -1);
       const discountPriceGp = normalizeGpNumber(gpProductDiscountInput?.value, priceGp);
       const discounted = !!gpProductDiscountedInput?.checked;
-      const effectiveSalePrice = discounted ? discountPriceGp : priceGp;
-      const tradeValRaw = document.getElementById("gpProductTradeValueInput")?.value;
-      const tradeValueGp = (tradeValRaw !== undefined && String(tradeValRaw).trim() !== "")
-        ? Math.max(0, normalizeGpNumber(tradeValRaw, effectiveSalePrice))
-        : Math.max(0, effectiveSalePrice);
       const stockRaw = parseInt(gpProductStockInput?.value);
       const stock = isNaN(stockRaw) ? 5 : stockRaw;
 
@@ -6495,7 +6403,6 @@
           title, description, itemCategory, currency,
           priceGp, discounted,
           discountPriceGp: discounted ? discountPriceGp : priceGp,
-          tradeValueGp,
           boxRewards,
           stock,
           isInventoryItem,
@@ -6534,8 +6441,6 @@
       if (gpProductTitleInput) gpProductTitleInput.value = '';
       if (gpProductPriceInput) gpProductPriceInput.value = '';
       if (gpProductDiscountInput) gpProductDiscountInput.value = '';
-      const tvInput = document.getElementById("gpProductTradeValueInput");
-      if (tvInput) tvInput.value = '';
       const currInput = document.getElementById("gpProductCurrencyInput");
       if (currInput) currInput.value = 'GP';
       const boxRewInput = document.getElementById("gpBoxRewardsInput");
@@ -6565,8 +6470,6 @@
       if (currInput) currInput.value = String(item.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
       if (gpProductPriceInput) gpProductPriceInput.value = String(normalizeGpNumber(item.priceGp, 0));
       if (gpProductDiscountInput) gpProductDiscountInput.value = String(normalizeGpNumber(item.discountPriceGp, 0));
-      const tvInput = document.getElementById("gpProductTradeValueInput");
-      if (tvInput) tvInput.value = String(getItemTradeGpValue(item));
       const boxRewInput = document.getElementById("gpBoxRewardsInput");
       if (boxRewInput) boxRewInput.value = item.boxRewards || '';
       if (gpProductDiscountedInput) gpProductDiscountedInput.checked = !!item.discounted;
@@ -6896,9 +6799,6 @@
           tx.set(productRef, { stock: latestStock - 1 }, { merge: true });
 
           if (pData.isInventoryItem || pData.itemCategory === "box") {
-            const tradeVal = pData.tradeValueGp !== undefined && Number.isFinite(Number(pData.tradeValueGp))
-              ? Number(pData.tradeValueGp)
-              : finalPrice;
             tx.set(doc(collection(db, "gpInventory")), {
               owner: currentUser,
               ownerKey: normalizeKey(currentUser),
@@ -6908,7 +6808,6 @@
               currency,
               priceGp: finalPrice,
               basePriceGp: basePrice,
-              tradeValueGp: tradeVal,
               boxRewards: pData.boxRewards || "",
               imageDataUrl: pData.imageDataUrl || "",
               consumeOnUse: pData.consumeOnUse !== false,
@@ -6999,35 +6898,50 @@
       const currentObj = getCurrentModelObject();
 
       const groups = [
-        { key: "standard", title: "⚡ Standart Modeller", items: all.filter((m) => (m.tier || "standard") === "standard") },
-        { key: "plus", title: "✨ Plus Modeller", items: all.filter((m) => m.tier === "plus") },
-        { key: "pro", title: "👑 PRO / ULTRA Modelleri", items: all.filter((m) => m.tier === "pro" || m.tier === "ultra") }
+        { key: "standard", title: "⚡ Standart Modeller", items: all.filter((m) => (m.tier || "standard") === "standard" && !m.promoOnly) },
+        { key: "plus", title: "✨ Plus Modeller", items: all.filter((m) => m.tier === "plus" && !m.promoOnly) },
+        { key: "pro", title: "👑 PRO / ULTRA Modelleri", items: all.filter((m) => (m.tier === "pro" || m.tier === "ultra") && !m.promoOnly) },
+        { key: "promo_only", title: "🎟 Özel / Promosyon Kodlu Modeller", items: all.filter((m) => m.tier === "promo_only" || m.promoOnly) }
       ];
 
       listEl.innerHTML = groups.map((g) => {
         if (!g.items.length) return "";
         const rowsHtml = g.items.map((m) => {
+          const isDisabled = !!m.disabled;
+          const allowedForDisabled = isUserAllowedForDisabledModel(m);
           const unlocked = isModelUnlockedForCurrentUser(m);
-          const isSelected = currentObj && currentObj.id === m.id;
+          const isSelected = currentObj && currentObj.id === m.id && unlocked;
           const gpCost = Math.max(0, normalizeGpNumber(m.gpCost, 0));
-          const tierLabel = m.tier === "ultra" ? "ULTRA" : (m.tier === "pro" ? "PRO / ULTRA" : (m.tier === "plus" ? "PLUS" : "STANDART"));
-          const tierClass = m.tier === "ultra" ? "ultra" : (m.tier === "pro" ? "pro" : (m.tier === "plus" ? "plus" : ""));
+          const isPromoOnly = !!(m.promoOnly || m.tier === "promo_only");
+          const tierLabel = isDisabled
+            ? (allowedForDisabled ? "ÖZEL İZİNLİ" : "KULLANIM DIŞI")
+            : (isPromoOnly ? "PROMO KODLU" : (m.tier === "ultra" ? "ULTRA" : (m.tier === "pro" ? "PRO / ULTRA" : (m.tier === "plus" ? "PLUS" : (gpCost > 0 ? `${gpCost} GP` : "STANDART")))));
+          const tierClass = isPromoOnly ? "ultra" : (m.tier === "ultra" ? "ultra" : (m.tier === "pro" ? "pro" : (m.tier === "plus" ? "plus" : "")));
+
+          let actionHtml = "";
+          if (isDisabled && !allowedForDisabled) {
+            actionHtml = `<span class="gp-badge" style="background:#3a1a1a; border-color:#7b3434; color:#fca5a5;">🚫 Kullanım Dışı (Sadece İzinli Kişiler)</span>`;
+          } else if (unlocked) {
+            actionHtml = `<button type="button" class="btn ${isSelected ? "secondary" : ""}" style="padding:7px 12px; font-size:12px;" data-select-model="${escapeHtml(m.id)}">${isSelected ? "✓ Seçili" : "Modeli Seç"}</button>`;
+          } else if (isPromoOnly) {
+            actionHtml = `<span class="gp-badge" style="background:#2e1065; border-color:#a855f7; color:#e9d5ff;">🎟 Sadece Promosyon Kodu ile Açılır</span>`;
+          } else if (gpCost > 0) {
+            actionHtml = `<button type="button" class="btn warn" style="padding:7px 10px; font-size:11px;" data-unlock-model-gp="${escapeHtml(m.id)}">🔓 ${formatGp(gpCost)} ile Aç</button>`;
+          } else {
+            actionHtml = `<span class="muted">Ticket Gerekli</span>`;
+          }
 
           return `
-            <div class="model-card-row ${isSelected ? "selected" : ""}">
+            <div class="model-card-row ${isSelected ? "selected" : ""}" style="${isDisabled && !allowedForDisabled ? "opacity:0.65; border-color:rgba(248,113,113,.3);" : ""}">
               <div class="model-card-info">
                 <div class="model-card-name">
-                  <span>${unlocked ? "🟢" : "🔒"} ${escapeHtml(m.name)}</span>
+                  <span>${isDisabled && !allowedForDisabled ? "🚫" : (unlocked ? "🟢" : "🔒")} ${escapeHtml(m.name)}</span>
                   <span class="model-tier-tag ${tierClass}">${tierLabel}</span>
                 </div>
                 <div class="muted">${escapeHtml(m.desc || "")}</div>
               </div>
               <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                ${unlocked
-                  ? `<button type="button" class="btn ${isSelected ? "secondary" : ""}" style="padding:7px 12px; font-size:12px;" data-select-model="${escapeHtml(m.id)}">${isSelected ? "✓ Seçili" : "Modeli Seç"}</button>`
-                  : `
-                    ${gpCost > 0 ? `<button type="button" class="btn warn" style="padding:7px 10px; font-size:11px;" data-unlock-model-gp="${escapeHtml(m.id)}">🔓 ${formatGp(gpCost)} ile Aç</button>` : `<span class="muted">Ticket Gerekli</span>`}
-                  `}
+                ${actionHtml}
               </div>
             </div>
           `;
@@ -7060,6 +6974,12 @@
     async function unlockModelWithGp(model) {
       if (!currentUser || !model) return;
       if (!checkUserQuotaOrBlock()) return;
+      if (model.disabled && !isUserAllowedForDisabledModel(model)) {
+        return setModelPickerMsg("Bu model kullanım dışı ve sadece izinli kişilere açıktır.");
+      }
+      if (model.promoOnly || model.tier === "promo_only") {
+        return setModelPickerMsg("Bu model sadece promosyon kodu ile açılabilir.");
+      }
       const cost = Math.max(0, normalizeGpNumber(model.gpCost, 0));
       if (cost <= 0) return setModelPickerMsg("Bu model sadece ilgili Ticket veya kod ile açılabilir.");
       if (currentGp < cost) return setModelPickerMsg(`Yetersiz GP! "${model.name}" modelini açmak için ${formatGp(cost)} gerekiyor.`);
@@ -7184,30 +7104,114 @@
       }
     }
 
+    function clearAdminModelForm() {
+      const idInp = document.getElementById("adminEditingModelIdInput");
+      const nameInp = document.getElementById("adminNewModelNameInput");
+      const tierSel = document.getElementById("adminNewModelTierSelect");
+      const gpInp = document.getElementById("adminNewModelGpCostInput");
+      const descInp = document.getElementById("adminNewModelDescInput");
+      const promoChk = document.getElementById("adminNewModelPromoOnlyChk");
+      const promoCodeInp = document.getElementById("adminNewModelPromoCodeInput");
+      const disChk = document.getElementById("adminNewModelDisabledChk");
+      const allowedInp = document.getElementById("adminNewModelAllowedUsersInput");
+      const saveBtn = document.getElementById("adminAddModelBtn");
+      if (idInp) idInp.value = "";
+      if (nameInp) nameInp.value = "";
+      if (tierSel) tierSel.value = "standard";
+      if (gpInp) gpInp.value = "250";
+      if (descInp) descInp.value = "";
+      if (promoChk) promoChk.checked = false;
+      if (promoCodeInp) promoCodeInp.value = "";
+      if (disChk) disChk.checked = false;
+      if (allowedInp) allowedInp.value = "";
+      if (saveBtn) saveBtn.textContent = "➕ Yeni Modeli Kaydet";
+    }
+
+    function loadModelIntoAdminForm(m) {
+      if (!m) return;
+      const idInp = document.getElementById("adminEditingModelIdInput");
+      const nameInp = document.getElementById("adminNewModelNameInput");
+      const tierSel = document.getElementById("adminNewModelTierSelect");
+      const gpInp = document.getElementById("adminNewModelGpCostInput");
+      const descInp = document.getElementById("adminNewModelDescInput");
+      const promoChk = document.getElementById("adminNewModelPromoOnlyChk");
+      const promoCodeInp = document.getElementById("adminNewModelPromoCodeInput");
+      const disChk = document.getElementById("adminNewModelDisabledChk");
+      const allowedInp = document.getElementById("adminNewModelAllowedUsersInput");
+      const saveBtn = document.getElementById("adminAddModelBtn");
+      if (idInp) idInp.value = m.id || "";
+      if (nameInp) nameInp.value = m.name || "";
+      if (tierSel) tierSel.value = m.promoOnly ? "promo_only" : (m.tier || "standard");
+      if (gpInp) gpInp.value = String(Math.max(0, normalizeGpNumber(m.gpCost, 0)));
+      if (descInp) descInp.value = m.desc || "";
+      if (promoChk) promoChk.checked = !!(m.promoOnly || m.tier === "promo_only");
+      if (promoCodeInp) promoCodeInp.value = m.promoCode || "";
+      if (disChk) disChk.checked = !!m.disabled;
+      if (allowedInp) allowedInp.value = Array.isArray(m.allowedUsers) ? m.allowedUsers.join(", ") : String(m.allowedUsers || "");
+      if (saveBtn) saveBtn.textContent = `💾 "${m.name}" Modelini Güncelle`;
+      nameInp?.focus();
+    }
+
     function renderAdminCustomModelsList() {
       const box = document.getElementById("adminCustomModelsList");
       if (!box || !isAdmin) return;
       populateModelSelectDropdowns();
-      if (!customModelsCatalog.length) {
-        box.innerHTML = `<div class="muted" style="padding:6px;">Henüz özel eklenmiş model yok (Varsayılan 8 model aktif).</div>`;
-        return;
-      }
-      box.innerHTML = customModelsCatalog.map((m) => `
-        <div class="gp-row">
-          <div>
-            <strong>🤖 ${escapeHtml(m.name)}</strong>
-            <div class="muted">Ticket: ${escapeHtml((m.tier || "standard").toUpperCase())} · GP Açma: ${formatGp(m.gpCost || 0)}</div>
+      const allModels = getAllModels();
+      const defaultIds = new Set(DEFAULT_MODELS.map((d) => d.id));
+      box.innerHTML = allModels.map((m) => {
+        const isDef = defaultIds.has(m.id);
+        const isCustomOverride = customModelsCatalog.some((c) => c.id === m.id);
+        const allowedList = parseAllowedUsersList(m.allowedUsers);
+        const statusBadges = [
+          `Ticket: ${escapeHtml((m.promoOnly || m.tier === "promo_only") ? "SADECE PROMO KOD" : (m.tier || "standard").toUpperCase())}`,
+          (m.promoOnly || m.tier === "promo_only") ? `Kod: ${escapeHtml(m.promoCode || "Yok")} (1 Kişilik)` : `GP Açma: ${formatGp(m.gpCost || 0)}`,
+          m.disabled ? `🚫 KULLANIM DIŞI (İzinliler: ${allowedList.length ? escapeHtml(allowedList.join(", ")) : "Yok"})` : `🟢 Aktif`
+        ].join(" · ");
+        return `
+          <div class="gp-row" style="${m.disabled ? "border-color:rgba(248,113,113,.45); background:#1f131b;" : ""}">
+            <div>
+              <strong>${m.disabled ? "🚫" : "🤖"} ${escapeHtml(m.name)} ${isDef ? '<span class="muted">(Varsayılan)</span>' : ""}</strong>
+              <div class="muted">${statusBadges}</div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn secondary" style="padding:6px 10px; font-size:11px;" data-edit-model="${escapeHtml(m.id)}">✏️ Düzenle</button>
+              <button type="button" class="btn ${m.disabled ? "" : "warn"}" style="padding:6px 10px; font-size:11px;" data-toggle-disable-model="${escapeHtml(m.id)}">${m.disabled ? "✅ Aktif Et" : "🚫 Kullanım Dışı"}</button>
+              ${(!isDef || isCustomOverride) ? `<button type="button" class="btn danger" style="padding:6px 10px; font-size:11px;" data-del-custom-model="${escapeHtml(m.id)}">${isDef ? "Sıfırla" : "Sil"}</button>` : ""}
+            </div>
           </div>
-          <button type="button" class="btn danger" style="padding:6px 10px; font-size:11px;" data-del-custom-model="${escapeHtml(m.id)}">Sil</button>
-        </div>
-      `).join("");
+        `;
+      }).join("");
+
+      box.querySelectorAll("[data-edit-model]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const found = allModels.find((x) => x.id === btn.dataset.editModel);
+          if (found) loadModelIntoAdminForm(found);
+        });
+      });
+
+      box.querySelectorAll("[data-toggle-disable-model]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.toggleDisableModel;
+          const found = allModels.find((x) => x.id === id);
+          if (!found) return;
+          const updatedModel = { ...found, disabled: !found.disabled };
+          const next = [...customModelsCatalog.filter((x) => x.id !== id), updatedModel];
+          try {
+            await setDoc(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
+            setAdminGiftMsg(`"${found.name}" modeli ${updatedModel.disabled ? "🚫 kullanım dışı yapıldı" : "🟢 tekrar aktif edildi"}.`, true);
+          } catch (err) {
+            setAdminGiftMsg(err?.message || "Model durumu güncellenemedi.");
+          }
+        });
+      });
+
       box.querySelectorAll("[data-del-custom-model]").forEach((btn) => {
         btn.addEventListener("click", async () => {
           const id = btn.dataset.delCustomModel;
           const next = customModelsCatalog.filter((x) => x.id !== id);
           try {
             await setDoc(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
-            setAdminGiftMsg("Model listeden kaldırıldı.", true);
+            setAdminGiftMsg("Model kaydı kaldırıldı / sıfırlandı.", true);
           } catch (err) {
             setAdminGiftMsg(err?.message || "Model silinemedi.");
           }
@@ -7217,38 +7221,55 @@
 
     async function adminAddCustomModel() {
       if (!isAdmin) return;
+      const editingId = String(document.getElementById("adminEditingModelIdInput")?.value || "").trim();
       const name = String(document.getElementById("adminNewModelNameInput")?.value || "").trim();
-      const tier = document.getElementById("adminNewModelTierSelect")?.value || "standard";
-      const gpCost = Math.max(0, normalizeGpNumber(document.getElementById("adminNewModelGpCostInput")?.value, 0));
-      const desc = String(document.getElementById("adminNewModelDescInput")?.value || "").trim() || `${tier.toUpperCase()} özel yapay zeka modeli`;
-      if (!name) return setAdminGiftMsg("Yeni modelin adını yaz.");
-      const id = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `model-${Date.now()}`;
-      const next = [...customModelsCatalog.filter((m) => m.id !== id), { id, name, tier, gpCost, desc }];
+      const rawTier = document.getElementById("adminNewModelTierSelect")?.value || "standard";
+      const promoOnlyChk = !!document.getElementById("adminNewModelPromoOnlyChk")?.checked;
+      const promoOnly = promoOnlyChk || rawTier === "promo_only";
+      const tier = promoOnly ? "promo_only" : rawTier;
+      const promoCode = String(document.getElementById("adminNewModelPromoCodeInput")?.value || "").trim();
+      const gpCost = promoOnly ? 0 : Math.max(0, normalizeGpNumber(document.getElementById("adminNewModelGpCostInput")?.value, 0));
+      const disabled = !!document.getElementById("adminNewModelDisabledChk")?.checked;
+      const allowedUsersRaw = String(document.getElementById("adminNewModelAllowedUsersInput")?.value || "").trim();
+      const allowedUsers = parseAllowedUsersList(allowedUsersRaw);
+      const desc = String(document.getElementById("adminNewModelDescInput")?.value || "").trim() || (promoOnly ? "Sadece promosyon kodu ile açılan özel model" : `${tier.toUpperCase()} özel yapay zeka modeli`);
+
+      if (!name) return setAdminGiftMsg("Modelin adını yaz.");
+      if (promoOnly && !promoCode) return setAdminGiftMsg("Sadece promosyon kodu ile açılacak model için bir promosyon kodu gir.");
+
+      const id = editingId || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `model-${Date.now()}`;
+      const modelEntry = {
+        id,
+        name,
+        tier,
+        gpCost,
+        promoOnly,
+        promoCode: promoCode || "",
+        disabled,
+        allowedUsers,
+        desc
+      };
+      const next = [...customModelsCatalog.filter((m) => m.id !== id), modelEntry];
       try {
         await setDoc(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
-        document.getElementById("adminNewModelNameInput").value = "";
-        document.getElementById("adminNewModelDescInput").value = "";
-        setAdminGiftMsg(`✅ "${name}" modeli (${tier.toUpperCase()}) eklendi!`, true);
+        if (promoCode) {
+          await setDoc(doc(db, "gpPromoCodes", promoCode), {
+            code: promoCode,
+            rewardType: "MODEL",
+            points: 0,
+            unlockModelId: id,
+            unlockModelName: name,
+            used: false,
+            maxUses: 1,
+            createdBy: currentUser,
+            createdAt: serverTimestamp(),
+            createdAtClient: Date.now()
+          }, { merge: true });
+        }
+        clearAdminModelForm();
+        setAdminGiftMsg(`✅ "${name}" modeli kaydedildi${promoCode ? ` ve "${promoCode}" tek kişilik promosyon kodu oluşturuldu` : ""}!`, true);
       } catch (err) {
         setAdminGiftMsg(err?.message || "Model kaydedilemedi.");
-      }
-    }
-
-    async function quickUpdateProductTradeGp() {
-      if (!isAdmin) return;
-      const prodId = document.getElementById("gpQuickTradeProductSelect")?.value || "";
-      const val = normalizeGpNumber(document.getElementById("gpQuickTradeValueInput")?.value, -1);
-      if (!prodId) return setGpAdminProductMsg("Önce listeden bir ürün seç.");
-      if (val < 0) return setGpAdminProductMsg("Geçerli bir Takas GP değeri gir.");
-      try {
-        await updateDoc(doc(db, "gpProducts", prodId), {
-          tradeValueGp: val,
-          updatedAt: serverTimestamp(),
-          updatedAtClient: Date.now()
-        });
-        setGpAdminProductMsg(`✅ Ürünün Takas GP değeri ${formatGp(val)} olarak güncellendi!`, true);
-      } catch (err) {
-        setGpAdminProductMsg(err?.message || "Takas değeri güncellenemedi.");
       }
     }
 
@@ -8135,8 +8156,8 @@
           sender: currentUser,
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "text",
-          modelId: activeModel.id,
-          modelName: activeModel.name,
+          modelId: isAdmin ? "" : activeModel.id,
+          modelName: isAdmin ? "" : activeModel.name,
           actionKind: text.startsWith("*") ? "Canlı Kod (*)" : "Mesaj",
           text,
           imageDataUrl: "",
@@ -8169,8 +8190,8 @@
           threadId,
           sender: currentUser,
           recipient: isAdmin ? threadId : ADMIN_USER,
-          modelId: activeModel.id,
-          modelName: activeModel.name,
+          modelId: isAdmin ? "" : activeModel.id,
+          modelName: isAdmin ? "" : activeModel.name,
           actionKind: "Resim Gönderimi",
           text: "",
           imageDataUrl: compressed.dataUrl,
@@ -8775,13 +8796,6 @@
       });
     });
 
-    document.getElementById("gpQuickTradeProductSelect")?.addEventListener("change", (e) => {
-      const p = gpProducts.find((x) => x.id === e.target.value);
-      const inp = document.getElementById("gpQuickTradeValueInput");
-      if (p && inp) inp.value = String(getItemTradeGpValue(p));
-    });
-    document.getElementById("gpQuickTradeSaveBtn")?.addEventListener("click", () => void quickUpdateProductTradeGp());
-
     document.getElementById("gpCreatePromoTypeSelect")?.addEventListener("change", (e) => {
       const isModel = e.target.value === "MODEL";
       document.getElementById("gpCreatePromoModelSelect")?.classList.toggle("hidden", !isModel);
@@ -8796,8 +8810,6 @@
       e.currentTarget.classList.toggle("off", !invGroupingEnabled);
       renderInventoryAndTradeSelection();
     });
-
-    document.getElementById("tradeCalcRunBtn")?.addEventListener("click", () => void calculateTradeNetValueWith60Gp());
 
     document.getElementById("modelSelectorDotsBtn")?.addEventListener("click", openModelPickerModal);
     document.getElementById("activeModelChip")?.addEventListener("click", openModelPickerModal);
@@ -8828,6 +8840,17 @@
     document.getElementById("adminGiftUpBtn")?.addEventListener("click", () => void grantAdminUp());
     document.getElementById("adminUnlockModelBtn")?.addEventListener("click", () => void adminUnlockModelForUser());
     document.getElementById("adminAddModelBtn")?.addEventListener("click", () => void adminAddCustomModel());
+    document.getElementById("adminClearModelFormBtn")?.addEventListener("click", clearAdminModelForm);
+    document.getElementById("adminNewModelTierSelect")?.addEventListener("change", (e) => {
+      const isPromo = e.target.value === "promo_only";
+      const chk = document.getElementById("adminNewModelPromoOnlyChk");
+      if (chk && isPromo) chk.checked = true;
+    });
+    document.getElementById("adminNewModelPromoOnlyChk")?.addEventListener("change", (e) => {
+      const sel = document.getElementById("adminNewModelTierSelect");
+      if (sel && e.target.checked) sel.value = "promo_only";
+      else if (sel && !e.target.checked && sel.value === "promo_only") sel.value = "standard";
+    });
 
     loadVoiceSetting();
     if (loadSession()) showApp();
