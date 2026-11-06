@@ -2134,13 +2134,17 @@
               <!-- OYUNCUDAN OYUNCUYA GP PAZARI -->
               <div id="gpPlayerMarketSection" class="gp-grid">
                 <div class="gp-box" style="grid-column:1 / -1; border-color:rgba(74,222,128,.28);">
-                  <div class="gp-box-title" style="color:#86efac;">🪙 Oyuncu Pazarı — Envanterindeki Eşyaları Sat</div>
-                  <div class="muted" style="margin-bottom:10px;">Envanterinden bir eşya seç, fiyatını belirle ve diğer oyunculara satışa çıkar. Fiyat 5–500.000 GP arasında olmalı. Satıştaki eşya kullanılamaz veya takas edilemez; istediğin zaman satıştan çekebilirsin.</div>
-                  <div class="gp-market-form">
+                  <div class="gp-box-title" style="color:#86efac;">🪙 Oyuncu Pazarı — Envanterindeki Eşyaları Sat (GP / UP)</div>
+                  <div class="muted" style="margin-bottom:10px;">Envanterinden bir eşya seç, fiyatını (GP veya 💎 UP olarak) belirle ve diğer oyunculara satışa çıkar. Satıştaki eşya kullanılamaz veya takas edilemez; istediğin zaman satıştan çekebilirsin.</div>
+                  <div class="gp-market-form" style="grid-template-columns:minmax(0,1fr) minmax(130px,170px) minmax(110px,140px) auto;">
                     <select id="gpMarketItemSelect" class="gp-input" aria-label="Satılacak envanter eşyası">
                       <option value="">Envanter yükleniyor...</option>
                     </select>
-                    <input id="gpMarketPriceInput" class="gp-input" type="number" min="5" max="500000" step="1" inputmode="numeric" placeholder="Fiyat (5–500000 GP)" aria-label="Satış fiyatı GP" />
+                    <input id="gpMarketPriceInput" class="gp-input" type="number" min="1" max="500000" step="1" inputmode="numeric" placeholder="Fiyat (1–500000)" aria-label="Satış fiyatı" />
+                    <select id="gpMarketCurrencySelect" class="gp-input" aria-label="Satış para birimi">
+                      <option value="GP">💰 GP ile Sat</option>
+                      <option value="UP">💎 UP ile Sat</option>
+                    </select>
                     <button id="gpMarketListBtn" class="btn" type="button">🛒 Satışa Koy</button>
                   </div>
                   <div id="gpMarketMsg" class="msg" style="margin:8px 0 0; text-align:left; min-height:18px;"></div>
@@ -2487,9 +2491,15 @@
         </div>
 
         <div class="plus-box" style="background:#131826; border-color: rgba(74, 222, 128, 0.4);">
-          <div class="plus-box-title" style="color: #4ade80;">🎁 GP Hediye Et</div>
+          <div class="plus-box-title" style="color: #4ade80;">🎁 GP veya 💎 UP Hediye Et</div>
           <input id="giftUsername" class="gp-input" placeholder="Alıcı Kullanıcı Adı" />
-          <input id="giftAmount" class="gp-input" type="number" placeholder="GP Miktarı" />
+          <div style="display:grid; grid-template-columns:1fr 120px; gap:8px;">
+            <input id="giftAmount" class="gp-input" type="number" min="1" placeholder="Miktar" />
+            <select id="giftCurrencySelect" class="gp-input" aria-label="Hediye para birimi">
+              <option value="GP">💰 GP</option>
+              <option value="UP">💎 UP</option>
+            </select>
+          </div>
           <button id="giftBtn" class="btn" type="button">GP Gönder</button>
           <div id="giftMsg" class="msg" style="margin:0;"></div>
         </div>
@@ -2714,11 +2724,19 @@
       <div class="trade-room-columns">
         <section class="trade-room-side">
           <h3>🎒 Benim Ürünlerim — <span id="tradeRoomMyName">Oyuncu</span></h3>
-          <div id="tradeRoomMyBalance" class="trade-room-balance">GP bakiyesi: 0 GP</div>
+          <div id="tradeRoomMyBalance" class="trade-room-balance">Bakiye: 0 GP · 💎 0 UP</div>
           <div class="trade-room-gp">
-            <label for="tradeRoomMyGpInput" style="font-size:13px;font-weight:800;">Vereceğim GP</label>
-            <input id="tradeRoomMyGpInput" type="number" inputmode="numeric" min="0" step="1" value="0" />
-            <div id="tradeRoomMySummary" class="muted">Teklif: 0 GP ve 0 ürün</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label for="tradeRoomMyGpInput" style="font-size:12px;font-weight:800;display:block;margin-bottom:4px;">💰 Vereceğim GP</label>
+                <input id="tradeRoomMyGpInput" type="number" inputmode="numeric" min="0" step="1" value="0" />
+              </div>
+              <div>
+                <label for="tradeRoomMyUpInput" style="font-size:12px;font-weight:800;color:#fde047;display:block;margin-bottom:4px;">💎 Vereceğim UP</label>
+                <input id="tradeRoomMyUpInput" type="number" inputmode="numeric" min="0" step="1" value="0" style="border-color:rgba(234,179,8,.45);" />
+              </div>
+            </div>
+            <div id="tradeRoomMySummary" class="muted">Teklif: 0 GP, 0 UP ve 0 ürün</div>
           </div>
           <div style="font-size:13px;font-weight:800;">Envanterinden takasa ekle / kaldır</div>
           <div id="tradeRoomMyItems" class="trade-room-items"><div class="trade-room-empty">Envanter yükleniyor...</div></div>
@@ -2727,11 +2745,11 @@
         </section>
         <section class="trade-room-side opponent">
           <h3>🤝 Rakibin Teklifi — <span id="tradeRoomOtherName">Oyuncu</span></h3>
-          <div id="tradeRoomOtherGp" class="trade-room-balance">Vereceği GP: 0 GP</div>
+          <div id="tradeRoomOtherGp" class="trade-room-balance">Vereceği: 0 GP · 💎 0 UP</div>
           <div id="tradeRoomOtherSummary" class="muted">Henüz ürün eklenmedi.</div>
           <div id="tradeRoomOtherItems" class="trade-room-items"><div class="trade-room-empty">Rakibin teklif bekleniyor...</div></div>
           <div id="tradeRoomOtherState" class="trade-room-state">Rakip henüz onaylamadı.</div>
-          <div class="muted">Takas, iki taraf da aynı güncel teklifleri onayladıktan sonra otomatik tamamlanır. Taraflardan biri ürün veya GP miktarını değiştirirse iki onay da sıfırlanır.</div>
+          <div class="muted">Takas, iki taraf da aynı güncel teklifleri onayladıktan sonra otomatik tamamlanır. Taraflardan biri ürün, GP veya UP miktarını değiştirirse iki onay da sıfırlanır.</div>
           <button id="tradeRoomCancelBtn" class="btn danger" type="button">✖ Takası İptal Et</button>
         </section>
       </div>
@@ -3122,6 +3140,7 @@
     let activeTradeRoomData = null;
     let unsubscribeActiveTradeRoom = null;
     let tradeDraftGp = 0;
+    let tradeDraftUp = 0;
     let tradeDraftItems = [];
     let tradeDraftTimer = null;
     let tradeRoomVisible = false;
@@ -4360,10 +4379,11 @@
       box.innerHTML = filtered.map((item) => {
         const stock = Math.max(0, normalizeGpNumber(item.stock, item.stock === undefined ? 5 : 0));
         const archived = item.isArchived === true || item.isActive === false;
+        const itemCurr = String(item.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
         return `<div class="admin-gift-product-row" role="option">
           <div>
             <strong>${escapeHtml(item.title || "İsimsiz ürün")}</strong>
-            <div class="muted">${stock} adet stok · ${archived ? "Mağazada değil / arşiv" : "Mağazada"} · ${escapeHtml(formatGp(item.priceGp || 0))}</div>
+            <div class="muted">${stock} adet stok · ${archived ? "Mağazada değil / arşiv" : "Mağazada"} · ${escapeHtml(formatPriceByCurrency(item.priceGp || 0, itemCurr))}</div>
           </div>
           <button class="btn" type="button" data-admin-gift-product="${escapeHtml(item.id)}" ${stock < 1 ? "disabled" : ""}>🎁 ${stock > 0 ? `Stok kadar ver (${stock})` : "Stok yok"}</button>
         </div>`;
@@ -4477,6 +4497,8 @@
             ownerKey: normalizeKey(user),
             productId: product.id,
             title: product.title || "Eşya",
+            itemCategory: product.itemCategory === "box" ? "box" : "product",
+            currency: String(product.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP",
             priceGp: inventoryPrice,
             basePriceGp: basePrice,
             imageDataUrl: product.imageDataUrl || "",
@@ -4979,6 +5001,14 @@
       return 0;
     }
 
+    function getItemCurrency(item) {
+      if (!item) return "GP";
+      if (item.currency && String(item.currency).toUpperCase() === "UP") return "UP";
+      const matched = gpProducts.find((p) => p.id === item.productId || normalizeKey(p.title) === normalizeKey(item.title));
+      if (matched && String(matched.currency || "GP").toUpperCase() === "UP") return "UP";
+      return "GP";
+    }
+
     function getItemGpValue(item) {
       return getItemSaleValue(item);
     }
@@ -5186,9 +5216,10 @@
         const previous = gpMarketItemSelect.value;
         const sellable = userInventory.filter((item) => item.marketListed !== true);
         gpMarketItemSelect.innerHTML = sellable.length
-          ? `<option value="">Satılacak eşyayı seç...</option>` + sellable.map((item) =>
-              `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title || "Eşya")} — değer ${formatGp(getItemGpValue(item))}</option>`
-            ).join("")
+          ? `<option value="">Satılacak eşyayı seç...</option>` + sellable.map((item) => {
+              const itemCurr = getItemCurrency(item);
+              return `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title || "Eşya")} — ${formatPriceByCurrency(getItemSaleValue(item), itemCurr)}</option>`;
+            }).join("")
           : `<option value="">Satışa koyabileceğin eşya yok</option>`;
         if (previous && sellable.some((item) => item.id === previous)) gpMarketItemSelect.value = previous;
         if (gpMarketListBtn) gpMarketListBtn.disabled = !sellable.length || !currentUser || isAdmin;
@@ -5204,18 +5235,22 @@
         const mine = !!currentUser && sellerKey === myKey;
         const title = listing.title || "Eşya";
         const price = normalizeGpNumber(listing.priceGp, 0);
-        const validPrice = Number.isSafeInteger(price) && price >= 5 && price <= 500000;
+        const listCurr = String(listing.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
+        const validPrice = Number.isSafeInteger(price) && price >= 1 && price <= 500000;
         return `
           <article class="gp-product-card gp-market-card">
             <div class="gp-product-body">
               <div class="gp-product-title">🪙 ${escapeHtml(title)}</div>
-              <div class="gp-price-row"><span class="gp-price">${formatGp(price)}</span><span class="gp-badge val">Oyuncu ilanı</span></div>
+              <div class="gp-price-row">
+                <span class="gp-price" style="${listCurr === "UP" ? "color:#fde047;" : ""}">${formatPriceByCurrency(price, listCurr)}</span>
+                <span class="gp-badge ${listCurr === "UP" ? "up-badge" : "val"}">${listCurr === "UP" ? "💎 UP İlanı" : "Oyuncu ilanı"}</span>
+              </div>
               <div class="muted">Satıcı: <strong>${escapeHtml(listing.seller || "Bilinmeyen")}</strong></div>
               <div class="muted">${mine ? "Bu ilan senin." : "Satın alırsan eşya envanterine aktarılır."}</div>
               <div class="gp-market-card-actions">
                 ${mine
                   ? `<button class="btn secondary" type="button" data-market-withdraw="${escapeHtml(listing.id)}">Satıştan Çek</button>`
-                  : `<button class="btn" type="button" data-market-buy="${escapeHtml(listing.id)}" ${(!validPrice || !currentUser || isAdmin) ? "disabled" : ""}>${isAdmin ? "Admin hesabı satın alamaz" : "Satın Al — " + formatGp(price)}</button>`}
+                  : `<button class="btn" type="button" data-market-buy="${escapeHtml(listing.id)}" ${(!validPrice || !currentUser || isAdmin) ? "disabled" : ""}>${isAdmin ? "Admin hesabı satın alamaz" : "Satın Al — " + formatPriceByCurrency(price, listCurr)}</button>`}
               </div>
             </div>
           </article>`;
@@ -5229,22 +5264,22 @@
       }
       const itemId = String(gpMarketItemSelect?.value || "");
       const rawPrice = String(gpMarketPriceInput?.value || "").trim();
+      const listCurr = document.getElementById("gpMarketCurrencySelect")?.value === "UP" ? "UP" : "GP";
       const priceGp = Number(rawPrice);
       if (!itemId) return setGpMarketMsg("Önce envanterinden satılacak bir eşya seç.");
-      if (!/^\d+$/.test(rawPrice) || !Number.isSafeInteger(priceGp) || priceGp < 5 || priceGp > 500000) {
-        return setGpMarketMsg("Fiyat tam sayı olmalı ve 5 ile 500.000 GP arasında kalmalı.");
+      if (!/^\d+$/.test(rawPrice) || !Number.isSafeInteger(priceGp) || priceGp < 1 || priceGp > 500000) {
+        return setGpMarketMsg(`Fiyat tam sayı olmalı ve 1 ile 500.000 ${listCurr} arasında kalmalı.`);
       }
       const item = userInventory.find((entry) => entry.id === itemId);
       if (!item) return setGpMarketMsg("Seçtiğin eşya envanterinde bulunamadı. Envanter güncellendikten sonra tekrar dene.");
       if (item.marketListed) return setGpMarketMsg("Bu eşya zaten satışta.");
 
-      if (!askAppConfirm(`“${item.title || "Eşya"}” ürününü ${formatGp(priceGp)} fiyatla satışa koymak istiyor musun? Satıştayken eşya kullanılamaz ve takas edilemez.`)) return;
+      if (!askAppConfirm(`“${item.title || "Eşya"}” ürününü ${formatPriceByCurrency(priceGp, listCurr)} fiyatla satışa koymak istiyor musun? Satıştayken eşya kullanılamaz ve takas edilemez.`)) return;
       if (gpMarketListBtn) { gpMarketListBtn.disabled = true; gpMarketListBtn.textContent = "İlan oluşturuluyor..."; }
       try {
         const seller = currentUser;
         const sellerKey = normalizeKey(seller);
         const inventoryRef = doc(db, "gpInventory", itemId);
-        // Listing ID'si envanter eşya ID'siyle aynı: tek eşya için ikinci ilan açılamaz.
         const listingRef = doc(db, "gpPlayerMarketListings", itemId);
         await runTransaction(db, async (tx) => {
           const listingSnap = await tx.get(listingRef);
@@ -5256,6 +5291,7 @@
           tx.update(inventoryRef, {
             marketListed: true,
             marketPriceGp: priceGp,
+            marketCurrency: listCurr,
             marketListedAt: serverTimestamp(),
             marketListedAtClient: Date.now()
           });
@@ -5265,13 +5301,14 @@
             sellerKey,
             title: String(liveItem.title || "Eşya").slice(0, 120),
             priceGp,
+            currency: listCurr,
             createdAt: serverTimestamp(),
             createdAtClient: Date.now(),
             status: "active"
           });
         });
         if (gpMarketPriceInput) gpMarketPriceInput.value = "";
-        setGpMarketMsg(`✅ ${item.title || "Eşya"} ${formatGp(priceGp)} fiyatla satışa kondu.`, true);
+        setGpMarketMsg(`✅ ${item.title || "Eşya"} ${formatPriceByCurrency(priceGp, listCurr)} fiyatla satışa kondu.`, true);
       } catch (err) {
         setGpMarketMsg(err?.message || "İlan oluşturulamadı. Firebase izinlerini kontrol et.");
       } finally {
@@ -5309,12 +5346,15 @@
       const cachedSellerKey = cached.sellerKey || normalizeKey(cached.seller || "");
       if (cachedSellerKey === normalizeKey(currentUser)) return setGpMarketMsg("Kendi ilanını satın alamazsın.");
       const cachedPrice = normalizeGpNumber(cached.priceGp, 0);
-      if (!Number.isSafeInteger(cachedPrice) || cachedPrice < 5 || cachedPrice > 500000) return setGpMarketMsg("İlan fiyatı geçersiz.");
-      if (currentGp < cachedPrice) return setGpMarketMsg(`Yetersiz GP. Bakiyen: ${formatGp(currentGp)}, gereken: ${formatGp(cachedPrice)}.`);
-      if (!askAppConfirm(`“${cached.title || "Eşya"}” ürününü ${formatGp(cachedPrice)} karşılığında satın al? GP satıcıya aktarılacak.`)) return;
+      const cachedCurr = String(cached.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
+      if (!Number.isSafeInteger(cachedPrice) || cachedPrice < 1 || cachedPrice > 500000) return setGpMarketMsg("İlan fiyatı geçersiz.");
+      if (cachedCurr === "UP" && currentUp < cachedPrice) return setGpMarketMsg(`Yetersiz UP. Bakiyen: ${formatUp(currentUp)}, gereken: ${formatUp(cachedPrice)}.`);
+      if (cachedCurr === "GP" && currentGp < cachedPrice) return setGpMarketMsg(`Yetersiz GP. Bakiyen: ${formatGp(currentGp)}, gereken: ${formatGp(cachedPrice)}.`);
+      if (!askAppConfirm(`“${cached.title || "Eşya"}” ürününü ${formatPriceByCurrency(cachedPrice, cachedCurr)} karşılığında satın al? Tutar satıcıya aktarılacak.`)) return;
 
       try {
         let paidPrice = 0;
+        let paidCurr = cachedCurr;
         let sellerName = "";
         const buyer = currentUser;
         const buyerKey = normalizeKey(buyer);
@@ -5331,7 +5371,8 @@
           if (itemId !== listingId) throw new Error("İlan ve eşya kimliği eşleşmiyor.");
           if (!seller || !sellerKey || sellerKey === buyerKey) throw new Error("Kendi ilanını satın alamazsın.");
           const priceGp = normalizeGpNumber(liveListing.priceGp, 0);
-          if (!Number.isSafeInteger(priceGp) || priceGp < 5 || priceGp > 500000) throw new Error("İlanın fiyatı geçersiz.");
+          const liveCurr = String(liveListing.currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
+          if (!Number.isSafeInteger(priceGp) || priceGp < 1 || priceGp > 500000) throw new Error("İlanın fiyatı geçersiz.");
           const sellerBalanceRef = doc(db, "gpBalances", gpDocId(seller));
           const itemSnap = await tx.get(inventoryRef);
           const buyerBalanceSnap = await tx.get(buyerBalanceRef);
@@ -5339,14 +5380,14 @@
           if (!itemSnap.exists()) throw new Error("Satılacak eşya bulunamadı; ilan geçersiz.");
           const liveItem = itemSnap.data() || {};
           if (liveItem.ownerKey !== sellerKey || liveItem.marketListed !== true) throw new Error("Eşyanın sahibi veya satış durumu değişmiş. Liste yenilendiğinde tekrar dene.");
-          const buyerGp = buyerBalanceSnap.exists() ? normalizeGpNumber(buyerBalanceSnap.data()?.gp, 0) : 0;
-          const sellerGp = sellerBalanceSnap.exists() ? normalizeGpNumber(sellerBalanceSnap.data()?.gp, 0) : 0;
-          if (buyerGp < priceGp) throw new Error(`Yetersiz GP. Bakiyen: ${formatGp(buyerGp)}.`);
+          const fieldName = liveCurr === "UP" ? "up" : "gp";
+          const buyerBal = buyerBalanceSnap.exists() ? normalizeGpNumber(buyerBalanceSnap.data()?.[fieldName], 0) : 0;
+          const sellerBal = sellerBalanceSnap.exists() ? normalizeGpNumber(sellerBalanceSnap.data()?.[fieldName], 0) : 0;
+          if (buyerBal < priceGp) throw new Error(`Yetersiz ${liveCurr}. Bakiyen: ${formatPriceByCurrency(buyerBal, liveCurr)}.`);
           if (buyerKey === sellerKey || buyerBalanceRef.path === sellerBalanceRef.path) throw new Error("Kullanıcı kendi eşyasını satın alamaz.");
 
-          // Bakiye transferi, eşya sahipliği ve ilanı kaldırma tek atomik işlemde gerçekleşir.
-          tx.set(buyerBalanceRef, { username: buyer, usernameKey: buyerKey, gp: buyerGp - priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
-          tx.set(sellerBalanceRef, { username: seller, usernameKey: sellerKey, gp: sellerGp + priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(buyerBalanceRef, { username: buyer, usernameKey: buyerKey, [fieldName]: buyerBal - priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(sellerBalanceRef, { username: seller, usernameKey: sellerKey, [fieldName]: sellerBal + priceGp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
           tx.update(inventoryRef, {
             owner: buyer,
             ownerKey: buyerKey,
@@ -5354,14 +5395,16 @@
             acquiredAtClient: Date.now(),
             marketListed: false,
             marketPriceGp: null,
+            marketCurrency: null,
             marketListedAt: null,
             marketListedAtClient: null
           });
           tx.delete(listingRef);
           paidPrice = priceGp;
+          paidCurr = liveCurr;
           sellerName = seller;
         });
-        setGpMarketMsg(`✅ Satın alma tamamlandı! ${cached.title || "Eşya"} envanterine geçti; ${formatGp(paidPrice)} GP ${sellerName} kullanıcısına aktarıldı.`, true);
+        setGpMarketMsg(`✅ Satın alma tamamlandı! ${cached.title || "Eşya"} envanterine geçti; ${formatPriceByCurrency(paidPrice, paidCurr)} ${sellerName} kullanıcısına aktarıldı.`, true);
       } catch (err) {
         setGpMarketMsg(err?.message || "Satın alma başarısız. Listeyi yenileyip tekrar dene.");
       }
@@ -5424,7 +5467,7 @@
       invBox.innerHTML = displayEntries.map(({ item, count }) => {
         const saleVal = getItemSaleValue(item);
         const isBox = item.itemCategory === "box" || item.actionType === "box";
-        const saleCurr = item.currency || "GP";
+        const saleCurr = getItemCurrency(item);
         return `
           <article class="gp-product-card">
             ${item.imageDataUrl ? `<div class="gp-product-image-wrap"><img class="gp-product-image" src="${escapeHtml(item.imageDataUrl)}" alt="${escapeHtml(item.title)}" /></div>` : ""}
@@ -5629,13 +5672,18 @@
       const items = Array.isArray(offer.items) ? offer.items : [];
       return {
         gp: Math.max(0, normalizeGpNumber(offer.gp, 0)),
+        up: Math.max(0, normalizeGpNumber(offer.up, 0)),
         items: items.filter((item) => item && item.id),
         confirmed: !!offer.confirmed
       };
     }
 
     function tradeOfferHasValue(offer) {
-      return !!offer && (normalizeGpNumber(offer.gp, 0) > 0 || (Array.isArray(offer.items) && offer.items.length > 0));
+      return !!offer && (
+        normalizeGpNumber(offer.gp, 0) > 0 ||
+        normalizeGpNumber(offer.up, 0) > 0 ||
+        (Array.isArray(offer.items) && offer.items.length > 0)
+      );
     }
 
     function setTradeRoomNotice(message, ok = false) {
@@ -5759,6 +5807,7 @@
         activeTradeRoomData = trade;
         const mine = getTradeOffer(trade, normalizeKey(currentUser));
         tradeDraftGp = mine.gp;
+        tradeDraftUp = mine.up;
         tradeDraftItems = mine.items.map((item) => item.id);
       } else {
         activeTradeRoomData = trade;
@@ -5781,7 +5830,7 @@
           const latest = { id: snap.id, ...snap.data() };
           if (["completed", "cancelled", "rejected"].includes(latest.status)) {
             const completed = latest.status === "completed";
-            finishTradeRoom(completed ? "✅ Takas tamamlandı! Ürünler ve GP aktarıldı." : "Takas odası kapatıldı.", completed);
+            finishTradeRoom(completed ? "✅ Takas tamamlandı! Ürünler, GP ve UP aktarıldı." : "Takas odası kapatıldı.", completed);
             return;
           }
           activeTradeRoomData = latest;
@@ -5823,6 +5872,7 @@
       activeTradeRoomId = null;
       activeTradeRoomData = null;
       tradeDraftGp = 0;
+      tradeDraftUp = 0;
       tradeDraftItems = [];
       tradeRoomVisible = false;
       document.getElementById("tradeRoomOverlay")?.classList.add("hidden");
@@ -5838,7 +5888,7 @@
       const mySummary = document.getElementById("tradeRoomMySummary");
       if (!mySummary) return;
       const chosen = userInventory.filter((item) => item.marketListed !== true && tradeDraftItems.includes(item.id));
-      mySummary.textContent = `Teklifin: ${formatGp(tradeDraftGp)} + ${chosen.length} ürün`;
+      mySummary.textContent = `Teklifin: ${formatGp(tradeDraftGp)} · 💎 ${formatUp(tradeDraftUp)} + ${chosen.length} ürün`;
     }
 
     function renderTradeRoom() {
@@ -5857,27 +5907,36 @@
 
       document.getElementById("tradeRoomMyName").textContent = currentUser;
       document.getElementById("tradeRoomOtherName").textContent = otherUser || "Rakip";
-      document.getElementById("tradeRoomMyBalance").textContent = `GP bakiyesi: ${formatGp(currentGp)}`;
-      document.getElementById("tradeRoomOtherGp").textContent = `Vereceği GP: ${formatGp(otherOffer.gp)}`;
-      document.getElementById("tradeRoomOtherSummary").textContent = `Teklif toplamı: ${formatGp(otherOffer.gp)} + ${otherOffer.items.length} ürün`;
+      document.getElementById("tradeRoomMyBalance").textContent = `Bakiye: ${formatGp(currentGp)} · 💎 ${formatUp(currentUp)}`;
+      document.getElementById("tradeRoomOtherGp").textContent = `Vereceği: ${formatGp(otherOffer.gp)} · 💎 ${formatUp(otherOffer.up)}`;
+      document.getElementById("tradeRoomOtherSummary").textContent = `Teklif toplamı: ${formatGp(otherOffer.gp)} + 💎 ${formatUp(otherOffer.up)} + ${otherOffer.items.length} ürün`;
 
       const gpInput = document.getElementById("tradeRoomMyGpInput");
-      gpInput.max = String(Math.max(0, currentGp));
-      if (document.activeElement !== gpInput) gpInput.value = String(tradeDraftGp);
-      gpInput.disabled = myOffer.confirmed;
+      if (gpInput) {
+        gpInput.max = String(Math.max(0, currentGp));
+        if (document.activeElement !== gpInput) gpInput.value = String(tradeDraftGp);
+        gpInput.disabled = myOffer.confirmed;
+      }
+      const upInput = document.getElementById("tradeRoomMyUpInput");
+      if (upInput) {
+        upInput.max = String(Math.max(0, currentUp));
+        if (document.activeElement !== upInput) upInput.value = String(tradeDraftUp);
+        upInput.disabled = myOffer.confirmed;
+      }
 
       const myItemsEl = document.getElementById("tradeRoomMyItems");
       const tradeableInventory = userInventory.filter((item) => item.marketListed !== true);
       if (!tradeableInventory.length) {
-        myItemsEl.innerHTML = `<div class="trade-room-empty">Takas edilebilir eşyan yok. Satıştaki eşyalar önce pazardan çekilmeli. GP ekleyerek de takas yapabilirsin.</div>`;
+        myItemsEl.innerHTML = `<div class="trade-room-empty">Takas edilebilir eşyan yok. Satıştaki eşyalar önce pazardan çekilmeli. GP veya UP ekleyerek de takas yapabilirsin.</div>`;
       } else {
         myItemsEl.innerHTML = tradeableInventory.map((item) => {
           const saleV = getItemSaleValue(item);
+          const itemCurr = getItemCurrency(item);
           return `
           <div class="trade-room-item">
             <label><input type="checkbox" data-trade-room-item="${escapeHtml(item.id)}" ${tradeDraftItems.includes(item.id) ? "checked" : ""} ${myOffer.confirmed ? "disabled" : ""}/><strong>${escapeHtml(item.title || "Eşya")}</strong></label>
             <div style="display:flex; gap:5px; flex-wrap:wrap;">
-              <span class="gp-badge val">${formatGp(saleV)}</span>
+              <span class="gp-badge ${itemCurr === "UP" ? "up-badge" : "val"}">${itemCurr === "UP" ? "💎 " : ""}${formatPriceByCurrency(saleV, itemCurr)}</span>
             </div>
           </div>
         `;
@@ -5887,11 +5946,12 @@
       const otherItemsEl = document.getElementById("tradeRoomOtherItems");
       otherItemsEl.innerHTML = otherOffer.items.length ? otherOffer.items.map((item) => {
         const saleV = item.salePriceGp !== undefined ? item.salePriceGp : (item.priceGp || 0);
+        const itemCurr = getItemCurrency(item);
         return `
         <div class="trade-room-item">
           <strong>🎒 ${escapeHtml(item.title || "Eşya")}</strong>
           <div style="display:flex; gap:5px; flex-wrap:wrap;">
-            <span class="gp-badge val">${formatGp(saleV)}</span>
+            <span class="gp-badge ${itemCurr === "UP" ? "up-badge" : "val"}">${itemCurr === "UP" ? "💎 " : ""}${formatPriceByCurrency(saleV, itemCurr)}</span>
           </div>
         </div>
       `;
@@ -5943,8 +6003,14 @@
       const myKey = normalizeKey(currentUser);
       const wantedIds = [...new Set(tradeDraftItems)];
       const gpValue = Math.max(0, normalizeGpNumber(tradeDraftGp, 0));
+      const upValue = Math.max(0, normalizeGpNumber(tradeDraftUp, 0));
       if (gpValue > currentGp) {
         setTradeRoomNotice("Vereceğin GP mevcut bakiyenden fazla olamaz.");
+        tradeSaveInFlight = false;
+        return false;
+      }
+      if (upValue > currentUp) {
+        setTradeRoomNotice("Vereceğin UP mevcut bakiyenden fazla olamaz.");
         tradeSaveInFlight = false;
         return false;
       }
@@ -5952,6 +6018,7 @@
         id: item.id,
         productId: item.productId || "",
         title: item.title || "Eşya",
+        currency: getItemCurrency(item),
         salePriceGp: getItemSaleValue(item),
         priceGp: getItemSaleValue(item)
       }));
@@ -5965,15 +6032,15 @@
           const toKey = data.toKey || normalizeKey(data.toUser);
           if (myKey !== fromKey && myKey !== toKey) throw new Error("Bu takas odasına erişim yetkin yok.");
           const offers = { ...(data.offers || {}) };
-          const oldOffer = offers[myKey] || { gp: 0, items: [], confirmed: false };
+          const oldOffer = offers[myKey] || { gp: 0, up: 0, items: [], confirmed: false };
           const oldItems = Array.isArray(oldOffer.items) ? oldOffer.items : [];
-          const oldSignature = JSON.stringify({ gp: Math.max(0, normalizeGpNumber(oldOffer.gp, 0)), ids: oldItems.map((x) => x.id).sort() });
-          const newSignature = JSON.stringify({ gp: gpValue, ids: items.map((x) => x.id).sort() });
+          const oldSignature = JSON.stringify({ gp: Math.max(0, normalizeGpNumber(oldOffer.gp, 0)), up: Math.max(0, normalizeGpNumber(oldOffer.up, 0)), ids: oldItems.map((x) => x.id).sort() });
+          const newSignature = JSON.stringify({ gp: gpValue, up: upValue, ids: items.map((x) => x.id).sort() });
           const changed = oldSignature !== newSignature;
           if (changed) {
             for (const key of Object.keys(offers)) offers[key] = { ...offers[key], confirmed: false };
           }
-          offers[myKey] = { gp: gpValue, items, confirmed: changed ? false : !!oldOffer.confirmed, updatedAtClient: Date.now() };
+          offers[myKey] = { gp: gpValue, up: upValue, items, confirmed: changed ? false : !!oldOffer.confirmed, updatedAtClient: Date.now() };
           tx.update(ref, { offers, updatedAt: serverTimestamp(), updatedAtClient: Date.now() });
         });
         setTradeRoomNotice("✅ Teklifin kaydedildi ve rakibin ekranında canlı güncellendi.", true);
@@ -6002,11 +6069,12 @@
           const toKey = data.toKey || normalizeKey(data.toUser);
           if (myKey !== fromKey && myKey !== toKey) throw new Error("Bu takasa katılamazsın.");
           const offers = { ...(data.offers || {}) };
-          const mine = offers[myKey] || { gp: 0, items: [], confirmed: false };
+          const mine = offers[myKey] || { gp: 0, up: 0, items: [], confirmed: false };
           const otherKey = myKey === fromKey ? toKey : fromKey;
-          const opponent = offers[otherKey] || { gp: 0, items: [], confirmed: false };
-          if (!tradeOfferHasValue(mine) && !tradeOfferHasValue(opponent)) throw new Error("Onaylamadan önce en az bir tarafa ürün veya GP eklenmeli.");
+          const opponent = offers[otherKey] || { gp: 0, up: 0, items: [], confirmed: false };
+          if (!tradeOfferHasValue(mine) && !tradeOfferHasValue(opponent)) throw new Error("Onaylamadan önce en az bir tarafa ürün, GP veya UP eklenmeli.");
           if (normalizeGpNumber(mine.gp, 0) > currentGp) throw new Error("GP bakiyen değişmiş; teklif miktarını yeniden ayarla.");
+          if (normalizeGpNumber(mine.up, 0) > currentUp) throw new Error("UP bakiyen değişmiş; teklif miktarını yeniden ayarla.");
           offers[myKey] = { ...mine, confirmed: true, updatedAtClient: Date.now() };
           tx.update(ref, { offers, updatedAt: serverTimestamp(), updatedAtClient: Date.now() });
         });
@@ -6035,7 +6103,7 @@
           const fromOffer = getTradeOffer({ offers }, fromKey);
           const toOffer = getTradeOffer({ offers }, toKey);
           if (!fromOffer.confirmed || !toOffer.confirmed) return "waiting";
-          if (!tradeOfferHasValue(fromOffer) && !tradeOfferHasValue(toOffer)) throw new Error("En az bir teklif ürün veya GP içermeli.");
+          if (!tradeOfferHasValue(fromOffer) && !tradeOfferHasValue(toOffer)) throw new Error("En az bir teklif ürün, GP veya UP içermeli.");
 
           const fromBalRef = doc(db, "gpBalances", gpDocId(fromUser));
           const toBalRef = doc(db, "gpBalances", gpDocId(toUser));
@@ -6043,8 +6111,12 @@
           const toBalSnap = await tx.get(toBalRef);
           const fromGp = fromBalSnap.exists() ? normalizeGpNumber(fromBalSnap.data()?.gp, 0) : 0;
           const toGp = toBalSnap.exists() ? normalizeGpNumber(toBalSnap.data()?.gp, 0) : 0;
+          const fromUp = fromBalSnap.exists() ? normalizeGpNumber(fromBalSnap.data()?.up, 0) : 0;
+          const toUp = toBalSnap.exists() ? normalizeGpNumber(toBalSnap.data()?.up, 0) : 0;
           if (fromOffer.gp > fromGp) throw new Error(`${fromUser} kullanıcısının GP bakiyesi yetersiz.`);
           if (toOffer.gp > toGp) throw new Error(`${toUser} kullanıcısının GP bakiyesi yetersiz.`);
+          if (fromOffer.up > fromUp) throw new Error(`${fromUser} kullanıcısının UP bakiyesi yetersiz.`);
+          if (toOffer.up > toUp) throw new Error(`${toUser} kullanıcısının UP bakiyesi yetersiz.`);
 
           const fromItemRefs = [];
           const toItemRefs = [];
@@ -6073,8 +6145,22 @@
             toItemSnaps.push({ ...entry, data: itemSnap.data() });
           }
 
-          tx.set(fromBalRef, { username: fromUser, usernameKey: fromKey, gp: fromGp - fromOffer.gp + toOffer.gp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
-          tx.set(toBalRef, { username: toUser, usernameKey: toKey, gp: toGp - toOffer.gp + fromOffer.gp, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(fromBalRef, {
+            username: fromUser,
+            usernameKey: fromKey,
+            gp: fromGp - fromOffer.gp + toOffer.gp,
+            up: fromUp - fromOffer.up + toOffer.up,
+            updatedAt: serverTimestamp(),
+            updatedAtClient: Date.now()
+          }, { merge: true });
+          tx.set(toBalRef, {
+            username: toUser,
+            usernameKey: toKey,
+            gp: toGp - toOffer.gp + fromOffer.gp,
+            up: toUp - toOffer.up + fromOffer.up,
+            updatedAt: serverTimestamp(),
+            updatedAtClient: Date.now()
+          }, { merge: true });
           for (const entry of fromItemSnaps) tx.update(entry.ref, { owner: toUser, ownerKey: toKey, acquiredAt: serverTimestamp(), acquiredAtClient: Date.now() });
           for (const entry of toItemSnaps) tx.update(entry.ref, { owner: fromUser, ownerKey: fromKey, acquiredAt: serverTimestamp(), acquiredAtClient: Date.now() });
           tx.update(tradeRef, { status: "completed", completedAt: serverTimestamp(), updatedAtClient: Date.now() });
@@ -6111,14 +6197,14 @@
           const toKey = normalizeKey(currentUser);
           if (toKey !== (data.toKey || normalizeKey(data.toUser))) throw new Error("Bu davet sana gönderilmemiş.");
           const offers = {
-            [fromKey]: { gp: 0, items: [], confirmed: false, updatedAtClient: Date.now() },
-            [toKey]: { gp: 0, items: [], confirmed: false, updatedAtClient: Date.now() }
+            [fromKey]: { gp: 0, up: 0, items: [], confirmed: false, updatedAtClient: Date.now() },
+            [toKey]: { gp: 0, up: 0, items: [], confirmed: false, updatedAtClient: Date.now() }
           };
           tx.update(ref, { status: "negotiating", toUser: currentUser, toKey, offers, acceptedAt: serverTimestamp(), updatedAtClient: Date.now() });
         });
         openTradeRoom({ ...trade, toUser: currentUser, toKey: normalizeKey(currentUser), status: "negotiating", offers: {
-          [trade.fromKey || normalizeKey(trade.fromUser)]: { gp: 0, items: [], confirmed: false },
-          [normalizeKey(currentUser)]: { gp: 0, items: [], confirmed: false }
+          [trade.fromKey || normalizeKey(trade.fromUser)]: { gp: 0, up: 0, items: [], confirmed: false },
+          [normalizeKey(currentUser)]: { gp: 0, up: 0, items: [], confirmed: false }
         } }, true);
         setGpUserMsg("🤝 Davet kabul edildi; canlı takas odası açıldı.", true);
       } catch (err) {
@@ -7281,11 +7367,14 @@
       if (!currentUser) return;
       const targetUser = document.getElementById("giftUsername").value.trim();
       const amount = parseInt(document.getElementById("giftAmount").value);
+      const giftCurr = document.getElementById("giftCurrencySelect")?.value === "UP" ? "UP" : "GP";
+      const fieldName = giftCurr === "UP" ? "up" : "gp";
 
       if (!targetUser) return setGiftMsg("Lütfen bir kullanıcı adı yazın.");
       if (targetUser.toLowerCase() === currentUser.toLowerCase()) return setGiftMsg("Kendinize hediye gönderemezsiniz.");
       if (isNaN(amount) || amount <= 0) return setGiftMsg("Geçerli bir miktar girin.");
-      if (currentGp < amount) return setGiftMsg("Yeterli GP'niz bulunmuyor.");
+      if (giftCurr === "UP" && currentUp < amount) return setGiftMsg("Yeterli UP bakiyeniz bulunmuyor.");
+      if (giftCurr === "GP" && currentGp < amount) return setGiftMsg("Yeterli GP'niz bulunmuyor.");
 
       const btn = document.getElementById("giftBtn");
       btn.disabled = true;
@@ -7296,22 +7385,22 @@
           const senderSnap = await tx.get(senderRef);
           const recipientSnap = await tx.get(recipientRef);
 
-          const senderGp = senderSnap.exists() ? normalizeGpNumber(senderSnap.data().gp, 0) : 0;
-          if (senderGp < amount) throw new Error("Yetersiz GP.");
-          const recipientGp = recipientSnap.exists() ? normalizeGpNumber(recipientSnap.data().gp, 0) : 0;
+          const senderBal = senderSnap.exists() ? normalizeGpNumber(senderSnap.data()?.[fieldName], 0) : 0;
+          if (senderBal < amount) throw new Error(`Yetersiz ${giftCurr}.`);
+          const recipientBal = recipientSnap.exists() ? normalizeGpNumber(recipientSnap.data()?.[fieldName], 0) : 0;
 
-          tx.set(senderRef, { gp: senderGp - amount, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
+          tx.set(senderRef, { [fieldName]: senderBal - amount, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
           tx.set(recipientRef, {
             username: targetUser, usernameKey: normalizeKey(targetUser),
-            gp: recipientGp + amount, updatedAt: serverTimestamp(), updatedAtClient: Date.now()
+            [fieldName]: recipientBal + amount, updatedAt: serverTimestamp(), updatedAtClient: Date.now()
           }, { merge: true });
 
           tx.set(doc(collection(db, "gpGifts")), {
-            from: currentUser, to: normalizeKey(targetUser), amount, read: false,
+            from: currentUser, to: normalizeKey(targetUser), amount, currency: giftCurr, read: false,
             createdAt: serverTimestamp(), createdAtClient: Date.now()
           });
         });
-        setGiftMsg(`${targetUser} kullanıcısına ${amount} GP gönderildi!`, true);
+        setGiftMsg(`${targetUser} kullanıcısına ${amount} ${giftCurr} gönderildi!`, true);
         document.getElementById("giftUsername").value = "";
         document.getElementById("giftAmount").value = "";
       } catch (err) {
@@ -7329,17 +7418,18 @@
         snap.docChanges().forEach(change => {
           if (change.type === "added") {
             const data = change.doc.data();
-            showGiftBanner(data.from, data.amount);
+            showGiftBanner(data.from, data.amount, data.currency || "GP");
             updateDoc(doc(db, "gpGifts", change.doc.id), { read: true }).catch(() => {});
           }
         });
       });
     }
 
-    function showGiftBanner(from, amount) {
+    function showGiftBanner(from, amount, currency = "GP") {
       const banner = document.getElementById("giftNotificationBanner");
       if (!banner) return;
-      banner.textContent = `🎁 ${from} size ${amount} GP gönderdi!`;
+      const curr = String(currency || "GP").toUpperCase() === "UP" ? "UP" : "GP";
+      banner.textContent = `🎁 ${from} size ${amount} ${curr} gönderdi!`;
       banner.style.display = "block";
       setTimeout(() => { banner.style.display = "none"; }, 10000);
     }
@@ -7567,6 +7657,7 @@
       activeTradeRoomId = null;
       activeTradeRoomData = null;
       tradeDraftGp = 0;
+      tradeDraftUp = 0;
       tradeDraftItems = [];
       tradeRoomVisible = false;
       document.getElementById("tradeRoomOverlay")?.classList.add("hidden");
@@ -8605,6 +8696,18 @@
         event.target.value = String(currentGp);
       } else {
         tradeDraftGp = parsed;
+      }
+      renderTradeRoomSummary();
+      queueTradeDraftSave();
+    });
+    document.getElementById("tradeRoomMyUpInput")?.addEventListener("input", (event) => {
+      const parsed = Math.max(0, normalizeGpNumber(event.target.value, 0));
+      if (parsed > currentUp) {
+        setTradeRoomNotice(`UP bakiyen ${formatUp(currentUp)}. Daha yüksek miktar ekleyemezsin.`);
+        tradeDraftUp = currentUp;
+        event.target.value = String(currentUp);
+      } else {
+        tradeDraftUp = parsed;
       }
       renderTradeRoomSummary();
       queueTradeDraftSave();
