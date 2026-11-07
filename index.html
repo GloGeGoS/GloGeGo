@@ -28,6 +28,43 @@
     .ultra-member-frame { border:1px solid rgba(216,180,254,.85) !important; box-shadow:0 0 0 1px rgba(192,132,252,.18), 0 0 16px rgba(139,92,246,.15); }
     #userPill.ultra-member-frame { color:#f3e8ff; background:linear-gradient(135deg,#34204e,#21152f); border-color:#c084fc !important; }
     .ultra-badge { background:linear-gradient(135deg,#4c1d95,#a16207); border:1px solid #d8b4fe; color:#fff7d6; }
+    .plus-member-frame { border:1px solid rgba(74,222,128,.78) !important; box-shadow:0 0 0 1px rgba(74,222,128,.13),0 0 12px rgba(34,197,94,.13); }
+    .pro-member-frame { border:1px solid rgba(167,139,250,.9) !important; box-shadow:0 0 0 1px rgba(167,139,250,.18),0 0 14px rgba(139,92,246,.18); }
+    .admin-report-kpis { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px; }
+    .admin-report-kpi { padding:10px;border:1px solid var(--line);border-radius:12px;background:#0c1422;min-width:0; }
+    .admin-report-kpi strong { display:block;font-size:20px;font-weight:950;overflow-wrap:anywhere; }
+    .admin-report-kpi span { color:var(--muted);font-size:11px; }
+    .quota-rate-grid { display:grid;grid-template-columns:1.05fr repeat(4,minmax(64px,1fr));gap:6px;align-items:center; }
+    .quota-rate-grid > * { min-width:0; }
+    .quota-rate-grid input { width:100%;min-width:0;background:#0b111d;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px; }
+    .quota-rate-head { color:#a5b4fc;font-size:10px;font-weight:900;text-align:center; }
+    .quota-rate-tier { font-size:12px;font-weight:850; }
+    .admin-report-table { display:grid;gap:7px;max-height:330px;overflow:auto; }
+    .admin-report-row { display:grid;grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,.8fr));gap:8px;align-items:center;padding:9px 10px;background:#111b2c;border:1px solid rgba(110,168,254,.13);border-radius:11px;font-size:11px; }
+    .admin-report-row strong { overflow-wrap:anywhere; }
+    .admin-report-row span { color:#cbd5e1;overflow-wrap:anywhere; }
+    .model-score-pill { display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:999px;border:1px solid rgba(250,204,21,.3);background:rgba(120,85,15,.18);color:#fde68a;font-size:10px;font-weight:900;white-space:nowrap; }
+    .model-score-note { color:#fde68a;font-size:11px;border:1px solid rgba(250,204,21,.2);background:rgba(120,85,15,.12);border-radius:10px;padding:8px 10px; }
+    .settings-section-label { display:flex;align-items:center;gap:8px;padding:4px 2px 0;color:#a5b4fc;font-size:11px;font-weight:950;letter-spacing:.08em;text-transform:uppercase; }
+    .settings-section-label::after { content:"";height:1px;flex:1;background:linear-gradient(90deg,rgba(110,168,254,.3),transparent); }
+    .usage-day-list { display:grid;gap:7px;margin-top:8px; }
+    .usage-day-row { display:grid;grid-template-columns:78px minmax(0,1fr) 42px;gap:8px;align-items:center;font-size:11px; }
+    .usage-day-track { height:8px;border-radius:99px;overflow:hidden;background:#202a3d;border:1px solid rgba(255,255,255,.06); }
+    .usage-day-fill { height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#8b5cf6);min-width:0; }
+    .model-ranking-top { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:9px;border:1px solid rgba(250,204,21,.2);border-radius:13px;background:linear-gradient(145deg,rgba(120,83,8,.13),rgba(30,41,59,.35));margin-bottom:10px; }
+    .model-ranking-item { min-width:0;padding:9px;border:1px solid rgba(250,204,21,.18);border-radius:10px;background:rgba(8,13,22,.65); }
+    .model-ranking-item strong { display:block;font-size:12px;overflow-wrap:anywhere;color:#fef3c7; }
+    .model-ranking-item span { display:block;color:#fcd34d;font-weight:900;font-size:11px;margin-top:4px; }
+    @media(max-width:760px) {
+      .admin-report-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .quota-rate-grid { grid-template-columns:1fr repeat(4,minmax(48px,.8fr));gap:4px; }
+      .quota-rate-grid input { padding:7px 4px;font-size:11px; }
+      .quota-rate-tier { font-size:10px; }
+      .quota-rate-head { font-size:9px; }
+      .admin-report-row { grid-template-columns:1fr 1fr; }
+      .model-ranking-top { grid-template-columns:1fr; }
+      .usage-day-row { grid-template-columns:68px minmax(0,1fr) 34px;gap:6px; }
+    }
     .message-search-bar { flex-shrink:0; display:flex; align-items:center; gap:8px; padding:8px 14px; border-bottom:1px solid var(--line); background:rgba(18,22,32,.72); }
     .message-search-bar input { min-width:0; flex:1; border:1px solid var(--line); border-radius:10px; padding:9px 11px; background:#0c111c; color:var(--text); outline:none; font-size:13px; }
     .message-search-count { color:var(--muted); font-size:11px; white-space:nowrap; }
@@ -1831,7 +1868,125 @@
       }
     }
 
-</style>
+
+
+    /* GLOGEGO MOBİL SOHBET DÜZENİ — kompakt üst bar, görünür mesaj kutusu */
+    @media (max-width: 900px) {
+      html, body {
+        width: 100%; max-width: 100%; height: 100%; height: 100dvh;
+        min-height: 0; overflow: hidden !important;
+      }
+      .wrap { width: 100%; height: 100dvh; min-height: 0; padding: 0; display: block; }
+      .card { width: 100%; height: 100dvh; min-height: 0; border: 0; border-radius: 0; overflow: hidden; }
+      #appScreen.app {
+        display: flex !important; flex-direction: column; width: 100%; height: 100%;
+        min-height: 0; overflow: hidden;
+      }
+      .sidebar {
+        flex: 0 0 66px; width: 100%; max-width: 100%; min-height: 0; max-height: 66px;
+        overflow: hidden; border: 0; border-bottom: 1px solid var(--line);
+      }
+      .sidebar h2, .sidebar .small { display: none !important; }
+      .thread-list {
+        display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center;
+        width: 100%; height: 100%; min-height: 0; overflow-x: auto; overflow-y: hidden;
+        padding: 6px 8px; gap: 6px;
+      }
+      .thread { flex: 0 0 148px; width: 148px; min-width: 148px; max-width: 148px; margin: 0; padding: 7px 9px; }
+      .thread .name { font-size: 11px; }
+      .thread .last { margin-top: 2px; font-size: 10px; }
+
+      .chat { flex: 1 1 auto; display: flex; flex-direction: column; width: 100%; height: auto; min-height: 0; overflow: hidden; }
+      .chat-head {
+        flex: 0 0 auto; display: flex; flex-direction: column; align-items: stretch;
+        gap: 5px; width: 100%; min-width: 0; padding: 6px 8px;
+      }
+      .head-left {
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 7px;
+        width: 100%; min-width: 0; min-height: 25px; overflow-x: auto; overflow-y: hidden;
+        scrollbar-width: none; white-space: nowrap;
+      }
+      .head-left::-webkit-scrollbar, .head-badges::-webkit-scrollbar, .top-actions::-webkit-scrollbar { display: none; }
+      .chat-head .who { flex: 0 0 auto; font-size: 15px; line-height: 1.1; }
+      .head-badges {
+        display: flex; flex: 0 0 auto; flex-wrap: nowrap; align-items: center;
+        gap: 4px; width: max-content; max-width: none; overflow: visible;
+      }
+      .head-badges .pill { flex: 0 0 auto; padding: 3px 7px; font-size: 9px; line-height: 1.2; }
+      .top-actions {
+        display: flex; flex: 0 0 auto; flex-wrap: nowrap; align-items: center; justify-content: flex-start;
+        width: 100%; min-width: 0; gap: 5px; padding: 0 0 2px; margin: 0;
+        overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+      }
+      .top-actions > button {
+        display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center;
+        width: auto; min-width: max-content; max-width: none; height: 30px; min-height: 30px;
+        padding: 5px 9px; font-size: 10px; line-height: 1; white-space: nowrap;
+      }
+      .message-search-bar { flex: 0 0 auto; padding: 5px 8px; gap: 6px; }
+      .message-search-bar input { padding: 7px 9px; font-size: 12px; }
+      .messages {
+        flex: 1 1 0; min-height: 0; width: 100%; max-width: 100%;
+        overflow-x: hidden; overflow-y: auto; padding: 8px; gap: 7px;
+        overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      }
+      .bubble { padding: 9px 10px; border-radius: 13px; }
+      .meta { gap: 6px; margin-bottom: 5px; font-size: 10px; }
+      .text { padding-right: 0; font-size: 13px; line-height: 1.45; }
+
+      .composer {
+        flex: 0 0 auto; width: 100%; min-width: 0; padding: 6px 7px calc(6px + env(safe-area-inset-bottom));
+        background: #101620; border-top: 1px solid var(--line);
+      }
+      .composer-box { width: 100%; min-width: 0; padding: 6px; gap: 5px; border-radius: 13px; }
+      .ultra-composer-tools {
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 4px;
+        max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-bottom: 1px;
+        scrollbar-width: none;
+      }
+      .ultra-composer-tools .tool-label { flex: 0 0 auto; font-size: 10px; white-space: nowrap; }
+      .ultra-composer-tools button { flex: 0 0 auto; padding: 5px 7px; font-size: 10px; white-space: nowrap; }
+      .composer-top {
+        display: grid; grid-template-columns: minmax(0, 1fr) 108px;
+        align-items: stretch; gap: 6px; width: 100%; min-width: 0;
+      }
+      .composer-top textarea#messageInput {
+        display: block; width: 100%; min-width: 0; height: 60px; min-height: 60px; max-height: 100px;
+        padding: 9px 10px; font-size: 13px; line-height: 1.35; border-radius: 11px;
+      }
+      .composer-right-wrap {
+        display: grid; grid-template-columns: minmax(0, 1fr) 34px;
+        align-items: stretch; gap: 4px; width: 100%; min-width: 0;
+      }
+      .button-stack {
+        display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, 28px); gap: 4px; width: 100%; min-width: 0;
+      }
+      .button-stack > button, .send-btn, .send-btn.small {
+        width: 100%; min-width: 0; max-width: 100%; height: 28px; min-height: 28px;
+        padding: 4px 3px; font-size: 10px; line-height: 1; border-radius: 8px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .model-dots-btn { width: 34px; min-width: 34px; min-height: 60px; height: 100%; padding: 4px; }
+      .composer-bottom {
+        display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center;
+        gap: 5px; width: 100%; min-width: 0; min-height: 18px; overflow: hidden;
+      }
+      .composer-bottom > div { min-width: 0; flex-wrap: nowrap !important; gap: 5px !important; }
+      .counter { flex: 0 0 auto; font-size: 9px; }
+      .active-model-chip { max-width: 55vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+      .status-line { min-width: 0; max-width: 48%; font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    }
+
+    @media (max-width: 360px) {
+      .composer-top { grid-template-columns: minmax(0, 1fr) 100px; }
+      .composer-right-wrap { grid-template-columns: minmax(0, 1fr) 32px; }
+      .model-dots-btn { width: 32px; min-width: 32px; }
+      .chat-head { padding-left: 6px; padding-right: 6px; }
+      .composer { padding-left: 5px; padding-right: 5px; }
+    }
+
+  </style>
 </head>
 <body>
   <div id="giftNotificationBanner"></div>
@@ -1971,7 +2126,7 @@
                   <div class="plus-feature">🧠 25 Düşünme + 25 Analiz hakkı (12 saatte bir yenilenir)</div>
                   <div class="plus-feature">🎁 Günlük +2 GP ULTRA ekstra bonusu (PRO +2 GP dahil toplam +4 GP)</div>
                   <div class="plus-feature">🛍️ Mağazada %8 indirim</div>
-                  <div class="plus-feature">🪪 Özel ULTRA profil çerçevesi ve mor/altın/mavi/kırmızı temalar</div>
+                  <div class="plus-feature">🪪 Özel ULTRA üyelik çerçevesi ve mor/altın/mavi/kırmızı temalar</div>
                   <div class="plus-feature">✍️ Yazı alanı araçları: temizle, düzenle ve kopyala</div>
                   <div class="plus-feature">🔎 Sohbet geçmişinde arama (ek Firestore sorgusu olmadan)</div>
                   <div class="plus-feature">🎁 Sadece ULTRA üyelerine özel ödül kodları</div>
@@ -2437,7 +2592,7 @@
   <!-- AYARLAR MODALI -->
   <div id="settingsModal" class="image-modal hidden" aria-hidden="true">
     <div class="image-modal-backdrop" id="settingsModalBackdrop"></div>
-    <div class="image-modal-panel" role="dialog" aria-modal="true" style="width: min(94vw, 440px);">
+    <div class="image-modal-panel" role="dialog" aria-modal="true" style="width:min(96vw, 980px);max-height:94dvh;">
       <div class="image-modal-top">
         <div class="image-modal-title">Ayarlar</div>
         <button id="settingsCloseBtn" class="image-modal-close" type="button">×</button>
@@ -2445,6 +2600,9 @@
       <div style="display:grid;gap:14px;">
         <button id="scrollBottomBtn" class="btn secondary" type="button">⬇ Sohbette En Alta Git</button>
         <button id="adminGiftShortcut" class="btn hidden" type="button" style="background:linear-gradient(135deg,#6d28d9,#a78bfa);border:1px solid #c4b5fd;">🛠️ Kullanıcıya GP / Ürün / PRO / ULTRA Ver ↓</button>
+
+
+        <div class="settings-section-label">⚙️ Görünüm ve Tercihler</div>
         <div class="field" style="margin:0;">
           <label for="setVolume">GloGeGo Okuma Sesi Seviyesi</label>
           <input type="range" id="setVolume" min="0" max="1" step="0.1" value="1" />
@@ -2462,10 +2620,11 @@
         </div>
 
         <!-- KULLANICI KOTA GÖSTERGESİ (Admin ayarlar diye bilgi asla vermez) -->
+        <div class="settings-section-label">📊 Kullanım ve Kota</div>
         <div id="userQuotaBox" class="plus-box" style="background:#121828; border-color:rgba(110,168,254,.35);">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
             <div class="plus-box-title" style="color:#93c5fd;">📊 Kullanım Kotası</div>
-            <span id="userQuotaNumbersTxt" style="font-size:13px; font-weight:900; color:#e8ecf5;">0 / 10</span>
+            <span id="userQuotaNumbersTxt" style="font-size:13px; font-weight:900; color:#e8ecf5;">0 / 100%</span>
           </div>
           <div class="quota-bar-wrap">
             <div id="userQuotaBarFill" class="quota-bar-fill" style="width:0%;"></div>
@@ -2474,6 +2633,7 @@
           <div id="userQuotaResetTxt" class="muted" style="color:#fde047; font-weight:700;"></div>
         </div>
 
+        <div class="settings-section-label">🧠 Akıllı Araçlar</div>
         <div class="plus-box" style="background:#131826;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div class="plus-box-title">🧠 Düşünme Modu</div>
@@ -2490,6 +2650,7 @@
           <div class="muted">Gönderdiğiniz verileri detaylıca analiz eder.<br>Kalan Hak: <strong id="analysisRightsTxt" style="color:var(--text);">10</strong><span id="resetTimerTxt2" style="color:var(--accent);"></span></div>
         </div>
 
+        <div class="settings-section-label">💰 GP ve Sosyal</div>
         <div class="plus-box" style="background:#131826; border-color: rgba(74, 222, 128, 0.4);">
           <div class="plus-box-title" style="color: #4ade80;">🎁 GP veya 💎 UP Hediye Et</div>
           <input id="giftUsername" class="gp-input" placeholder="Alıcı Kullanıcı Adı" />
@@ -2543,10 +2704,10 @@
           <!-- ADMİN: KULLANICI KOTA YÖNETİMİ (Ondalıklı 0.3 gibi ayarlanabilir) -->
           <div style="border-top:1px solid var(--line); padding-top:12px; display:grid; gap:8px;">
             <strong style="font-size:14px; color:#fca5a5;">📊 Admin · Kullanıcı Kotası & Boşalma Zamanı Ayarla</strong>
-            <div class="muted">Yukarıdaki hedef kullanıcı için kotayı ondalıklı (örn: <code>0.3</code>, <code>4.5</code>) olarak belirleyebilirsin. Kota kendi düşmez, sadece buradan yönetilir. Kota dolduğunda kullanıcı mesaj atamaz ve işlem yapamaz.</div>
+            <div class="muted">Yukarıdaki hedef kullanıcı için kotayı ondalıklı (örn: <code>0.3</code>, <code>4.5</code>) olarak belirleyebilirsin. Kota %100 tabanındadır; kullanıcıya özel üst sınırı buradan değiştirebilirsin. Kullanım etkinlikleri otomatik düşülür. Kota dolduğunda kullanıcı mesaj atamaz ve işlem yapamaz.</div>
             <div class="admin-gift-two">
-              <input id="adminQuotaUsedInput" class="gp-input" type="number" step="0.1" min="0" value="0.3" placeholder="Kullanılan (Örn: 0.3)" />
-              <input id="adminQuotaMaxInput" class="gp-input" type="number" step="0.1" min="0.1" value="10" placeholder="Maks Kota (Örn: 10)" />
+              <input id="adminQuotaUsedInput" class="gp-input" type="number" step="0.1" min="0" value="0.3" placeholder="Kullanılan % (Örn: 25)" />
+              <input id="adminQuotaMaxInput" class="gp-input" type="number" step="0.1" min="0.1" max="100" value="100" placeholder="Maks Kota % (Örn: 100)" />
             </div>
             <input id="adminQuotaResetInput" class="gp-input" type="text" placeholder="Kota ne zaman boşalacak? (Örn: Yarın 18:00 veya 2 saat sonra)" />
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -2590,6 +2751,10 @@
               <input id="adminNewModelGpCostInput" class="gp-input" type="number" min="0" step="1" value="250" placeholder="GP ile Açma Fiyatı (0=Kapalı)" />
             </div>
             <input id="adminNewModelDescInput" class="gp-input" type="text" placeholder="Kısa açıklama (Örn: Ultra hızlı akıl yürütme modeli)" />
+            <div class="admin-gift-two">
+              <input id="adminNewModelScoreInput" class="gp-input" type="number" min="0" max="100" step="1" value="80" placeholder="GloGeGo puanı (0–100)" />
+              <div class="muted" style="align-self:center;">Sıralama puanı yöneticinin verdiği vitrin puanıdır; bağımsız benchmark sonucu değildir.</div>
+            </div>
             <div style="border:1px solid rgba(167,139,250,.3); background:#0c1220; border-radius:12px; padding:10px; display:grid; gap:8px;">
               <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#e9d5ff; font-weight:800; cursor:pointer;">
                 <input type="checkbox" id="adminNewModelPromoOnlyChk" style="width:17px; height:17px;" />
@@ -2610,6 +2775,55 @@
             </div>
             <div id="adminCustomModelsList" class="gp-admin-list" style="max-height:280px;"></div>
           </div>
+
+          <section class="plus-box" style="background:#111827;border-color:rgba(74,222,128,.28);">
+            <div class="plus-box-title">📊 Admin · Kota Tarifeleri</div>
+            <div class="muted">Her işlem, kullanıcının planına göre toplam kotasından düşer. Değerler yüzde puandır; varsayılan kota %100. Kaydettiğinde yeni işlemlere uygulanır.</div>
+            <div class="quota-rate-grid">
+              <span></span><span class="quota-rate-head">Mesaj</span><span class="quota-rate-head">Görsel</span><span class="quota-rate-head">Video</span><span class="quota-rate-head">Dosya</span>
+              <span class="quota-rate-tier">Standart</span>
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="standard" data-quota-kind="message" value="9" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="standard" data-quota-kind="image" value="10" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="standard" data-quota-kind="video" value="20" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="standard" data-quota-kind="file" value="10" />
+              <span class="quota-rate-tier" style="color:#86efac;">Plus</span>
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="plus" data-quota-kind="message" value="2" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="plus" data-quota-kind="image" value="5" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="plus" data-quota-kind="video" value="10" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="plus" data-quota-kind="file" value="5" />
+              <span class="quota-rate-tier" style="color:#c4b5fd;">PRO</span>
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="pro" data-quota-kind="message" value="0.5" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="pro" data-quota-kind="image" value="1" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="pro" data-quota-kind="video" value="3" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="pro" data-quota-kind="file" value="2" />
+              <span class="quota-rate-tier" style="color:#fde68a;">ULTRA</span>
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="message" value="0.1" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="image" value="0.5" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="video" value="1" />
+              <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="file" value="1" />
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="saveQuotaRatesBtn" class="btn" type="button">Tarifeleri Kaydet</button>
+              <button id="resetQuotaRatesBtn" class="btn secondary" type="button">Varsayılana Dön</button>
+            </div>
+            <div id="quotaRatesMsg" class="muted" aria-live="polite"></div>
+          </section>
+
+          <section class="plus-box" style="background:#111827;border-color:rgba(110,168,254,.32);">
+            <div class="plus-box-title">📈 Admin · Kullanım İstatistikleri</div>
+            <div class="muted">Kullanıcı bazında toplam kullanım, bugünkü etkinlikler, kota tüketimi ve en çok kullanılan modeller. Rapor, mevcut GP bakiye belgelerinden okunur; ayrı bir istatistik koleksiyonu oluşturulmaz.</div>
+            <button id="refreshUsageReportBtn" class="btn secondary" type="button">↻ İstatistikleri Yenile</button>
+            <div class="admin-report-kpis">
+              <div class="admin-report-kpi"><strong id="usageTodayTotal">—</strong><span>Bugünkü işlemler</span></div>
+              <div class="admin-report-kpi"><strong id="usageTodayQuota">—</strong><span>Bugünkü kota tüketimi</span></div>
+              <div class="admin-report-kpi"><strong id="usageAllMessages">—</strong><span>Toplam mesaj</span></div>
+              <div class="admin-report-kpi"><strong id="usageActiveToday">—</strong><span>Bugün aktif kullanıcı</span></div>
+            </div>
+            <div><strong style="font-size:13px;">📅 Son 7 günün günlük kullanımı</strong><div id="usageLast7Days" class="usage-day-list"><div class="muted">Raporu yenile.</div></div></div>
+            <div><strong style="font-size:13px;">🏆 En çok kullanılan modeller</strong><div id="usageTopModels" class="muted" style="margin-top:6px;">Raporu yenile.</div></div>
+            <div><strong style="font-size:13px;">👥 Kullanıcı raporu</strong><div id="usageReportList" class="admin-report-table" style="margin-top:7px;"><div class="muted">Raporu yenilemek için butona bas.</div></div></div>
+            <div id="usageReportMsg" class="muted" aria-live="polite"></div>
+          </section>
         </section>
 
         <button id="logoutBtn" class="btn danger">Hesaptan Çıkış Yap</button>
@@ -2677,7 +2891,8 @@
       <div class="image-modal-top">
         <div>
           <div id="modelPickerTitle" class="image-modal-title">🤖 GloGeGo Model Seçimi</div>
-          <div class="muted" style="margin-top:2px;">Üyeliğine göre modelleri seçebilir, GP veya promosyon kodu ile kilitli modelleri açabilirsin.</div>
+          <div class="muted" style="margin-top:2px;">Modeller puanlarına göre sıralanır. GP veya promosyon koduyla özel modelleri kalıcı açabilirsin.</div>
+          <div class="model-score-note">⭐ Puanlar GloGeGo yönetici vitrin puanıdır; bağımsız performans testi değildir.</div>
         </div>
         <button id="modelPickerCloseBtn" class="image-modal-close" type="button">×</button>
       </div>
@@ -2686,6 +2901,7 @@
         <button id="modelPromoRedeemBtn" class="btn secondary" type="button" style="padding:9px 12px; font-size:12px; white-space:nowrap;">Kodla Model Aç</button>
       </div>
       <div id="modelPickerMsg" class="msg" style="margin:0; min-height:16px;"></div>
+      <div id="modelRankingTop" class="model-ranking-top" aria-label="En yüksek puanlı üç model"></div>
       <div id="modelPickerList" style="display:grid; gap:8px;"></div>
     </div>
   </div>
@@ -2793,7 +3009,8 @@
       writeBatch,
       serverTimestamp,
       Timestamp,
-      deleteDoc
+      deleteDoc,
+      increment
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -3089,10 +3306,11 @@
     let currentGp = 0;
     let currentUp = 0;
     let userQuotaUsed = 0;
-    let userQuotaMax = 10;
+    let userQuotaMax = 100;
     let userQuotaResetText = "";
     let unlockedModels = [];
-    let selectedModelId = localStorage.getItem("glogego_selected_model") || "glo-4.0";
+    let selectedModelId = "glo-4.0";
+    let quotaRates = { standard: { message: 9, image: 10, video: 20, file: 10 }, plus: { message: 2, image: 5, video: 10, file: 5 }, pro: { message: 0.5, image: 1, video: 3, file: 2 }, ultra: { message: 0.1, image: 0.5, video: 1, file: 1 } };
     let customModelsCatalog = [];
     let currentPreviewRawCode = "";
     let activeStoreTab = "product";
@@ -3100,14 +3318,14 @@
     let invGroupingEnabled = true;
 
     const DEFAULT_MODELS = [
-      { id: "glo-4.0", name: "Glo 4.0", tier: "standard", gpCost: 0, desc: "Standart hızlı genel sohbet modeli" },
-      { id: "gemini-3.8-flash", name: "Gemini 3.8 flash", tier: "standard", gpCost: 0, desc: "Standart anlık yanıt ve analiz modeli" },
-      { id: "glo-4.2-pro", name: "Glo 4.2 Pro", tier: "plus", gpCost: 200, desc: "Plus gelişmiş mantık ve kodlama modeli" },
-      { id: "gemini-3.0-pro", name: "Gemini 3.0 pro", tier: "plus", gpCost: 250, desc: "Plus derin içerik ve veri modeli" },
-      { id: "claude-opus-5.5", name: "Claude opus 5.5", tier: "plus", gpCost: 300, desc: "Plus yaratıcı yazım ve ileri kodlama modeli" },
-      { id: "glo-5.0", name: "Glo 5.0", tier: "pro", gpCost: 500, desc: "PRO / ULTRA yeni nesil amiral gemisi model" },
-      { id: "glo-5.0-pro", name: "Glo 5.0 Pro", tier: "pro", gpCost: 650, desc: "PRO / ULTRA maksimum kapasiteli profesyonel model" },
-      { id: "gemini-4-carbon", name: "Gemini 4 Carbon", tier: "pro", gpCost: 800, desc: "PRO / ULTRA ultra derin analiz ve kuantum mimari" }
+      { id: "glo-4.0", name: "Glo 4.0", tier: "standard", gpCost: 0, score: 78, desc: "Standart hızlı genel sohbet modeli" },
+      { id: "gemini-3.8-flash", name: "Gemini 3.8 flash", tier: "standard", gpCost: 0, score: 82, desc: "Standart anlık yanıt ve analiz modeli" },
+      { id: "glo-4.2-pro", name: "Glo 4.2 Pro", tier: "plus", gpCost: 200, score: 88, desc: "Plus gelişmiş mantık ve kodlama modeli" },
+      { id: "gemini-3.0-pro", name: "Gemini 3.0 pro", tier: "plus", gpCost: 250, score: 90, desc: "Plus derin içerik ve veri modeli" },
+      { id: "claude-opus-5.5", name: "Claude opus 5.5", tier: "plus", gpCost: 300, score: 92, desc: "Plus yaratıcı yazım ve ileri kodlama modeli" },
+      { id: "glo-5.0", name: "Glo 5.0", tier: "pro", gpCost: 500, score: 94, desc: "PRO / ULTRA yeni nesil amiral gemisi model" },
+      { id: "glo-5.0-pro", name: "Glo 5.0 Pro", tier: "pro", gpCost: 650, score: 97, desc: "PRO / ULTRA maksimum kapasiteli profesyonel model" },
+      { id: "gemini-4-carbon", name: "Gemini 4 Carbon", tier: "pro", gpCost: 800, score: 99, desc: "PRO / ULTRA ultra derin analiz ve kuantum mimari" }
     ];
 
     const upPill = document.getElementById("upPill");
@@ -3990,6 +4208,218 @@
       return { thinking: 5, analysis: 10, cycleHours: 24, tier: "standard" };
     }
 
+    const DEFAULT_QUOTA_RATES = {
+      standard: { message: 9, image: 10, video: 20, file: 10 },
+      plus: { message: 2, image: 5, video: 10, file: 5 },
+      pro: { message: 0.5, image: 1, video: 3, file: 2 },
+      ultra: { message: 0.1, image: 0.5, video: 1, file: 1 }
+    };
+
+    function getQuotaTier() {
+      if (isUltraActive(currentUltra)) return "ultra";
+      if (isProActive(currentPro)) return "pro";
+      if (isPlusActive(currentPlus)) return "plus";
+      return "standard";
+    }
+
+    function normalizeQuotaRates(raw) {
+      const out = {};
+      for (const tier of ["standard", "plus", "pro", "ultra"]) {
+        out[tier] = {};
+        for (const kind of ["message", "image", "video", "file"]) {
+          const value = Number(raw?.[tier]?.[kind]);
+          out[tier][kind] = Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : DEFAULT_QUOTA_RATES[tier][kind];
+        }
+      }
+      return out;
+    }
+
+    function getQuotaCost(kind) {
+      const tier = getQuotaTier();
+      const value = Number(quotaRates?.[tier]?.[kind]);
+      return Number.isFinite(value) ? Math.max(0, value) : DEFAULT_QUOTA_RATES[tier][kind];
+    }
+
+    function selectedModelStorageKey(username = currentUser) {
+      return `glogego_selected_model_${safeDocId(username || "guest")}`;
+    }
+
+    function restoreSelectedModelForUser() {
+      if (!currentUser || isAdmin) return;
+      try {
+        const scoped = localStorage.getItem(selectedModelStorageKey());
+        const legacy = localStorage.getItem("glogego_selected_model");
+        selectedModelId = scoped || legacy || "glo-4.0";
+        if (!scoped && legacy) localStorage.setItem(selectedModelStorageKey(), legacy);
+      } catch { selectedModelId = "glo-4.0"; }
+    }
+
+    function persistSelectedModel(modelId) {
+      if (!modelId) return;
+      selectedModelId = String(modelId);
+      if (!currentUser || isAdmin) return;
+      try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
+      // Model tercihini sadece kullanıcı açıkça seçtiğinde bir kez kaydet; yenilemede okunur.
+      setDoc(doc(db, "gpBalances", gpDocId(currentUser)), {
+        username: currentUser,
+        usernameKey: normalizeKey(currentUser),
+        selectedModelId,
+        updatedAt: serverTimestamp(),
+        updatedAtClient: Date.now()
+      }, { merge: true }).catch((err) => console.warn("Model tercihi buluta kaydedilemedi:", err));
+    }
+
+    // Sohbetlerde hesap adı gösterilir; düzenlenebilir profil bulunmaz.
+    function getMessageIdentityFields() {
+      return {
+        senderDisplayName: isAdmin ? "Admin" : String(currentUser || "Kullanıcı"),
+        senderAvatar: isAdmin ? "🛠️" : ""
+      };
+    }
+
+    async function recordUsage(kind, model) {
+      if (!currentUser || isAdmin) return;
+      const normalizedKind = ["message", "image", "video", "file"].includes(kind) ? kind : "message";
+      const cost = getQuotaCost(normalizedKind);
+      const tier = getQuotaTier();
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }).replaceAll("-", "");
+      const modelId = String(model?.id || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 64) || "unknown";
+      const modelName = String(model?.name || model?.id || "Bilinmeyen model").slice(0, 80);
+      userQuotaUsed = Math.round((Math.max(0, Number(userQuotaUsed) || 0) + cost) * 1000) / 1000;
+      updateComposerState();
+      const ref = doc(db, "gpBalances", gpDocId(currentUser));
+      const statsPatch = {
+        username: currentUser,
+        usernameKey: normalizeKey(currentUser),
+        quotaUsed: increment(cost),
+        [`usageTotal_${normalizedKind}`]: increment(1),
+        [`usageDay_${today}_${normalizedKind}`]: increment(1),
+        [`usageDay_${today}_quota`]: increment(cost),
+        [`usageModel__${modelId}`]: increment(1),
+        [`usageModelName__${modelId}`]: modelName,
+        usageLastModel: modelName,
+        usageLastPlan: tier,
+        usageLastAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        updatedAtClient: Date.now()
+      };
+      try { await setDoc(ref, statsPatch, { merge: true }); }
+      catch (err) { console.warn("Kota / kullanım istatistiği kaydedilemedi:", err); }
+    }
+
+    function setQuotaRateInputs(rates) {
+      const clean = normalizeQuotaRates(rates);
+      document.querySelectorAll("[data-quota-tier][data-quota-kind]").forEach((input) => {
+        const tier = input.dataset.quotaTier;
+        const kind = input.dataset.quotaKind;
+        if (clean[tier] && clean[tier][kind] !== undefined) input.value = String(clean[tier][kind]);
+      });
+    }
+
+    async function saveQuotaRates(reset = false) {
+      if (!isAdmin) return;
+      const msg = document.getElementById("quotaRatesMsg");
+      const next = reset ? DEFAULT_QUOTA_RATES : { standard: {}, plus: {}, pro: {}, ultra: {} };
+      if (!reset) {
+        for (const tier of ["standard", "plus", "pro", "ultra"]) {
+          for (const kind of ["message", "image", "video", "file"]) {
+            const input = document.querySelector(`[data-quota-tier="${tier}"][data-quota-kind="${kind}"]`);
+            const value = Number(String(input?.value ?? "").replace(",", "."));
+            if (!Number.isFinite(value) || value < 0 || value > 100) {
+              if (msg) msg.textContent = "Her kota değeri 0 ile 100 arasında olmalı.";
+              input?.focus();
+              return;
+            }
+            next[tier][kind] = value;
+          }
+        }
+      }
+      try {
+        await setDoc(statusDocRef, { quotaRates: normalizeQuotaRates(next), updatedAt: serverTimestamp() }, { merge: true });
+        quotaRates = normalizeQuotaRates(next);
+        setQuotaRateInputs(quotaRates);
+        if (msg) msg.textContent = "✅ Kota tarifeleri kaydedildi.";
+      } catch (err) { if (msg) msg.textContent = err?.message || "Tarifeler kaydedilemedi."; }
+    }
+
+    async function loadUsageReport() {
+      if (!isAdmin) return;
+      const btn = document.getElementById("refreshUsageReportBtn");
+      const msg = document.getElementById("usageReportMsg");
+      if (btn) { btn.disabled = true; btn.textContent = "Yükleniyor..."; }
+      if (msg) msg.textContent = "Rapor hazırlanıyor...";
+      try {
+        const snap = await getDocs(query(collection(db, "gpBalances"), limit(300)));
+        const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }).replaceAll("-", "");
+        const rows = snap.docs.map((d) => ({ id: d.id, ...(d.data() || {}) }));
+        const kindLabels = { message: "Mesaj", image: "Görsel", video: "Video", file: "Dosya" };
+        const modelTotals = new Map();
+        const recentDays = Array.from({ length: 7 }, (_, index) => {
+          const date = new Date(Date.now() - (6 - index) * DAY_MS);
+          return {
+            key: date.toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }).replaceAll("-", ""),
+            label: date.toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul", day: "2-digit", month: "2-digit" })
+          };
+        });
+        const dailyTotals = new Map(recentDays.map((day) => [day.key, 0]));
+        let todayTotal = 0, todayQuota = 0, allMessages = 0, activeToday = 0;
+        rows.forEach((r) => {
+          let rowToday = 0;
+          for (const kind of Object.keys(kindLabels)) {
+            rowToday += Number(r[`usageDay_${today}_${kind}`] || 0);
+            if (kind === "message") allMessages += Number(r[`usageTotal_${kind}`] || 0);
+          }
+          if (rowToday > 0) activeToday++;
+          todayTotal += rowToday;
+          todayQuota += Number(r[`usageDay_${today}_quota`] || 0);
+          for (const day of recentDays) {
+            const dayCount = Object.keys(kindLabels).reduce((sum, kind) => sum + (Number(r[`usageDay_${day.key}_${kind}`]) || 0), 0);
+            dailyTotals.set(day.key, (dailyTotals.get(day.key) || 0) + dayCount);
+          }
+          Object.entries(r).forEach(([key, value]) => {
+            if (!key.startsWith("usageModel__")) return;
+            const modelKey = key.slice("usageModel__".length);
+            const count = Number(value) || 0;
+            if (!count) return;
+            const name = String(r[`usageModelName__${modelKey}`] || modelKey);
+            modelTotals.set(name, (modelTotals.get(name) || 0) + count);
+          });
+        });
+        const el = (id) => document.getElementById(id);
+        if (el("usageTodayTotal")) el("usageTodayTotal").textContent = String(todayTotal);
+        if (el("usageTodayQuota")) el("usageTodayQuota").textContent = `${formatQuotaDecimal(todayQuota)}%`;
+        if (el("usageAllMessages")) el("usageAllMessages").textContent = String(allMessages);
+        if (el("usageActiveToday")) el("usageActiveToday").textContent = String(activeToday);
+        const maxDaily = Math.max(1, ...Array.from(dailyTotals.values()));
+        if (el("usageLast7Days")) {
+          el("usageLast7Days").innerHTML = recentDays.map((day) => {
+            const count = dailyTotals.get(day.key) || 0;
+            const width = Math.max(0, Math.min(100, (count / maxDaily) * 100));
+            return `<div class="usage-day-row"><span>${day.label}</span><div class="usage-day-track"><div class="usage-day-fill" style="width:${width}%"></div></div><strong style="text-align:right;">${count}</strong></div>`;
+          }).join("");
+        }
+        const topModels = Array.from(modelTotals.entries()).sort((a,b) => b[1]-a[1]).slice(0, 5);
+        if (el("usageTopModels")) el("usageTopModels").innerHTML = topModels.length ? topModels.map(([name,count],i) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);"><span>${i+1}. ${escapeHtml(name)}</span><strong>${count}</strong></div>`).join("") : "Henüz model kullanımı kaydı yok.";
+        const sortedRows = rows.sort((a,b) => {
+          const total = (r) => ["message","image","video","file"].reduce((sum,k) => sum + (Number(r[`usageTotal_${k}`]) || 0), 0);
+          return total(b) - total(a);
+        });
+        if (el("usageReportList")) el("usageReportList").innerHTML = sortedRows.length ? `<div class="admin-report-row" style="background:#0b1220;color:#93c5fd;font-weight:900;"><strong>Kullanıcı</strong><span>Toplam</span><span>Bugün</span><span>Kota</span></div>` + sortedRows.map((r) => {
+          const username = r.username || r.id;
+          const total = ["message","image","video","file"].reduce((sum,k) => sum + (Number(r[`usageTotal_${k}`]) || 0), 0);
+          const daily = ["message","image","video","file"].reduce((sum,k) => sum + (Number(r[`usageDay_${today}_${k}`]) || 0), 0);
+          const used = Number(r.quotaUsed || 0), max = Number(r.quotaMax || 100);
+          const topModelEntry = Object.entries(r).filter(([k,v]) => k.startsWith("usageModel__") && !k.startsWith("usageModelName__") && Number(v) > 0).sort((a,b) => Number(b[1])-Number(a[1]))[0];
+          const topModel = topModelEntry ? (r[`usageModelName__${topModelEntry[0].slice("usageModel__".length)}`] || topModelEntry[0].slice("usageModel__".length)) : "—";
+          const messageCount = Number(r.usageTotal_message || 0);
+          const detail = `📩 ${messageCount} mesaj · 🖼 ${Number(r.usageTotal_image || 0)} · 🎥 ${Number(r.usageTotal_video || 0)} · 📎 ${Number(r.usageTotal_file || 0)}`;
+          return `<div class="admin-report-row"><strong>${escapeHtml(username)}<small style="display:block;color:#94a3b8;font-weight:500;">${detail}</small><small style="display:block;color:#64748b;font-weight:500;">En çok: ${escapeHtml(topModel)}</small></strong><span>${total} işlem</span><span>${daily} bugün</span><span>${formatQuotaDecimal(used)} / ${formatQuotaDecimal(max)}%</span></div>`;
+        }).join("") : `<div class="muted">Kullanım verisi bulunamadı.</div>`;
+        if (msg) msg.textContent = `✅ ${rows.length} hesap incelendi · Bugün: ${new Date().toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" })}`;
+      } catch (err) { if (msg) msg.textContent = err?.message || "İstatistikler okunamadı. Firestore kurallarını kontrol et."; }
+      finally { if (btn) { btn.disabled = false; btn.textContent = "↻ İstatistikleri Yenile"; } }
+    }
+
     function getAllModels() {
       const merged = [...DEFAULT_MODELS];
       for (const cm of customModelsCatalog) {
@@ -4040,7 +4470,6 @@
       if (found && isModelUnlockedForCurrentUser(found)) return found;
       const unlockedFallback = all.find((m) => isModelUnlockedForCurrentUser(m));
       const fallback = unlockedFallback || all[0] || DEFAULT_MODELS[0];
-      selectedModelId = fallback.id;
       return fallback;
     }
 
@@ -4076,14 +4505,30 @@
       return Number.isInteger(num) ? String(num) : String(Number(num.toFixed(2)));
     }
 
-    function checkUserQuotaOrBlock() {
+    function checkUserQuotaOrBlock(kind = "") {
       if (isAdmin) return true;
-      if (isUserQuotaExhausted()) {
-        const resetInfo = userQuotaResetText ? ` Kotanın yenileneceği zaman: ${userQuotaResetText}` : "";
-        const msg = `⚠️ Kullanım kotanız doldu (${formatQuotaDecimal(userQuotaUsed)} / ${formatQuotaDecimal(userQuotaMax)}). Şu anda mesaj gönderemez veya işlem yapamazsınız.${resetInfo}`;
+      const max = Math.min(100, Math.max(0, Number(userQuotaMax) || 100));
+      const used = Math.max(0, Number(userQuotaUsed) || 0);
+      const resetInfo = userQuotaResetText ? ` Kotanın yenileneceği zaman: ${userQuotaResetText}` : "";
+      if (used >= max) {
+        const msg = `⚠️ Kullanım kotanız doldu (${formatQuotaDecimal(used)} / ${formatQuotaDecimal(max)}%). Şu anda mesaj gönderemez veya işlem yapamazsınız.${resetInfo}`;
         if (statusLine) statusLine.textContent = msg;
         showAppNotice(msg);
         return false;
+      }
+      if (kind) {
+        const tier = getQuotaTier();
+        const cost = getQuotaCost(kind);
+        const usageLabel = { message: "mesaj", image: "görsel", video: "video", file: "dosya" }[kind] || "işlem";
+        if (used + cost > max + 0.000001) {
+          const remaining = Math.max(0, max - used);
+          const msg = `⚠️ Bu ${usageLabel} kotanızı aşacağı için gönderilemedi. Kalan: %${formatQuotaDecimal(remaining)} · İşlem maliyeti: %${formatQuotaDecimal(cost)}.${resetInfo}`;
+          if (statusLine) statusLine.textContent = msg;
+          showAppNotice(msg);
+          return false;
+        }
+        const msg = `📊 Bu ${usageLabel} ${tier.toUpperCase()} kotanızdan %${formatQuotaDecimal(cost)} tüketir.`;
+        if (statusLine && used >= max * 0.75) statusLine.textContent = msg;
       }
       return true;
     }
@@ -4098,7 +4543,7 @@
       const used = Math.max(0, Number(userQuotaUsed) || 0);
       const max = Math.max(0.1, Number(userQuotaMax) || 10);
       const pct = Math.min(100, Math.max(0, (used / max) * 100));
-      if (nums) nums.textContent = `${formatQuotaDecimal(used)} / ${formatQuotaDecimal(max)}`;
+      if (nums) nums.textContent = `${formatQuotaDecimal(used)}% / ${formatQuotaDecimal(max)}%`;
       if (bar) {
         bar.style.width = `${pct}%`;
         bar.classList.toggle("warn", pct >= 75 && pct < 100);
@@ -4610,7 +5055,9 @@
       const modelBadgeHtml = (!isSenderAdmin && docData.modelName)
         ? `<span class="msg-model-badge" title="Kullanılan Model">🤖 ${escapeHtml(docData.modelName)}${docData.actionKind && isAdmin ? ` · ${escapeHtml(docData.actionKind)}` : ""}</span>`
         : "";
-      const metaLeftHtml = `<span style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;"><strong>${escapeHtml(docData.sender || "")}</strong>${modelBadgeHtml}</span>`;
+      const senderName = String(docData.sender || "Kullanıcı");
+      const senderAvatar = docData.sender === ADMIN_USER ? "🛠️" : "";
+      const metaLeftHtml = `<span style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">${senderAvatar ? `<span aria-hidden="true">${escapeHtml(senderAvatar)}</span>` : ""}<strong>${escapeHtml(senderName)}</strong>${modelBadgeHtml}</span>`;
 
       if (kind === "mode_request") {
         return `
@@ -4817,7 +5264,7 @@
       const threadId = isAdmin ? selectedThread : currentUser;
       if (!threadId) return showAppNotice("Önce bir sohbet seç.");
       if (!isAdmin && !chatOpen) return showAppNotice("GloGeGo müsait değil.");
-      if (!checkUserQuotaOrBlock()) return;
+      if (!checkUserQuotaOrBlock("file")) return;
       if (!file) return;
       if (file.size > FILE_MAX_SIZE) return showAppNotice("Dosya 25 MB sınırını geçti.");
 
@@ -4832,6 +5279,7 @@
         await setDoc(messageRef, {
           threadId,
           sender: currentUser,
+          ...getMessageIdentityFields(),
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "file",
           modelId: isAdmin ? "" : activeModel.id,
@@ -4860,6 +5308,7 @@
         }
 
         await updateDoc(messageRef, { fileStatus: "ready", updatedAt: serverTimestamp() });
+        if (!isAdmin) await recordUsage("file", activeModel);
         setTimeout(scrollToBottomFast, 50);
       } catch (err) {
         showAppNotice(err?.message || "Dosya gönderilemedi.");
@@ -4896,7 +5345,7 @@
       const threadId = isAdmin ? selectedThread : currentUser;
       if (!threadId) return showAppNotice("Önce bir sohbet seç.");
       if (!isAdmin && !chatOpen) return showAppNotice("GloGeGo müsait değil.");
-      if (!checkUserQuotaOrBlock()) return;
+      if (!checkUserQuotaOrBlock("message")) return;
       const normalizedText = String(text || "").trim();
       if (!normalizedText) return showAppNotice("Bir şey yaz.");
 
@@ -4904,13 +5353,14 @@
       sendBtn.disabled = true;
       try {
         const ref = await addDoc(collection(db, "messages"), {
-          threadId, sender: currentUser, recipient: isAdmin ? threadId : ADMIN_USER,
+          threadId, sender: currentUser, ...getMessageIdentityFields(), recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "mode_request", mode, text: normalizedText, cancelled: false,
           modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name,
           actionKind: getModeLabel(mode),
           createdAt: serverTimestamp(), createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + 6 * 60 * 60 * 1000))
         });
+        if (!isAdmin) await recordUsage("message", activeModel);
         pendingModeRequest = { id: ref.id, mode, text: normalizedText };
         if (modePill) { modePill.textContent = getModeStatus(mode); modePill.classList.remove("hidden"); }
         messageInput.value = "";
@@ -4925,7 +5375,7 @@
     async function sendVideo(file) {
       const threadId = isAdmin ? selectedThread : currentUser;
       if (!threadId || (!isAdmin && !chatOpen) || !file) return;
-      if (!checkUserQuotaOrBlock()) return;
+      if (!checkUserQuotaOrBlock("video")) return;
       if (file.size > 50 * 1024 * 1024) return showAppNotice("Video 50 MB sınırını geçti.");
 
       const activeModel = getCurrentModelObject();
@@ -4936,7 +5386,7 @@
 
       try {
         await setDoc(messageRef, {
-          threadId, sender: currentUser, recipient: isAdmin ? threadId : ADMIN_USER,
+          threadId, sender: currentUser, ...getMessageIdentityFields(), recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "video", modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name, actionKind: "Video Gönderimi", text: file.name || "video", videoName: file.name || "video.mp4",
           videoMime: file.type || "video/mp4", videoSize: file.size, videoChunkCount: totalChunks,
           videoStatus: "uploading", createdAt: serverTimestamp(), createdAtClient: Date.now(),
@@ -4951,6 +5401,7 @@
           videoBtn.textContent = `${Math.floor(((i + 1) / totalChunks) * 100)}%`;
         }
         await updateDoc(messageRef, { videoStatus: "ready", updatedAt: serverTimestamp() });
+        if (!isAdmin) await recordUsage("video", activeModel);
         setTimeout(scrollToBottomFast, 50);
       } catch (err) {
         showAppNotice(err?.message || "Video yüklenemedi.");
@@ -5092,7 +5543,11 @@
           currentGp = normalizeGpNumber(data.gp, 0);
           currentUp = normalizeGpNumber(data.up, 0);
           userQuotaUsed = data.quotaUsed !== undefined && Number.isFinite(Number(data.quotaUsed)) ? Number(data.quotaUsed) : 0;
-          userQuotaMax = data.quotaMax !== undefined && Number.isFinite(Number(data.quotaMax)) && Number(data.quotaMax) > 0 ? Number(data.quotaMax) : 10;
+          userQuotaMax = data.quotaMax !== undefined && Number.isFinite(Number(data.quotaMax)) && Number(data.quotaMax) > 0 ? Number(data.quotaMax) : 100;
+          if (data.selectedModelId && !isAdmin) {
+            selectedModelId = String(data.selectedModelId);
+            try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
+          }
           userQuotaResetText = String(data.quotaResetText || "");
           unlockedModels = Array.isArray(data.unlockedModels) ? data.unlockedModels : [];
           updateGpPill();
@@ -6378,7 +6833,7 @@
           <div class="gp-row">
             <div>
               <strong>${escapeHtml(data.username || data.usernameKey || 'Bilinmeyen')}</strong>
-              <div class="muted">Kota: ${formatQuotaDecimal(data.quotaUsed || 0)} / ${formatQuotaDecimal(data.quotaMax || 10)} ${data.quotaResetText ? `(${escapeHtml(data.quotaResetText)})` : ""}</div>
+              <div class="muted">Kota: ${formatQuotaDecimal(data.quotaUsed || 0)}% / ${formatQuotaDecimal(data.quotaMax || 100)}% ${data.quotaResetText ? `(${escapeHtml(data.quotaResetText)})` : ""}</div>
             </div>
             <div style="text-align:right">
               <strong>${escapeHtml(formatGp(data.gp || 0))}</strong>
@@ -6643,20 +7098,28 @@
       const points = normalizeGpNumber(gpCreatePointsInput?.value, 0);
       const modelId = document.getElementById("gpCreatePromoModelSelect")?.value || "";
       if (!code) return setGpAdminProductMsg('Geçerli bir kod yaz.');
+      if (code.includes("/")) return setGpAdminProductMsg('Kod içinde / karakteri kullanılamaz.');
       if (rewardType !== "MODEL" && points <= 0) return setGpAdminProductMsg('Geçerli miktar yaz.');
       if (rewardType === "MODEL" && !modelId) return setGpAdminProductMsg('Kodun açacağı modeli seç.');
       const modelObj = getAllModels().find((m) => m.id === modelId);
-      await setDoc(doc(db, 'gpPromoCodes', code), {
-        code,
-        rewardType,
-        points: rewardType === "MODEL" ? 0 : points,
-        unlockModelId: rewardType === "MODEL" ? modelId : "",
-        unlockModelName: rewardType === "MODEL" ? (modelObj?.name || modelId) : "",
-        used: false,
-        createdBy: currentUser,
-        createdAt: serverTimestamp(),
-        createdAtClient: Date.now()
-      }, { merge: true });
+      const promoRef = doc(db, 'gpPromoCodes', code);
+      try {
+        await runTransaction(db, async (tx) => {
+          const existing = await tx.get(promoRef);
+          if (existing.exists()) throw new Error('Bu promosyon kodu zaten var. Yeni ve benzersiz bir kod kullan.');
+          tx.set(promoRef, {
+            code,
+            rewardType,
+            points: rewardType === "MODEL" ? 0 : points,
+            unlockModelId: rewardType === "MODEL" ? modelId : "",
+            unlockModelName: rewardType === "MODEL" ? (modelObj?.name || modelId) : "",
+            used: false,
+            createdBy: currentUser,
+            createdAt: serverTimestamp(),
+            createdAtClient: Date.now()
+          });
+        });
+      } catch (err) { return setGpAdminProductMsg(err?.message || 'Promo kod oluşturulamadı.'); }
       setGpAdminProductMsg(`Promo kod oluşturuldu (${rewardType}).`, true);
       if (gpCreateCodeInput) gpCreateCodeInput.value = '';
     }
@@ -6667,6 +7130,7 @@
       const code = String(rawCode || '').trim();
       if (!code) return msgCb('Kod yaz.', false);
       let successMessage = "Kod kullanıldı!";
+      let unlockedModelId = "";
       await runTransaction(db, async (tx) => {
         const codeRef = doc(db, 'gpPromoCodes', code);
         const codeSnap = await tx.get(codeRef);
@@ -6685,10 +7149,10 @@
           if (!existingModels.includes(targetModelId)) existingModels.push(targetModelId);
           tx.set(balanceRef, {
             username: currentUser, usernameKey: normalizeKey(currentUser),
-            unlockedModels: existingModels, updatedAt: serverTimestamp(), updatedAtClient: Date.now()
+            unlockedModels: existingModels, selectedModelId: targetModelId,
+            updatedAt: serverTimestamp(), updatedAtClient: Date.now()
           }, { merge: true });
-          selectedModelId = targetModelId;
-          localStorage.setItem("glogego_selected_model", targetModelId);
+          unlockedModelId = String(targetModelId);
           successMessage = `🔓 Tebrikler! "${cData.unlockModelName || targetModelId}" modeli hesabına kalıcı olarak açıldı!`;
         } else if (rewardType === "UP") {
           const curUp = normalizeGpNumber(balData.up, 0);
@@ -6707,6 +7171,11 @@
         }
         tx.set(codeRef, { used: true, usedBy: currentUser, usedAt: serverTimestamp() }, { merge: true });
       });
+      if (unlockedModelId) {
+        selectedModelId = unlockedModelId;
+        try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
+        updateActiveModelUI();
+      }
       msgCb(successMessage, true);
     }
 
@@ -6980,8 +7449,19 @@
     function renderModelPickerModal() {
       const listEl = document.getElementById("modelPickerList");
       if (!listEl) return;
-      const all = getAllModels();
+      const all = getAllModels().slice().sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+      const globalRanks = new Map(all.map((model, index) => [model.id, index + 1]));
       const currentObj = getCurrentModelObject();
+
+      const rankingTopEl = document.getElementById("modelRankingTop");
+      if (rankingTopEl) {
+        rankingTopEl.innerHTML = all.slice(0, 3).map((model, index) => `
+          <div class="model-ranking-item">
+            <strong>${index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"} #${index + 1} ${escapeHtml(model.name)}</strong>
+            <span>⭐ ${Math.max(0, Math.min(100, Number(model.score) || 0))}/100</span>
+            <small class="muted">${escapeHtml(model.tier === "promo_only" || model.promoOnly ? "Promosyon" : (model.tier || "standard").toUpperCase())}</small>
+          </div>`).join("");
+      }
 
       const groups = [
         { key: "standard", title: "⚡ Standart Modeller", items: all.filter((m) => (m.tier || "standard") === "standard" && !m.promoOnly) },
@@ -7021,10 +7501,11 @@
             <div class="model-card-row ${isSelected ? "selected" : ""}" style="${isDisabled && !allowedForDisabled ? "opacity:0.65; border-color:rgba(248,113,113,.3);" : ""}">
               <div class="model-card-info">
                 <div class="model-card-name">
-                  <span>${isDisabled && !allowedForDisabled ? "🚫" : (unlocked ? "🟢" : "🔒")} ${escapeHtml(m.name)}</span>
+                  <span>${isDisabled && !allowedForDisabled ? "🚫" : (unlocked ? "🟢" : "🔒")} #${globalRanks.get(m.id) || "—"} ${escapeHtml(m.name)}</span>
                   <span class="model-tier-tag ${tierClass}">${tierLabel}</span>
                 </div>
                 <div class="muted">${escapeHtml(m.desc || "")}</div>
+                <span class="model-score-pill">⭐ ${Math.max(0, Math.min(100, Number(m.score) || 0))}/100</span>
               </div>
               <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
                 ${actionHtml}
@@ -7040,8 +7521,7 @@
           const id = btn.dataset.selectModel;
           const found = all.find((x) => x.id === id);
           if (!found || !isModelUnlockedForCurrentUser(found)) return;
-          selectedModelId = found.id;
-          localStorage.setItem("glogego_selected_model", found.id);
+          persistSelectedModel(found.id);
           updateActiveModelUI();
           renderModelPickerModal();
           setModelPickerMsg(`🤖 Aktif model "${found.name}" olarak değiştirildi.`, true);
@@ -7085,12 +7565,13 @@
             usernameKey: normalizeKey(currentUser),
             gp: curGp - cost,
             unlockedModels: list,
+            selectedModelId: model.id,
             updatedAt: serverTimestamp(),
             updatedAtClient: Date.now()
           }, { merge: true });
         });
-        selectedModelId = model.id;
-        localStorage.setItem("glogego_selected_model", model.id);
+        selectedModelId = String(model.id);
+        try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
         updateActiveModelUI();
         renderModelPickerModal();
         setModelPickerMsg(`🎉 "${model.name}" modeli açıldı ve seçildi!`, true);
@@ -7107,10 +7588,12 @@
       const maxInput = document.getElementById("adminQuotaMaxInput");
       const resetInput = document.getElementById("adminQuotaResetInput");
 
-      let maxVal = parseFloat(String(maxInput?.value || "10").replace(",", "."));
-      if (!Number.isFinite(maxVal) || maxVal <= 0) maxVal = 10;
+      let maxVal = parseFloat(String(maxInput?.value || "100").replace(",", "."));
+      if (!Number.isFinite(maxVal) || maxVal <= 0) maxVal = 100;
+      maxVal = Math.min(100, maxVal);
       let usedVal = parseFloat(String(usedInput?.value || "0").replace(",", "."));
       if (!Number.isFinite(usedVal) || usedVal < 0) usedVal = 0;
+      usedVal = Math.min(maxVal, usedVal);
 
       if (mode === "full") usedVal = maxVal;
       if (mode === "clear") usedVal = 0;
@@ -7127,7 +7610,7 @@
           updatedAt: serverTimestamp(),
           updatedAtClient: Date.now()
         }, { merge: true });
-        setAdminGiftMsg(`✅ ${user} kotası güncellendi: ${formatQuotaDecimal(usedVal)} / ${formatQuotaDecimal(maxVal)} ${resetStr ? `(Boşalma: ${resetStr})` : ""}`, true);
+        setAdminGiftMsg(`✅ ${user} kotası güncellendi: ${formatQuotaDecimal(usedVal)} / ${formatQuotaDecimal(maxVal)}% ${resetStr ? `(Boşalma: ${resetStr})` : ""}`, true);
       } catch (err) {
         setAdminGiftMsg(err?.message || "Kota güncellenemedi.");
       }
@@ -7196,6 +7679,7 @@
       const tierSel = document.getElementById("adminNewModelTierSelect");
       const gpInp = document.getElementById("adminNewModelGpCostInput");
       const descInp = document.getElementById("adminNewModelDescInput");
+      const scoreInp = document.getElementById("adminNewModelScoreInput");
       const promoChk = document.getElementById("adminNewModelPromoOnlyChk");
       const promoCodeInp = document.getElementById("adminNewModelPromoCodeInput");
       const disChk = document.getElementById("adminNewModelDisabledChk");
@@ -7206,6 +7690,7 @@
       if (tierSel) tierSel.value = "standard";
       if (gpInp) gpInp.value = "250";
       if (descInp) descInp.value = "";
+      if (scoreInp) scoreInp.value = "80";
       if (promoChk) promoChk.checked = false;
       if (promoCodeInp) promoCodeInp.value = "";
       if (disChk) disChk.checked = false;
@@ -7220,6 +7705,7 @@
       const tierSel = document.getElementById("adminNewModelTierSelect");
       const gpInp = document.getElementById("adminNewModelGpCostInput");
       const descInp = document.getElementById("adminNewModelDescInput");
+      const scoreInp = document.getElementById("adminNewModelScoreInput");
       const promoChk = document.getElementById("adminNewModelPromoOnlyChk");
       const promoCodeInp = document.getElementById("adminNewModelPromoCodeInput");
       const disChk = document.getElementById("adminNewModelDisabledChk");
@@ -7230,6 +7716,7 @@
       if (tierSel) tierSel.value = m.promoOnly ? "promo_only" : (m.tier || "standard");
       if (gpInp) gpInp.value = String(Math.max(0, normalizeGpNumber(m.gpCost, 0)));
       if (descInp) descInp.value = m.desc || "";
+      if (scoreInp) scoreInp.value = String(Math.max(0, Math.min(100, Number(m.score) || 0)));
       if (promoChk) promoChk.checked = !!(m.promoOnly || m.tier === "promo_only");
       if (promoCodeInp) promoCodeInp.value = m.promoCode || "";
       if (disChk) disChk.checked = !!m.disabled;
@@ -7251,6 +7738,7 @@
         const statusBadges = [
           `Ticket: ${escapeHtml((m.promoOnly || m.tier === "promo_only") ? "SADECE PROMO KOD" : (m.tier || "standard").toUpperCase())}`,
           (m.promoOnly || m.tier === "promo_only") ? `Kod: ${escapeHtml(m.promoCode || "Yok")} (1 Kişilik)` : `GP Açma: ${formatGp(m.gpCost || 0)}`,
+          `⭐ Puan: ${Math.max(0, Math.min(100, Number(m.score) || 0))}/100`,
           m.disabled ? `🚫 KULLANIM DIŞI (İzinliler: ${allowedList.length ? escapeHtml(allowedList.join(", ")) : "Yok"})` : `🟢 Aktif`
         ].join(" · ");
         return `
@@ -7319,9 +7807,12 @@
       const allowedUsersRaw = String(document.getElementById("adminNewModelAllowedUsersInput")?.value || "").trim();
       const allowedUsers = parseAllowedUsersList(allowedUsersRaw);
       const desc = String(document.getElementById("adminNewModelDescInput")?.value || "").trim() || (promoOnly ? "Sadece promosyon kodu ile açılan özel model" : `${tier.toUpperCase()} özel yapay zeka modeli`);
+      const scoreRaw = Number(document.getElementById("adminNewModelScoreInput")?.value ?? 80);
+      const score = Number.isFinite(scoreRaw) ? Math.max(0, Math.min(100, Math.round(scoreRaw))) : 80;
 
       if (!name) return setAdminGiftMsg("Modelin adını yaz.");
       if (promoOnly && !promoCode) return setAdminGiftMsg("Sadece promosyon kodu ile açılacak model için bir promosyon kodu gir.");
+      if (promoCode.includes("/")) return setAdminGiftMsg("Promosyon kodunda / karakteri kullanılamaz.");
 
       const id = editingId || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `model-${Date.now()}`;
       const modelEntry = {
@@ -7329,6 +7820,7 @@
         name,
         tier,
         gpCost,
+        score,
         promoOnly,
         promoCode: promoCode || "",
         disabled,
@@ -7337,23 +7829,36 @@
       };
       const next = [...customModelsCatalog.filter((m) => m.id !== id), modelEntry];
       try {
-        await setDoc(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
+        let promoCreated = false;
         if (promoCode) {
-          await setDoc(doc(db, "gpPromoCodes", promoCode), {
-            code: promoCode,
-            rewardType: "MODEL",
-            points: 0,
-            unlockModelId: id,
-            unlockModelName: name,
-            used: false,
-            maxUses: 1,
-            createdBy: currentUser,
-            createdAt: serverTimestamp(),
-            createdAtClient: Date.now()
-          }, { merge: true });
+          const promoRef = doc(db, "gpPromoCodes", promoCode);
+          await runTransaction(db, async (tx) => {
+            const existing = await tx.get(promoRef);
+            if (existing.exists() && String(existing.data()?.unlockModelId || "") !== id) {
+              throw new Error("Bu promosyon kodu başka bir ödüle ayrılmış. Benzersiz bir kod kullan.");
+            }
+            tx.set(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
+            if (!existing.exists()) {
+              tx.set(promoRef, {
+                code: promoCode,
+                rewardType: "MODEL",
+                points: 0,
+                unlockModelId: id,
+                unlockModelName: name,
+                used: false,
+                maxUses: 1,
+                createdBy: currentUser,
+                createdAt: serverTimestamp(),
+                createdAtClient: Date.now()
+              });
+              promoCreated = true;
+            }
+          });
+        } else {
+          await setDoc(statusDocRef, { customModels: next, updatedAt: serverTimestamp() }, { merge: true });
         }
         clearAdminModelForm();
-        setAdminGiftMsg(`✅ "${name}" modeli kaydedildi${promoCode ? ` ve "${promoCode}" tek kişilik promosyon kodu oluşturuldu` : ""}!`, true);
+        setAdminGiftMsg(`✅ "${name}" modeli kaydedildi${promoCreated ? ` ve "${promoCode}" tek kişilik promosyon kodu oluşturuldu` : ""}!`, true);
       } catch (err) {
         setAdminGiftMsg(err?.message || "Model kaydedilemedi.");
       }
@@ -7441,7 +7946,7 @@
       proChatSendBtn.disabled = true;
       try {
         await addDoc(collection(db, "proChatMessages"), {
-          sender: currentUser, text, createdAt: serverTimestamp(), createdAtClient: Date.now()
+          sender: currentUser, ...getMessageIdentityFields(), text, createdAt: serverTimestamp(), createdAtClient: Date.now()
         });
         proChatMessageInput.value = "";
       } catch {
@@ -7467,7 +7972,7 @@
           const time = new Date(item.createdAtClient).toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' });
           return `
             <div class="bubble ${mine ? 'me' : ''}" style="max-width: 85%; align-self: ${mine ? 'flex-end' : 'flex-start'}; border-color: rgba(139, 92, 246, 0.4);">
-              <div class="meta" style="color: #a78bfa;"><span>${escapeHtml(item.sender)}</span><span>${time}</span></div>
+              <div class="meta" style="color: #a78bfa;"><span>${item.sender === ADMIN_USER ? "🛠️ " : ""}${escapeHtml(item.sender || "Kullanıcı")}</span><span>${time}</span></div>
               <div class="text">${formatMarkdown(item.text)}</div>
             </div>
           `;
@@ -7481,6 +7986,7 @@
       appScreen.style.display = "grid";
       sidebar.classList.toggle("hidden", !isAdmin);
       userPill.textContent = isAdmin ? "Admin" : currentUser;
+      if (!isAdmin) restoreSelectedModelForUser();
       adminPlusSection.classList.toggle("hidden", !isAdmin);
       setGpAdminVisibility();
 
@@ -7732,6 +8238,8 @@
         plusPill.classList.add("hidden");
       }
       userPill?.classList.toggle("ultra-member-frame", !!ultraActive);
+      userPill?.classList.toggle("pro-member-frame", !!proActive && !ultraActive);
+      userPill?.classList.toggle("plus-member-frame", !!plusActive && !proActive && !ultraActive);
       ultraComposerTools?.classList.toggle("hidden", !ultraActive);
       ultraThemeSection?.classList.toggle("hidden", !ultraActive);
       messageSearchBar?.classList.toggle("hidden", !(isAdmin || ultraActive));
@@ -7740,6 +8248,7 @@
         applyMessageSearch();
       }
       applyUltraTheme();
+      updateActiveModelUI();
       if (proChatBtn) proChatBtn.classList.toggle("hidden", !(isAdmin || proActive || ultraActive));
     }
 
@@ -8214,7 +8723,7 @@
 
       if (!threadId) return showAppNotice("Önce bir sohbet seç.");
       if (!isAdmin && !chatOpen) return showAppNotice("GloGeGo müsait değil.");
-      if (!checkUserQuotaOrBlock()) return;
+      if (!checkUserQuotaOrBlock("message")) return;
       if (!text) return;
 
       if (!isAdmin) {
@@ -8245,6 +8754,7 @@
         await addDoc(collection(db, "messages"), {
           threadId,
           sender: currentUser,
+          ...getMessageIdentityFields(),
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "text",
           modelId: isAdmin ? "" : activeModel.id,
@@ -8256,6 +8766,7 @@
           createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + DAY_MS))
         });
+        if (!isAdmin) await recordUsage("message", activeModel);
         messageInput.value = "";
         charCount.textContent = "0";
         setTimeout(scrollToBottomFast, 10);
@@ -8269,7 +8780,7 @@
     async function sendImage(file) {
       const threadId = isAdmin ? selectedThread : currentUser;
       if (!threadId || (!isAdmin && !chatOpen) || !file) return;
-      if (!checkUserQuotaOrBlock()) return;
+      if (!checkUserQuotaOrBlock("image")) return;
       if (!file.type.startsWith("image/")) return showAppNotice("Sadece resim yükleyebilirsin.");
 
       const activeModel = getCurrentModelObject();
@@ -8280,6 +8791,7 @@
         await addDoc(collection(db, "messages"), {
           threadId,
           sender: currentUser,
+          ...getMessageIdentityFields(),
           recipient: isAdmin ? threadId : ADMIN_USER,
           modelId: isAdmin ? "" : activeModel.id,
           modelName: isAdmin ? "" : activeModel.name,
@@ -8292,6 +8804,7 @@
           createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + IMAGE_EXPIRE_MS))
         });
+        if (!isAdmin) await recordUsage("image", activeModel);
         setTimeout(scrollToBottomFast, 50);
       } catch (err) {
         showAppNotice(err?.message || "Fotoğraf yüklenemedi.");
@@ -8576,6 +9089,8 @@
         const d = snap.exists() ? (snap.data() || {}) : {};
         chatOpen = d.open !== false;
         customModelsCatalog = Array.isArray(d.customModels) ? d.customModels : [];
+        quotaRates = normalizeQuotaRates(d.quotaRates || DEFAULT_QUOTA_RATES);
+        if (isAdmin) setQuotaRateInputs(quotaRates);
         updateComposerState();
         renderAdminCustomModelsList();
         renderModelPickerModal();
@@ -8937,6 +9452,9 @@
       }
     });
 
+    document.getElementById("saveQuotaRatesBtn")?.addEventListener("click", () => void saveQuotaRates(false));
+    document.getElementById("resetQuotaRatesBtn")?.addEventListener("click", () => void saveQuotaRates(true));
+    document.getElementById("refreshUsageReportBtn")?.addEventListener("click", () => void loadUsageReport());
     document.getElementById("adminQuotaSaveBtn")?.addEventListener("click", () => void adminSaveUserQuota("custom"));
     document.getElementById("adminQuotaFullBtn")?.addEventListener("click", () => void adminSaveUserQuota("full"));
     document.getElementById("adminQuotaClearBtn")?.addEventListener("click", () => void adminSaveUserQuota("clear"));
