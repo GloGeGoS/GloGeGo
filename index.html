@@ -1,9 +1,28 @@
 <!DOCTYPE html>
+<!--
+GloGeGo APEX integration / deployment notes:
+- Firebase project configuration and original account system are preserved.
+- New paths: apexMembers/{user}, apexCodes/{code}, apexCodeClaims/{claim},
+  settings/gsAuctionRoom; settings/chatStatus.liveStatuses; optional
+  workshopFiles/{id}/chunks/{n}, workshopDeliveryFiles/{id}/chunks/{n}.
+- Existing Firestore Security Rules must authorize these paths and validate
+  memberships, admin status edits, balances and atomic ownership transfers.
+  Client-side guards and transactions are not a substitute for server rules.
+- No external AI endpoint exists in the source: model replies are authored by
+  the admin; the dual reply editor stores both headings in one chat message.
+- Timers render locally. Room writes occur only on join, phase change, item
+  selection, successful bid, and settlement. Hidden tabs pause snapshots.
+  An all-offline room advances on participant return, without a polling service.
+- Status updates do not create messages or listeners; each successful status
+  mutation still incurs a Firestore write and active listeners incur reads.
+- Free quota depends on actual activity across the entire Firebase project;
+  three-hour quota usage cannot be guaranteed by a client HTML alone.
+-->
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GloGeGo | ULTRA</title>
+  <title>GloGeGo | APEX</title>
   <style>
     :root {
       --bg: #0f1115;
@@ -1986,7 +2005,30 @@
       .composer { padding-left: 5px; padding-right: 5px; }
     }
 
-  </style>
+  
+/* APEX / live statuses / auction: bounded mobile layouts */
+@keyframes apexRGB{0%,100%{border-color:#00e5ff;box-shadow:0 0 10px #00e5ff55}33%{border-color:#ff38df;box-shadow:0 0 12px #ff38df55}66%{border-color:#baff38;box-shadow:0 0 10px #baff3855}}
+@keyframes apexArrival{0%{opacity:0;transform:translateY(-20px) skewX(8deg);filter:brightness(3)}45%{transform:translateX(-3px) skewX(-4deg)}70%{transform:translateX(3px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes livePulse{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+@keyframes neonBg{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.apex-frame{border:1px solid #00e5ff!important;animation:apexRGB 6s linear infinite!important}
+.apex-message.message-animated{animation:apexArrival .5s ease-out,apexRGB 6s linear infinite!important}
+:root[data-ultra-theme="cyberpunk"]{--accent:#00e5ff;--accent2:#f038df;--bubble2:#1d1539;--line:#7542a3}
+:root[data-ultra-theme="void"]{--accent:#c7a7ff;--accent2:#6635c7;--bubble2:#150c26;--line:#503479}
+:root[data-ultra-theme="cyberpunk"] body{background:linear-gradient(120deg,#060c1e,#301036,#061e29);background-size:250% 250%;animation:neonBg 16s ease infinite}
+:root[data-ultra-theme="void"] body{background:radial-gradient(ellipse at 50% 40%,#020105 15%,#2d164d 43%,#040209 70%);background-size:160% 160%;animation:neonBg 22s ease infinite}
+#liveArea{min-width:0;max-height:32dvh;overflow:auto;padding:0 12px}
+.live-state{display:flex;align-items:center;gap:9px;padding:5px 0;color:var(--accent);font-size:13px;overflow-wrap:anywhere}
+.live-state>span:nth-child(2){flex:1;min-width:0}.live-state button{background:transparent;color:inherit;border:0;font-size:22px;cursor:pointer;min-width:32px}
+.live-dots{display:flex;gap:3px}.live-dots i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:livePulse 1.4s infinite}.live-dots i:nth-child(2){animation-delay:.2s}.live-dots i:nth-child(3){animation-delay:.4s}
+#liveAdminBar{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0}#liveAdminBar button{font-size:11px;padding:7px;border-radius:9px;border:1px solid var(--line);background:var(--bubble2);color:var(--text);cursor:pointer}#liveStatusCustom{flex:1;min-width:120px}
+#dualReplyPanel{border:1px solid var(--line);border-radius:10px;padding:10px}#dualReplyPanel textarea{display:block;width:100%;min-height:80px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px}#dualReplyPanel label{display:block;margin:8px 0}
+#gsModal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(8px);z-index:18000;display:flex;align-items:center;justify-content:center;padding:12px}
+.gs-panel{width:min(560px,100%);max-height:92dvh;overflow:auto;border:1px solid #8265cd;border-radius:20px;background:#111322;color:#eef2ff;padding:22px;box-shadow:0 20px 80px #0009}.gs-panel header{display:flex;justify-content:space-between;align-items:center;gap:10px}.gs-panel h2{font-size:20px;margin:0}.gs-panel p{overflow-wrap:anywhere}.gs-panel button{min-height:40px}.gs-panel input,.gs-panel select{min-width:0;max-width:100%;font-size:16px}.gs-panel #gsClock{font-size:18px;color:#c4b5fd;font-variant-numeric:tabular-nums;margin:18px 0}.gs-panel #gsItems{display:grid;gap:8px;margin:12px 0}#gsBidForm{display:flex;flex-wrap:wrap;gap:8px}#gsBidAmount{flex:1;width:120px}#gsNotice{font-size:13px;line-height:1.6;color:#c7cde1}#gsHighest{color:#67e8f9}#dualModeToggle{accent-color:#bd7dff}
+@media(max-width:600px){.gs-panel{padding:16px;border-radius:15px}#liveArea{padding:0 8px;max-height:30dvh}#liveAdminBar{gap:4px}#liveAdminBar button{min-height:36px}.model-card-row{min-width:0;flex-wrap:wrap}.model-card-info{min-width:0}.model-card-name{overflow-wrap:anywhere}#activeModelNameTxt{overflow-wrap:anywhere}#dualReplyPanel textarea{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.apex-frame,.apex-message.message-animated,.live-dots i,:root[data-ultra-theme] body{animation:none!important}}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
   <div id="giftNotificationBanner"></div>
@@ -2031,7 +2073,7 @@
                 <span id="upPill" class="up-pill hidden" title="Özel UP Bakiyesi (Şans çarkı ve günlük bonustan çıkmaz)"></span>
                 <span id="plusPill" class="pill hidden"></span>
                 <span id="proPill" class="pill hidden"></span>
-                <span id="ultraPill" class="pill ultra-badge hidden">👑 ULTRA</span>
+                <span id="apexPill" class="pill apex-frame hidden">🌌 APEX</span><span id="ultraPill" class="pill ultra-badge hidden">👑 ULTRA</span>
                 <span id="modePill" class="pill hidden"></span>
               </div>
             </div>
@@ -2043,7 +2085,7 @@
               <button id="topInvBtn" class="live-btn" style="background:#1e293b; border-color:#3b82f6; color:#93c5fd;">🎒 Envanter & Takas</button>
               <button id="voiceToggleBtn" class="voice-toggle-btn hidden" type="button">Ses: Açık</button>
               <button id="statusToggleBtn" class="status-btn hidden">Durum</button>
-              <button id="workshopOpenBtn" class="live-btn workshop-top-btn">🧩 Atölye</button>
+              <button id="gsReopen" type="button" class="live-btn">⚖️ /gs</button><button id="workshopOpenBtn" class="live-btn workshop-top-btn">🧩 Atölye</button>
               <button id="settingsBtn" class="live-btn">⚙ Ayarlar</button>
             </div>
           </div>
@@ -2117,7 +2159,10 @@
                   <div class="plus-box-title" style="color:#e9d5ff;font-size:18px;">👑 ULTRA Ticket Kodunu Gir</div>
                   <input id="ultraCodeInput" class="plus-input" type="password" maxlength="100" placeholder="ULTRA aktivasyon kodu" autocomplete="one-time-code" />
                   <button id="ultraActivateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">ULTRA Aktifleştir</button>
-                  <div id="ultraMsg" class="msg"></div>
+                  <div id="ultraMsg" class="msg"></div>                  <div class="plus-box-title" style="color:#e9d5ff;font-size:18px;">👑 APEX Ticket Kodunu Gir</div>
+                  <input id="apexCodeInput" class="plus-input" type="password" maxlength="100" placeholder="APEX aktivasyon kodu" autocomplete="one-time-code" />
+                  <button id="apexActivateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">APEX Aktifleştir</button>
+                  <div id="apexMsg" class="msg"></div>
                 </div>
 
                 <div class="plus-box" style="border-color:#a78bfa;background:#171126;">
@@ -2191,7 +2236,15 @@
                     <input id="ultraCreateUsesInput" class="plus-input" type="number" min="1" max="10000" value="1" placeholder="Kişi limiti" />
                     <button id="ultraCreateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">ULTRA Kodu Oluştur</button>
                   </div>
-                  <div id="ultraCreateMsg" class="msg"></div>
+                  <div id="ultraCreateMsg" class="msg"></div>                  <div class="plus-box-title" style="color:#e9d5ff;">👑 APEX Aktivasyon Kodu Oluştur</div>
+                  <div class="plus-admin-note" style="grid-column:auto;">Gün süresini ve kodu kullanabilecek toplam hesap sayısını belirle. Her hesap aynı APEX kodunu yalnızca bir kez kullanabilir.</div>
+                  <div class="plus-admin-create-grid">
+                    <input id="apexCreateCodeInput" class="plus-input" type="text" maxlength="100" placeholder="Yeni APEX kodu" autocomplete="off" />
+                    <input id="apexCreateDaysInput" class="plus-input" type="number" min="1" max="3650" value="30" placeholder="Gün" />
+                    <input id="apexCreateUsesInput" class="plus-input" type="number" min="1" max="10000" value="1" placeholder="Kişi limiti" />
+                    <button id="apexCreateBtn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#b45309);" type="button">APEX Kodu Oluştur</button>
+                  </div>
+                  <div id="apexCreateMsg" class="msg"></div>
                 </div>
                 <div>
                   <div class="plus-box-title" style="margin-bottom:8px;color:#e9d5ff;">Aktif ULTRA Kullanıcılar</div>
@@ -2484,6 +2537,9 @@
             <div class="empty">Bir mesaj seç ya da yaz.</div>
           </div>
 
+<div id="liveArea" style="flex:0 1 auto"><div id="liveStatusRows" role="status" aria-live="polite"></div>
+<div id="liveAdminBar" class="hidden"><strong style="width:100%;font-size:12px">Canlı Durum Yansıtıcı</strong><button type="button" data-status="🧠 Düşünüyor...">🧠 Düşünüyor</button><button type="button" data-status="📊 Analiz ediliyor...">📊 Analiz</button><button type="button" data-status="⚡ Çift model düşünüyor...">⚡ Çift model</button><button type="button" data-status="💻 Kod derleniyor...">💻 Derleniyor</button><input id="liveStatusCustom" class="gp-input" maxlength="160" placeholder="Özel canlı durum"><button type="button" id="liveStatusAdd">Ekle</button><button type="button" id="liveStatusClear">Tümünü temizle</button><label style="font-size:12px;width:100%"><input id="clearStatusesOnSend" type="checkbox"> Mesaj gönderince durumları temizle</label></div>
+<details id="dualReplyPanel" class="hidden"><summary>⚡ İki model için yanıt yaz</summary><p id="dualReplyQuestion"></p><label><span id="dualReplyLabel0"></span><textarea id="dualReplyText0" maxlength="20000" placeholder="Birinci modelin yanıtı"></textarea></label><label><span id="dualReplyLabel1"></span><textarea id="dualReplyText1" maxlength="20000" placeholder="İkinci modelin yanıtı"></textarea></label><button id="dualReplySend" type="button" class="btn">İki yanıtı aynı sohbete gönder</button></details></div>
           <!-- MESAJ YAZMA ALANI (SES KALDIRILDI, DOSYA EKLENDİ) -->
           <div class="composer">
             <div class="composer-box">
@@ -2555,7 +2611,7 @@
             <label class="workshop-label">index.html dosyası
               <input id="workshopFileInput" class="workshop-input" type="file" accept=".html,text/html" />
             </label>
-            <div class="workshop-note">En fazla 450 KB. Yalnızca kendi oluşturduğun veya paylaşma iznin olan HTML dosyalarını yükle. Düzenlerken dosya seçmezsen mevcut dosya korunur.</div>
+            <div class="workshop-note">Normal üyeler: en fazla 450 KB · Aktif APEX: 2 MB. Yalnızca kendi oluşturduğun veya paylaşma iznin olan HTML dosyalarını yükle. Düzenlerken dosya seçmezsen mevcut dosya korunur.</div>
             <label class="workshop-checkbox-row"><input id="workshopForSaleInput" type="checkbox" /> Bu ürün satılsın mı?</label>
             <label class="workshop-label" id="workshopPriceWrap">Satış fiyatı (5–100000 GP)
               <input id="workshopPriceInput" class="workshop-input" type="number" min="5" max="100000" step="1" value="5" />
@@ -2612,7 +2668,7 @@
           <div class="plus-box-title" style="color:#e9d5ff;">👑 ULTRA Tema Seçimi</div>
           <label for="ultraThemeSelect" class="muted">Arayüz rengini seç. Seçimin bu tarayıcıda saklanır.</label>
           <select id="ultraThemeSelect" class="plus-input">
-            <option value="violet">ULTRA Mor</option>
+            <option value="cyberpunk">APEX · Cyberpunk Neon</option><option value="void">APEX · Karadelik (Void)</option><option value="violet">ULTRA Mor</option>
             <option value="gold">Altın</option>
             <option value="ice">Buz Mavisi</option>
             <option value="ruby">Kırmızı</option>
@@ -2746,6 +2802,7 @@
                 <option value="plus">Plus Ticket veya GP Gerekli</option>
                 <option value="pro">PRO / ULTRA Ticket veya GP Gerekli</option>
                 <option value="ultra">Sadece ULTRA Ticket veya GP Gerekli</option>
+                <option value="apex">🌌 Sadece Aktif APEX Ticket (GP ile açılamaz)</option>
                 <option value="promo_only">🎟 Sadece Promosyon Kodu ile Aç</option>
               </select>
               <input id="adminNewModelGpCostInput" class="gp-input" type="number" min="0" step="1" value="250" placeholder="GP ile Açma Fiyatı (0=Kapalı)" />
@@ -2777,7 +2834,7 @@
           </div>
 
           <section class="plus-box" style="background:#111827;border-color:rgba(74,222,128,.28);">
-            <div class="plus-box-title">📊 Admin · Kota Tarifeleri</div>
+            <div class="plus-box-title">📊 Admin · Kota Tarifeleri (APEX dahil)</div>
             <div class="muted">Her işlem, kullanıcının planına göre toplam kotasından düşer. Değerler yüzde puandır; varsayılan kota %100. Kaydettiğinde yeni işlemlere uygulanır.</div>
             <div class="quota-rate-grid">
               <span></span><span class="quota-rate-head">Mesaj</span><span class="quota-rate-head">Görsel</span><span class="quota-rate-head">Video</span><span class="quota-rate-head">Dosya</span>
@@ -2801,6 +2858,11 @@
               <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="image" value="0.5" />
               <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="video" value="1" />
               <input type="number" min="0" max="100" step="0.1" data-quota-tier="ultra" data-quota-kind="file" value="1" />
+              <span class="quota-rate-tier" style="color:#67e8f9">APEX</span>
+              <input type="number" min="0.001" max="100" step="0.001" data-quota-tier="apex" data-quota-kind="message" value="0.01" />
+              <input type="number" min="0.001" max="100" step="0.001" data-quota-tier="apex" data-quota-kind="image" value="0.05" />
+              <input type="number" min="0.001" max="100" step="0.001" data-quota-tier="apex" data-quota-kind="video" value="0.1" />
+              <input type="number" min="0.001" max="100" step="0.001" data-quota-tier="apex" data-quota-kind="file" value="0.05" />
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button id="saveQuotaRatesBtn" class="btn" type="button">Tarifeleri Kaydet</button>
@@ -2902,7 +2964,7 @@
       </div>
       <div id="modelPickerMsg" class="msg" style="margin:0; min-height:16px;"></div>
       <div id="modelRankingTop" class="model-ranking-top" aria-label="En yüksek puanlı üç model"></div>
-      <div id="modelPickerList" style="display:grid; gap:8px;"></div>
+      <label class="plus-box"><span><input id="dualModeToggle" type="checkbox"> ⚡ Çift Model (Hibrit) Modu</span><small class="muted"> İki farklı açık model seç. Yanıtlar aynı sohbet akışında görünür.</small></label><div id="modelPickerList" style="display:grid; gap:8px;"></div>
     </div>
   </div>
 
@@ -2988,6 +3050,7 @@
     </div>
   </section>
 
+<div id="gsModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="gsTitle"><section class="gs-panel"><header><h2 id="gsTitle">⚖️ Gizli Satış</h2><button id="gsClose" type="button" class="btn secondary" aria-label="Turu durdur ve kapat">×</button></header><p id="gsPlayers"></p><div id="gsClock"></div><h3 id="gsItemTitle"></h3><div id="gsHighest"></div><div id="gsItems" class="hidden"></div><form id="gsBidForm" class="hidden"><input id="gsBidAmount" class="gp-input" type="number" min="1" max="1000000000" step="1" inputmode="numeric" required aria-label="Teklif tutarı"><select id="gsBidCurrency" class="gp-input" aria-label="Para birimi"><option value="gp">GP</option><option value="up">Özel UP</option></select><button id="gsBidBtn" type="submit" class="btn">Teklif ver</button></form><p id="gsNotice" role="status"></p><button id="gsRetry" type="button" class="btn secondary">Bağlantı sonrası yeniden dene</button><p class="muted">Lobi 3 dakika, maç en fazla 10 dakika sürer. × turu herkes için iptal eder; satılmamış eşya sahibinde kalır. Yeni lobi için /gs yaz. Tüm katılımcılar çevrimdışıyken sonuç, ilk geri dönen katılımcıda işlenir.</p></section></div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
     import {
@@ -2999,7 +3062,7 @@
       orderBy,
       limit,
       startAfter,
-      onSnapshot,
+      onSnapshot as firebaseOnSnapshot,
       doc,
       getDocs,
       getDoc,
@@ -3092,6 +3155,14 @@
     const proAdminList = document.getElementById("proAdminList");
     const proCodeAdminList = document.getElementById("proCodeAdminList");
     const proPill = document.getElementById("proPill");
+    const apexCodeInput = document.getElementById("apexCodeInput");
+const apexActivateBtn = document.getElementById("apexActivateBtn");
+const apexMsg = document.getElementById("apexMsg");
+const apexCreateCodeInput = document.getElementById("apexCreateCodeInput");
+const apexCreateDaysInput = document.getElementById("apexCreateDaysInput");
+const apexCreateUsesInput = document.getElementById("apexCreateUsesInput");
+const apexCreateBtn = document.getElementById("apexCreateBtn");
+const apexCreateMsg = document.getElementById("apexCreateMsg");
     const ultraPill = document.getElementById("ultraPill");
     const ultraCodeInput = document.getElementById("ultraCodeInput");
     const ultraActivateBtn = document.getElementById("ultraActivateBtn");
@@ -3301,6 +3372,7 @@
     let currentPlus = null;
     let currentPro = null;
     let currentUltra = null;
+    let currentApex = null; let unsubscribeApexSelf = null;
     let plusPanelOpen = false;
 
     let currentGp = 0;
@@ -3310,7 +3382,7 @@
     let userQuotaResetText = "";
     let unlockedModels = [];
     let selectedModelId = "glo-4.0";
-    let quotaRates = { standard: { message: 9, image: 10, video: 20, file: 10 }, plus: { message: 2, image: 5, video: 10, file: 5 }, pro: { message: 0.5, image: 1, video: 3, file: 2 }, ultra: { message: 0.1, image: 0.5, video: 1, file: 1 } };
+    let quotaRates = { standard: { message: 9, image: 10, video: 20, file: 10 }, plus: { message: 2, image: 5, video: 10, file: 5 }, pro: { message: 0.5, image: 1, video: 3, file: 2 }, ultra: { message: 0.1, image: 0.5, video: 1, file: 1 }, apex: { message:0.01, image:0.05, video:0.1, file:0.05 } };
     let customModelsCatalog = [];
     let currentPreviewRawCode = "";
     let activeStoreTab = "product";
@@ -3385,7 +3457,7 @@
     let olderMessagesHasMore = false;
     let olderMessagesLoading = false;
     let olderMessagesPagesLoaded = 0;
-    const LIVE_MESSAGES_LIMIT = 100;
+    const LIVE_MESSAGES_LIMIT = 40;
     const OLDER_MESSAGES_PAGE_SIZE = 50;
 
     let utteranceVoice = null;
@@ -3400,7 +3472,12 @@
     // Boylece GP panelini tekrar tekrar acmak gereksiz saat-kontrol yazimi olusturmaz.
     let serverClockCache = null;
     const SERVER_CLOCK_CACHE_MS = 5 * 60 * 1000;
-    async function getServerDayAndTime() {
+    let serverClockInFlight=null;
+    async function getServerDayAndTime(){
+      if(!serverClockInFlight) serverClockInFlight=readCachedServerClock().finally(()=>{serverClockInFlight=null;});
+      return serverClockInFlight;
+    }
+    async function readCachedServerClock() {
       const perfNow = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
       if (serverClockCache && perfNow >= serverClockCache.perfAt && (perfNow - serverClockCache.perfAt) < SERVER_CLOCK_CACHE_MS) {
         const serverMs = serverClockCache.serverMs + (perfNow - serverClockCache.perfAt);
@@ -3614,7 +3691,7 @@
     async function readHtmlFile(file) {
       if (!file) return null;
       if (!/\.html?$/i.test(file.name) && file.type !== "text/html") throw new Error("Yalnızca .html dosyası yüklenebilir.");
-      if (file.size <= 0 || file.size > WORKSHOP_MAX_FILE_BYTES) throw new Error("HTML dosyası boş olamaz ve en fazla 450 KB olabilir.");
+      if (file.size <= 0 || file.size > (isApexActive() ? 2 * 1024 * 1024 : WORKSHOP_MAX_FILE_BYTES)) throw new Error("HTML dosyası boş olamaz; sınır normal üyelerde 450 KB, APEX için 2 MB.");
       const html = await file.text();
       if (!/<html[\s>]/i.test(html) && !/<body[\s>]/i.test(html)) throw new Error("Dosyada HTML belgesi bulunamadı.");
       return { htmlContent: html, fileName: file.name.slice(0, 120), fileSize: file.size };
@@ -3648,9 +3725,11 @@
             const itemSnap = await transaction.get(itemRef);
             if (!itemSnap.exists()) throw new Error("Bu oyun artık atölyede bulunmuyor.");
             const latest = itemSnap.data();
+            const oldFile = filePayload ? await transaction.get(fileRef) : null;
             if (normalizeKey(latest.ownerKey || "") !== normalizeKey(currentUser)) throw new Error("Bu oyunu yalnızca sahibi düzenleyebilir.");
             transaction.set(itemRef, { title, description, forSale, priceGp: forSale ? priceGp : 0, updatedAtClient: Date.now(), updatedAt: serverTimestamp() }, { merge: true });
-            if (filePayload) transaction.set(fileRef, { ...filePayload, ownerKey: normalizeKey(currentUser), itemId, updatedAtClient: Date.now() }, { merge: true });
+            if(filePayload) deleteWorkshopChunks(transaction,fileRef,oldFile?.data());
+            if (filePayload) writeWorkshopFile(transaction,fileRef,{ ...filePayload, ownerKey: normalizeKey(currentUser), itemId, updatedAtClient: Date.now() });
           });
           resetWorkshopForm();
           setWorkshopStatus("Oyun güncellendi.", true);
@@ -3669,7 +3748,7 @@
               priceGp: forSale ? priceGp : 0, likesCount: 0, playsCount: 0,
               createdAt: serverTimestamp(), createdAtClient: Date.now(), updatedAtClient: Date.now()
             });
-            transaction.set(fileRef, { ...filePayload, ownerKey: normalizeKey(currentUser), itemId: newItemRef.id, createdAtClient: Date.now() });
+            writeWorkshopFile(transaction,fileRef,{ ...filePayload, ownerKey: normalizeKey(currentUser), itemId: newItemRef.id, createdAtClient: Date.now() });
           });
           resetWorkshopForm();
           setWorkshopStatus("Oyun yayımlandı! 50 GP harcandı.", true);
@@ -3695,7 +3774,9 @@
           const fresh = await transaction.get(itemRef);
           if (!fresh.exists()) throw new Error("Oyun zaten silinmiş.");
           const data = fresh.data();
+          const oldFile = await transaction.get(fileRef);
           if (!isAdmin && normalizeKey(data.ownerKey || "") !== normalizeKey(currentUser)) throw new Error("Yalnızca sahibi silebilir.");
+          deleteWorkshopChunks(transaction,fileRef,oldFile.data());
           transaction.delete(itemRef);
           transaction.delete(fileRef);
         });
@@ -3760,12 +3841,13 @@
           const buyerBalance = buyerBalanceSnap.exists() ? normalizeGpNumber(buyerBalanceSnap.data()?.gp, 0) : 0;
           const sellerBalance = sellerBalanceSnap.exists() ? normalizeGpNumber(sellerBalanceSnap.data()?.gp, 0) : 0;
           if (buyerBalance < cost) throw new Error("Yetersiz GP.");
-          const file = fileSnap.data();
-          if (typeof file.htmlContent !== "string" || file.htmlContent.length > WORKSHOP_MAX_FILE_BYTES) throw new Error("Oyun dosyası geçersiz veya çok büyük.");
+          const file = await readWorkshopFile(fileRef, fileSnap.data(), transaction);
+          if (typeof file.htmlContent !== "string" || new TextEncoder().encode(file.htmlContent).length > 2*1024*1024) throw new Error("Oyun dosyası geçersiz veya çok büyük.");
           transaction.set(buyerBalanceRef, { username: currentUser, usernameKey: normalizeKey(currentUser), gp: buyerBalance - cost, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
           transaction.set(sellerBalanceRef, { username: latest.owner, usernameKey: normalizeKey(latest.owner), gp: sellerBalance + cost, updatedAt: serverTimestamp(), updatedAtClient: Date.now() }, { merge: true });
           transaction.set(deliveryRef, { title: latest.title || "Atölye oyunu", seller: latest.owner || "Bilinmeyen", buyer: currentUser, buyerKey: normalizeKey(currentUser), createdAt: serverTimestamp(), createdAtClient: Date.now(), fileName: file.fileName || workshopSafeFileName(latest.title), originalItemId: item.id });
-          transaction.set(deliveryFileRef, { htmlContent: file.htmlContent, fileName: file.fileName || workshopSafeFileName(latest.title), buyerKey: normalizeKey(currentUser), createdAtClient: Date.now() });
+          writeWorkshopFile(transaction,deliveryFileRef,{ htmlContent: file.htmlContent, fileName: file.fileName || workshopSafeFileName(latest.title), buyerKey: normalizeKey(currentUser), createdAtClient: Date.now() });
+          deleteWorkshopChunks(transaction,fileRef,fileSnap.data());
           transaction.delete(itemRef);
           transaction.delete(fileRef);
         });
@@ -3782,7 +3864,7 @@
         if (!snap.exists()) throw new Error("Dosya bulunamadı.");
         const data = snap.data();
         if (normalizeKey(data.buyerKey || "") !== normalizeKey(currentUser)) throw new Error("Bu dosya senin hesabına ait değil.");
-        downloadWorkshopHtml(data.htmlContent || "", data.fileName || workshopSafeFileName(item.title));
+        downloadWorkshopHtml((await readWorkshopFile(doc(db,"workshopDeliveryFiles",item.id),data)).htmlContent || "", data.fileName || workshopSafeFileName(item.title));
         setWorkshopListStatus("Dosya indirilmeye başlandı.", true);
       } catch (err) { setWorkshopListStatus(err?.message || "Dosya indirilemedi."); }
     }
@@ -3814,8 +3896,8 @@
       try {
         const fileSnap = await getDoc(doc(db, "workshopFiles", item.id));
         if (!fileSnap.exists()) throw new Error("Oyun dosyası bulunamadı. Yapımcı veya yöneticiyle iletişime geç.");
-        const fileData = fileSnap.data();
-        if (typeof fileData.htmlContent !== "string" || fileData.htmlContent.length > WORKSHOP_MAX_FILE_BYTES) throw new Error("Oyun dosyası geçersiz.");
+        const fileData = await readWorkshopFile(doc(db,"workshopFiles",item.id),fileSnap.data());
+        if (typeof fileData.htmlContent !== "string" || new TextEncoder().encode(fileData.htmlContent).length > 2*1024*1024) throw new Error("Oyun dosyası geçersiz.");
         workshopCurrentGame = item;
         workshopCurrentHtml = fileData.htmlContent;
         workshopGameTitle.textContent = item.title || "Atölye oyunu";
@@ -4188,22 +4270,27 @@
       return getUltraRemainingMs(data) > 0;
     }
 
+    function isApexActive() { const v=currentApex?.apexUntil; return (v?.toMillis ? v.toMillis() : new Date(v || 0).getTime()) > Date.now(); }
+    function hasUltraAccess() { return isApexActive() || isUltraActive(currentUltra); }
     function hasProAccess() {
-      return isUltraActive(currentUltra) || isProActive(currentPro);
+      return hasUltraAccess() || isProActive(currentPro);
     }
 
     function getMembershipDiscountRate() {
-      if (isUltraActive(currentUltra)) return 0.08;
+      if (isApexActive()) return 0.15;
+      if (hasUltraAccess()) return 0.08;
       if (isProActive(currentPro)) return 0.05;
       return 0;
     }
 
     function getMembershipDiscountLabel() {
-      return isUltraActive(currentUltra) ? "ULTRA %8" : (isProActive(currentPro) ? "PRO %5" : "");
+      if (isApexActive()) return "APEX %15";
+      return hasUltraAccess() ? "ULTRA %8" : (isProActive(currentPro) ? "PRO %5" : "");
     }
 
     function getRightsLimits() {
-      if (isUltraActive(currentUltra)) return { thinking: 25, analysis: 25, cycleHours: 12, tier: "ultra" };
+      if (isApexActive()) return { thinking:50, analysis:50, cycleHours:6, tier:"apex" };
+      if (hasUltraAccess()) return { thinking: 25, analysis: 25, cycleHours: 12, tier: "ultra" };
       if (isProActive(currentPro)) return { thinking: 10, analysis: 10, cycleHours: 6, tier: "pro" };
       return { thinking: 5, analysis: 10, cycleHours: 24, tier: "standard" };
     }
@@ -4212,11 +4299,12 @@
       standard: { message: 9, image: 10, video: 20, file: 10 },
       plus: { message: 2, image: 5, video: 10, file: 5 },
       pro: { message: 0.5, image: 1, video: 3, file: 2 },
-      ultra: { message: 0.1, image: 0.5, video: 1, file: 1 }
+      ultra: { message: 0.1, image: 0.5, video: 1, file: 1 }, apex: { message:0.01, image:0.05, video:0.1, file:0.05 }
     };
 
     function getQuotaTier() {
-      if (isUltraActive(currentUltra)) return "ultra";
+      if (isApexActive()) return "apex";
+      if (hasUltraAccess()) return "ultra";
       if (isProActive(currentPro)) return "pro";
       if (isPlusActive(currentPlus)) return "plus";
       return "standard";
@@ -4224,11 +4312,11 @@
 
     function normalizeQuotaRates(raw) {
       const out = {};
-      for (const tier of ["standard", "plus", "pro", "ultra"]) {
+      for (const tier of ["standard", "plus", "pro", "ultra", "apex"]) {
         out[tier] = {};
         for (const kind of ["message", "image", "video", "file"]) {
           const value = Number(raw?.[tier]?.[kind]);
-          out[tier][kind] = Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : DEFAULT_QUOTA_RATES[tier][kind];
+          out[tier][kind] = Number.isFinite(value) ? Math.min(100, Math.max(tier === "apex" ? 0.001 : 0, value)) : DEFAULT_QUOTA_RATES[tier][kind];
         }
       }
       return out;
@@ -4259,21 +4347,14 @@
       selectedModelId = String(modelId);
       if (!currentUser || isAdmin) return;
       try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
-      // Model tercihini sadece kullanıcı açıkça seçtiğinde bir kez kaydet; yenilemede okunur.
-      setDoc(doc(db, "gpBalances", gpDocId(currentUser)), {
-        username: currentUser,
-        usernameKey: normalizeKey(currentUser),
-        selectedModelId,
-        updatedAt: serverTimestamp(),
-        updatedAtClient: Date.now()
-      }, { merge: true }).catch((err) => console.warn("Model tercihi buluta kaydedilemedi:", err));
+
     }
 
     // Sohbetlerde hesap adı gösterilir; düzenlenebilir profil bulunmaz.
     function getMessageIdentityFields() {
       return {
         senderDisplayName: isAdmin ? "Admin" : String(currentUser || "Kullanıcı"),
-        senderAvatar: isAdmin ? "🛠️" : ""
+        senderTier: isApexActive() ? "apex" : getQuotaTier(), senderAvatar: isAdmin ? "🛠️" : ""
       };
     }
 
@@ -4319,14 +4400,14 @@
     async function saveQuotaRates(reset = false) {
       if (!isAdmin) return;
       const msg = document.getElementById("quotaRatesMsg");
-      const next = reset ? DEFAULT_QUOTA_RATES : { standard: {}, plus: {}, pro: {}, ultra: {} };
+      const next = reset ? DEFAULT_QUOTA_RATES : { standard: {}, plus: {}, pro: {}, ultra: {}, apex: {} };
       if (!reset) {
-        for (const tier of ["standard", "plus", "pro", "ultra"]) {
+        for (const tier of ["standard", "plus", "pro", "ultra", "apex"]) {
           for (const kind of ["message", "image", "video", "file"]) {
             const input = document.querySelector(`[data-quota-tier="${tier}"][data-quota-kind="${kind}"]`);
             const value = Number(String(input?.value ?? "").replace(",", "."));
-            if (!Number.isFinite(value) || value < 0 || value > 100) {
-              if (msg) msg.textContent = "Her kota değeri 0 ile 100 arasında olmalı.";
+            if (!Number.isFinite(value) || value < (tier === "apex" ? 0.001 : 0) || value > 100) {
+              if (msg) msg.textContent = tier === "apex" ? "APEX tüketimi 0,001 ile 100 arasında olmalı; sıfır olamaz." : "Her kota değeri 0 ile 100 arasında olmalı.";
               input?.focus();
               return;
             }
@@ -4448,6 +4529,7 @@
     function isModelUnlockedForCurrentUser(model) {
       if (!model) return false;
       if (isAdmin) return true;
+      if (model.tier === "apex") return isApexActive() && (!model.disabled || isUserAllowedForDisabledModel(model));
       if (model.disabled) {
         if (!isUserAllowedForDisabledModel(model)) return false;
         return true;
@@ -4458,9 +4540,9 @@
       if (model.tier === "standard") {
         return gpCost <= 0;
       }
-      if (model.tier === "plus" && (isPlusActive(currentPlus) || isProActive(currentPro) || isUltraActive(currentUltra))) return true;
-      if (model.tier === "pro" && (isProActive(currentPro) || isUltraActive(currentUltra))) return true;
-      if (model.tier === "ultra" && isUltraActive(currentUltra)) return true;
+      if (model.tier === "plus" && (isPlusActive(currentPlus) || isProActive(currentPro) || hasUltraAccess())) return true;
+      if (model.tier === "pro" && (isProActive(currentPro) || hasUltraAccess())) return true;
+      if (model.tier === "ultra" && hasUltraAccess()) return true;
       return false;
     }
 
@@ -4476,7 +4558,7 @@
     function updateActiveModelUI() {
       const model = getCurrentModelObject();
       const nameEl = document.getElementById("activeModelNameTxt");
-      if (nameEl && model) nameEl.textContent = model.name;
+      if (nameEl && model) nameEl.textContent = getSelectedModels().map(m=>m.name).join(" + ");
       const chipEl = document.getElementById("activeModelChip");
       if (chipEl) chipEl.classList.toggle("hidden", !!isAdmin);
       populateModelSelectDropdowns();
@@ -4560,13 +4642,15 @@
       }
     }
 
+    function normalizeApexCode(v="") { return normalizeUltraCode(v); }
     function normalizeUltraCode(value = "") {
       return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
     }
 
     function applyUltraTheme() {
-      const active = isUltraActive(currentUltra);
-      const theme = ["violet", "gold", "ice", "ruby"].includes(localStorage.getItem("glogego_ultra_theme"))
+      const active = hasUltraAccess();
+      ultraThemeSelect?.querySelectorAll("option").forEach(o=>{if(["cyberpunk","void"].includes(o.value)) o.disabled=!isApexActive();});
+      const theme = (isApexActive() ? ["cyberpunk", "void", "violet", "gold", "ice", "ruby"] : ["violet", "gold", "ice", "ruby"]).includes(localStorage.getItem("glogego_ultra_theme"))
         ? localStorage.getItem("glogego_ultra_theme") : "violet";
       if (ultraThemeSelect && ultraThemeSelect.value !== theme) ultraThemeSelect.value = theme;
       if (active) document.documentElement.dataset.ultraTheme = theme;
@@ -4712,7 +4796,7 @@
         el.addEventListener("click", () => {
           selectedThread = el.dataset.thread;
           listenMessages();
-          renderThreadList();
+          renderLiveStatuses(); renderThreadList();
         });
       });
     }
@@ -4888,10 +4972,10 @@
     }
 
     async function grantAdminMembership(tier) {
-      if (!isAdmin || !["pro", "ultra"].includes(tier)) return;
+      if (!isAdmin || !["pro", "ultra", "apex"].includes(tier)) return;
       const user = getAdminGiftTargetUser();
-      const inputId = tier === "pro" ? "adminGiftProDays" : "adminGiftUltraDays";
-      const btnId = tier === "pro" ? "adminGiftProBtn" : "adminGiftUltraBtn";
+      const inputId = tier === "apex" ? "adminGiftApexDays" : tier === "pro" ? "adminGiftProDays" : "adminGiftUltraDays";
+      const btnId = tier === "apex" ? "adminGiftApexBtn" : tier === "pro" ? "adminGiftProBtn" : "adminGiftUltraBtn";
       const requestedDays = normalizeGpNumber(document.getElementById(inputId)?.value, 0);
       if (!user) return;
       if (requestedDays < 1) return setAdminGiftMsg("Gün sayısı en az 1 olmalı.");
@@ -4899,8 +4983,8 @@
       const btn = document.getElementById(btnId);
       if (btn) btn.disabled = true;
       try {
-        const collectionName = tier === "pro" ? "proMembers" : "ultraMembers";
-        const fieldName = tier === "pro" ? "proUntil" : "ultraUntil";
+        const collectionName = `${tier}Members`;
+        const fieldName = `${tier}Until`;
         const ref = doc(db, collectionName, plusDocId(user));
         const until = await runTransaction(db, async (tx) => {
           const snap = await tx.get(ref);
@@ -5033,12 +5117,12 @@
 
     function isUltraSender(docData, mine) {
       if (isAdmin) return isUltraActive(ultraMap.get(plusDocId(docData.sender)));
-      return !!mine && isUltraActive(currentUltra);
+      return !!mine && hasUltraAccess();
     }
 
     function renderMessage(docData, isNew = false) {
       const mine = docData.sender === currentUser;
-      const ultraFrameClass = isUltraSender(docData, mine) ? "ultra-member-frame" : "";
+      const ultraFrameClass = docData.senderTier === "apex" ? "apex-frame apex-message" : isUltraSender(docData, mine) ? "ultra-member-frame" : "";
       const kind = docData.kind || (docData.videoStatus ? "video" : ((docData.imageDataUrl || docData.imageName) ? "image" : "text"));
       const textValue = docData.text || "";
       const imageDataUrl = docData.imageDataUrl || "";
@@ -5283,7 +5367,8 @@
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "file",
           modelId: isAdmin ? "" : activeModel.id,
-          modelName: isAdmin ? "" : activeModel.name,
+          modelName: isAdmin ? "" : getSelectedModels().map(m=>m.name).join(" + "),
+          modelIds: isAdmin ? [] : getSelectedModels().map(m=>m.id), models: isAdmin ? [] : getSelectedModels().map(m=>({id:m.id,name:m.name})),
           actionKind: "Dosya Gönderimi",
           text: `Dosya: ${file.name}`,
           fileName: file.name || "dosya",
@@ -5355,7 +5440,8 @@
         const ref = await addDoc(collection(db, "messages"), {
           threadId, sender: currentUser, ...getMessageIdentityFields(), recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "mode_request", mode, text: normalizedText, cancelled: false,
-          modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name,
+          modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : getSelectedModels().map(m=>m.name).join(" + "),
+          modelIds: isAdmin ? [] : getSelectedModels().map(m=>m.id), models: isAdmin ? [] : getSelectedModels().map(m=>({id:m.id,name:m.name})),
           actionKind: getModeLabel(mode),
           createdAt: serverTimestamp(), createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + 6 * 60 * 60 * 1000))
@@ -5387,7 +5473,8 @@
       try {
         await setDoc(messageRef, {
           threadId, sender: currentUser, ...getMessageIdentityFields(), recipient: isAdmin ? threadId : ADMIN_USER,
-          kind: "video", modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : activeModel.name, actionKind: "Video Gönderimi", text: file.name || "video", videoName: file.name || "video.mp4",
+          kind: "video", modelId: isAdmin ? "" : activeModel.id, modelName: isAdmin ? "" : getSelectedModels().map(m=>m.name).join(" + "),
+          modelIds: isAdmin ? [] : getSelectedModels().map(m=>m.id), models: isAdmin ? [] : getSelectedModels().map(m=>({id:m.id,name:m.name})), actionKind: "Video Gönderimi", text: file.name || "video", videoName: file.name || "video.mp4",
           videoMime: file.type || "video/mp4", videoSize: file.size, videoChunkCount: totalChunks,
           videoStatus: "uploading", createdAt: serverTimestamp(), createdAtClient: Date.now(),
           expiresAt: Timestamp.fromDate(new Date(Date.now() + 6 * 60 * 60 * 1000))
@@ -5523,7 +5610,8 @@
       }
       let texts = [];
       texts.push(dailySelfClaimedToday ? "Günlük 10 GP alındı" : "Günlük bonus: +10 GP");
-      if (isUltraActive(currentUltra)) texts.push(ultraSelfClaimedToday ? "ULTRA +4 GP alındı" : "ULTRA ekstra: +4 GP (PRO +2 GP dahil)");
+      if (isApexActive()) texts.push("APEX günlük ekstra: +6 GP");
+      else if (hasUltraAccess()) texts.push(ultraSelfClaimedToday ? "ULTRA +4 GP alındı" : "ULTRA ekstra: +4 GP (PRO +2 GP dahil)");
       else {
         if (currentPlus && isPlusActive(currentPlus)) texts.push(gpSelfClaimedToday ? "Plus +5 GP alındı" : "Plus ekstra: +5 GP");
         if (currentPro && isProActive(currentPro)) texts.push(proSelfClaimedToday ? "PRO +2 GP alındı" : "PRO ekstra: +2 GP");
@@ -5538,13 +5626,13 @@
       const ref = doc(db, "gpBalances", gpDocId(currentUser));
       if (gpBalanceDoc?.unsubscribe) { try { gpBalanceDoc.unsubscribe(); } catch {} }
       gpBalanceDoc = {
-        unsubscribe: onSnapshot(ref, (snap) => {
+        unsubscribe: managedSnapshot("core", ref, (snap) => {
           const data = snap.exists() ? (snap.data() || {}) : {};
           currentGp = normalizeGpNumber(data.gp, 0);
           currentUp = normalizeGpNumber(data.up, 0);
           userQuotaUsed = data.quotaUsed !== undefined && Number.isFinite(Number(data.quotaUsed)) ? Number(data.quotaUsed) : 0;
           userQuotaMax = data.quotaMax !== undefined && Number.isFinite(Number(data.quotaMax)) && Number(data.quotaMax) > 0 ? Number(data.quotaMax) : 100;
-          if (data.selectedModelId && !isAdmin) {
+          if (data.selectedModelId && !isAdmin && !localStorage.getItem(selectedModelStorageKey())) {
             selectedModelId = String(data.selectedModelId);
             try { localStorage.setItem(selectedModelStorageKey(), selectedModelId); } catch {}
           }
@@ -5561,7 +5649,7 @@
     function listenGpProducts() {
       if (unsubscribeGpProducts) return;
       const q = query(collection(db, "gpProducts"), orderBy("createdAtClient", "desc"), limit(50));
-      unsubscribeGpProducts = onSnapshot(q, (snap) => {
+      unsubscribeGpProducts = managedSnapshot("store", q, (snap) => {
         gpProducts = [];
         snap.forEach((d) => gpProducts.push({ id: d.id, ...d.data() }));
         renderGpProducts();
@@ -5581,7 +5669,7 @@
       if (unsubscribeGpMarketListings) return;
       // Tek bir limitli canlı sorgu: ilan kartlarında büyük görsel/veri dosyaları tutulmaz.
       const marketQ = query(collection(db, "gpPlayerMarketListings"), orderBy("createdAtClient", "desc"), limit(100));
-      unsubscribeGpMarketListings = onSnapshot(marketQ, (snap) => {
+      unsubscribeGpMarketListings = managedSnapshot("store", marketQ, (snap) => {
         gpMarketListings = [];
         snap.forEach((d) => gpMarketListings.push({ id: d.id, ...d.data() }));
         renderGpPlayerMarket();
@@ -5592,7 +5680,7 @@
 
     function listenGpAdminUsers() {
       if (!isAdmin || unsubscribeGpAdminUsers) return;
-      unsubscribeGpAdminUsers = onSnapshot(query(collection(db, "gpBalances"), limit(100)), (snap) => {
+      unsubscribeGpAdminUsers = managedSnapshot("store", query(collection(db, "gpBalances"), limit(100)), (snap) => {
         gpAdminUsers = [];
         snap.forEach((d) => gpAdminUsers.push({ id: d.id, ...d.data() }));
         renderGpAdminUsers();
@@ -5601,7 +5689,7 @@
 
     function listenGpAdminCodes() {
       if (!isAdmin || unsubscribeGpAdminCodes) return;
-      unsubscribeGpAdminCodes = onSnapshot(query(collection(db, "gpPromoCodes"), limit(100)), (snap) => {
+      unsubscribeGpAdminCodes = managedSnapshot("store", query(collection(db, "gpPromoCodes"), limit(100)), (snap) => {
         gpAdminCodes = [];
         snap.forEach((d) => gpAdminCodes.push({ id: d.id, ...d.data() }));
         renderGpAdminCodes();
@@ -5614,7 +5702,7 @@
 
       if (!unsubscribeInventory) {
         const invQ = query(collection(db, "gpInventory"), where("ownerKey", "==", userKey));
-        unsubscribeInventory = onSnapshot(invQ, (snap) => {
+        unsubscribeInventory = managedSnapshot("store", invQ, (snap) => {
           userInventory = [];
           snap.forEach((d) => userInventory.push({ id: d.id, ...d.data() }));
           userInventory.sort((a, b) => (b.acquiredAtClient || 0) - (a.acquiredAtClient || 0));
@@ -5624,7 +5712,7 @@
 
       if (!unsubscribeTradesIn) {
         const inQ = query(collection(db, "gpTrades"), where("toKey", "==", userKey));
-        unsubscribeTradesIn = onSnapshot(inQ, (snap) => {
+        unsubscribeTradesIn = managedSnapshot("store", inQ, (snap) => {
           incomingTrades = [];
           snap.forEach((d) => incomingTrades.push({ id: d.id, ...d.data() }));
           renderActiveTrades();
@@ -5633,7 +5721,7 @@
 
       if (!unsubscribeTradesOut) {
         const outQ = query(collection(db, "gpTrades"), where("fromKey", "==", userKey));
-        unsubscribeTradesOut = onSnapshot(outQ, (snap) => {
+        unsubscribeTradesOut = managedSnapshot("store", outQ, (snap) => {
           outgoingTrades = [];
           snap.forEach((d) => outgoingTrades.push({ id: d.id, ...d.data() }));
           renderActiveTrades();
@@ -6184,7 +6272,7 @@
       const chatQuery = tradeChatLastAt > 0
         ? query(messagesRef, where("createdAtClient", ">", tradeChatLastAt), orderBy("createdAtClient", "asc"))
         : query(messagesRef, orderBy("createdAtClient", "desc"), limit(30));
-      unsubscribeTradeChat = onSnapshot(chatQuery, (snap) => {
+      unsubscribeTradeChat = managedSnapshot("tradechat", chatQuery, (snap) => {
         if (activeTradeRoomId !== tradeId) return;
         for (const d of snap.docs) {
           if (tradeChatSeenIds.has(d.id)) continue;
@@ -6276,7 +6364,7 @@
 
       if (!unsubscribeActiveTradeRoom) {
         const subscribedId = trade.id;
-        unsubscribeActiveTradeRoom = onSnapshot(doc(db, "gpTrades", subscribedId), (snap) => {
+        unsubscribeActiveTradeRoom = managedSnapshot("trade", doc(db, "gpTrades", subscribedId), (snap) => {
           if (activeTradeRoomId !== subscribedId) return;
           if (!snap.exists()) {
             finishTradeRoom("Bu takas odası artık bulunamıyor.", false);
@@ -7241,7 +7329,7 @@
 
     async function claimDailyBonuses() {
       if (!currentUser || isAdmin) return;
-      const ultraActive = isUltraActive(currentUltra);
+      const ultraActive = hasUltraAccess();
       const plusActive = !!(currentPlus && isPlusActive(currentPlus));
       const proActive = !!(currentPro && isProActive(currentPro));
       if (gpClaimBtn) { gpClaimBtn.disabled = true; }
@@ -7261,7 +7349,9 @@
 
           let pointsToAdd = 0;
           if (!dailyClaimed) pointsToAdd += 10;
-          if (ultraActive) {
+          if (isApexActive()) {
+            if (!(claimData.lastGrantKey === dayKey && claimData.apexClaimed)) pointsToAdd += Math.max(0,6-(claimedUltra?4:((claimedPlus?5:0)+(claimedPro?2:0))));
+          } else if (ultraActive) {
             if (!claimedUltra) pointsToAdd += 4;
           } else {
             if (plusActive && !claimedPlus) pointsToAdd += 5;
@@ -7292,6 +7382,7 @@
               plusClaimed: claimedPlus || plusActive || ultraActive,
               proClaimed: claimedPro || proActive || ultraActive,
               ultraClaimed: claimedUltra || ultraActive,
+              apexClaimed: (claimData.lastGrantKey === dayKey && !!claimData.apexClaimed) || isApexActive(),
               updatedAt: serverTimestamp()
             }, { merge: true });
           }
@@ -7467,7 +7558,8 @@
         { key: "standard", title: "⚡ Standart Modeller", items: all.filter((m) => (m.tier || "standard") === "standard" && !m.promoOnly) },
         { key: "plus", title: "✨ Plus Modeller", items: all.filter((m) => m.tier === "plus" && !m.promoOnly) },
         { key: "pro", title: "👑 PRO / ULTRA Modelleri", items: all.filter((m) => (m.tier === "pro" || m.tier === "ultra") && !m.promoOnly) },
-        { key: "promo_only", title: "🎟 Özel / Promosyon Kodlu Modeller", items: all.filter((m) => m.tier === "promo_only" || m.promoOnly) }
+        { key: "apex", title: "🌌 Sadece APEX Modelleri", items: all.filter(m => m.tier === "apex") },
+        { key: "promo_only", title: "🎟 Özel / Promosyon Kodlu Modeller", items: all.filter((m) => m.tier !== "apex" && (m.tier === "promo_only" || m.promoOnly)) }
       ];
 
       listEl.innerHTML = groups.map((g) => {
@@ -7476,19 +7568,21 @@
           const isDisabled = !!m.disabled;
           const allowedForDisabled = isUserAllowedForDisabledModel(m);
           const unlocked = isModelUnlockedForCurrentUser(m);
-          const isSelected = currentObj && currentObj.id === m.id && unlocked;
+          const isSelected = getSelectedModels().some(x=>x.id===m.id) && unlocked;
           const gpCost = Math.max(0, normalizeGpNumber(m.gpCost, 0));
           const isPromoOnly = !!(m.promoOnly || m.tier === "promo_only");
-          const tierLabel = isDisabled
+          const tierLabel = m.tier === "apex" ? "SADECE APEX" : isDisabled
             ? (allowedForDisabled ? "ÖZEL İZİNLİ" : "KULLANIM DIŞI")
             : (isPromoOnly ? "PROMO KODLU" : (m.tier === "ultra" ? "ULTRA" : (m.tier === "pro" ? "PRO / ULTRA" : (m.tier === "plus" ? "PLUS" : (gpCost > 0 ? `${gpCost} GP` : "STANDART")))));
-          const tierClass = isPromoOnly ? "ultra" : (m.tier === "ultra" ? "ultra" : (m.tier === "pro" ? "pro" : (m.tier === "plus" ? "plus" : "")));
+          const tierClass = m.tier === "apex" ? "apex-frame" : isPromoOnly ? "ultra" : (m.tier === "ultra" ? "ultra" : (m.tier === "pro" ? "pro" : (m.tier === "plus" ? "plus" : "")));
 
           let actionHtml = "";
           if (isDisabled && !allowedForDisabled) {
             actionHtml = `<span class="gp-badge" style="background:#3a1a1a; border-color:#7b3434; color:#fca5a5;">🚫 Kullanım Dışı (Sadece İzinli Kişiler)</span>`;
           } else if (unlocked) {
             actionHtml = `<button type="button" class="btn ${isSelected ? "secondary" : ""}" style="padding:7px 12px; font-size:12px;" data-select-model="${escapeHtml(m.id)}">${isSelected ? "✓ Seçili" : "Modeli Seç"}</button>`;
+          } else if (m.tier === "apex") {
+            actionHtml = `<span class="gp-badge apex-frame">🌌 Aktif APEX gerekli</span>`;
           } else if (isPromoOnly) {
             actionHtml = `<span class="gp-badge" style="background:#2e1065; border-color:#a855f7; color:#e9d5ff;">🎟 Sadece Promosyon Kodu ile Açılır</span>`;
           } else if (gpCost > 0) {
@@ -7521,7 +7615,7 @@
           const id = btn.dataset.selectModel;
           const found = all.find((x) => x.id === id);
           if (!found || !isModelUnlockedForCurrentUser(found)) return;
-          persistSelectedModel(found.id);
+          if (dualMode) { dualModelIds=dualModelIds.includes(found.id)?dualModelIds.filter(x=>x!==found.id):[...dualModelIds.slice(-1),found.id]; } else persistSelectedModel(found.id);
           updateActiveModelUI();
           renderModelPickerModal();
           setModelPickerMsg(`🤖 Aktif model "${found.name}" olarak değiştirildi.`, true);
@@ -7538,6 +7632,7 @@
     }
 
     async function unlockModelWithGp(model) {
+      if (model?.tier === "apex") return setModelPickerMsg("Bu model yalnızca aktif APEX üyeliğiyle kullanılır; GP ile açılamaz.");
       if (!currentUser || !model) return;
       if (!checkUserQuotaOrBlock()) return;
       if (model.disabled && !isUserAllowedForDisabledModel(model)) {
@@ -7737,7 +7832,7 @@
         const allowedList = parseAllowedUsersList(m.allowedUsers);
         const statusBadges = [
           `Ticket: ${escapeHtml((m.promoOnly || m.tier === "promo_only") ? "SADECE PROMO KOD" : (m.tier || "standard").toUpperCase())}`,
-          (m.promoOnly || m.tier === "promo_only") ? `Kod: ${escapeHtml(m.promoCode || "Yok")} (1 Kişilik)` : `GP Açma: ${formatGp(m.gpCost || 0)}`,
+          m.tier === "apex" ? "Aktif APEX gerekli · GP ile açılamaz" : (m.promoOnly || m.tier === "promo_only") ? `Kod: ${escapeHtml(m.promoCode || "Yok")} (1 Kişilik)` : `GP Açma: ${formatGp(m.gpCost || 0)}`,
           `⭐ Puan: ${Math.max(0, Math.min(100, Number(m.score) || 0))}/100`,
           m.disabled ? `🚫 KULLANIM DIŞI (İzinliler: ${allowedList.length ? escapeHtml(allowedList.join(", ")) : "Yok"})` : `🟢 Aktif`
         ].join(" · ");
@@ -7799,10 +7894,10 @@
       const name = String(document.getElementById("adminNewModelNameInput")?.value || "").trim();
       const rawTier = document.getElementById("adminNewModelTierSelect")?.value || "standard";
       const promoOnlyChk = !!document.getElementById("adminNewModelPromoOnlyChk")?.checked;
-      const promoOnly = promoOnlyChk || rawTier === "promo_only";
+      const promoOnly = rawTier !== "apex" && (promoOnlyChk || rawTier === "promo_only");
       const tier = promoOnly ? "promo_only" : rawTier;
-      const promoCode = String(document.getElementById("adminNewModelPromoCodeInput")?.value || "").trim();
-      const gpCost = promoOnly ? 0 : Math.max(0, normalizeGpNumber(document.getElementById("adminNewModelGpCostInput")?.value, 0));
+      const promoCode = tier === "apex" ? "" : String(document.getElementById("adminNewModelPromoCodeInput")?.value || "").trim();
+      const gpCost = (promoOnly || tier === "apex") ? 0 : Math.max(0, normalizeGpNumber(document.getElementById("adminNewModelGpCostInput")?.value, 0));
       const disabled = !!document.getElementById("adminNewModelDisabledChk")?.checked;
       const allowedUsersRaw = String(document.getElementById("adminNewModelAllowedUsersInput")?.value || "").trim();
       const allowedUsers = parseAllowedUsersList(allowedUsersRaw);
@@ -7919,7 +8014,7 @@
       if (unsubscribeGifts) unsubscribeGifts();
       if (!currentUser || isAdmin) return;
       const q = query(collection(db, "gpGifts"), where("to", "==", normalizeKey(currentUser)), where("read", "==", false));
-      unsubscribeGifts = onSnapshot(q, (snap) => {
+      unsubscribeGifts = managedSnapshot("core", q, (snap) => {
         snap.docChanges().forEach(change => {
           if (change.type === "added") {
             const data = change.doc.data();
@@ -7961,7 +8056,7 @@
       const oneHourAgo = Date.now() - 3600000;
       // Önce en yeni 80 mesajı al; görünümde kronolojik sıra için sonra ters çevir.
       const q = query(collection(db, "proChatMessages"), where("createdAtClient", ">", oneHourAgo), orderBy("createdAtClient", "desc"), limit(80));
-      unsubscribeProChat = onSnapshot(q, (snap) => {
+      unsubscribeProChat = managedSnapshot("prochat", q, (snap) => {
         const box = document.getElementById("proChatMessages");
         if (!box) return;
         const items = [];
@@ -7971,7 +8066,7 @@
           const mine = item.sender === currentUser;
           const time = new Date(item.createdAtClient).toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' });
           return `
-            <div class="bubble ${mine ? 'me' : ''}" style="max-width: 85%; align-self: ${mine ? 'flex-end' : 'flex-start'}; border-color: rgba(139, 92, 246, 0.4);">
+            <div class="bubble ${mine ? 'me' : ''} ${item.senderTier==='apex'?'apex-frame':''}" style="max-width: 85%; align-self: ${mine ? 'flex-end' : 'flex-start'}; border-color: rgba(139, 92, 246, 0.4);">
               <div class="meta" style="color: #a78bfa;"><span>${item.sender === ADMIN_USER ? "🛠️ " : ""}${escapeHtml(item.sender || "Kullanıcı")}</span><span>${time}</span></div>
               <div class="text">${formatMarkdown(item.text)}</div>
             </div>
@@ -7997,6 +8092,8 @@
       listenPlusStatus();
       listenProStatus();
       listenUltraStatus();
+      listenApexStatus();
+      if(!isAdmin && sessionStorage.getItem("glogego_gs_"+normalizeKey(currentUser))) void joinGs();
       listenGpStatus();
       listenGifts();
 
@@ -8170,7 +8267,7 @@
 
       currentUser = null;
       isAdmin = false;
-      currentUltra = null;
+      currentUltra = null; currentApex=null; unsubscribeApexSelf?.(); unsubscribeApexSelf=null; sessionStorage.removeItem("glogego_gs_"+normalizeKey(currentUser)); stopGs(); dualModelIds=[]; dualMode=false;
       currentPro = null;
       currentPlus = null;
       selectedThread = null;
@@ -8214,10 +8311,11 @@
 
     function updatePlusPill() {
       if (!plusPill || !proPill || !ultraPill) return;
-      const ultraActive = currentUser && !isAdmin && isUltraActive(currentUltra);
+      const ultraActive = currentUser && !isAdmin && hasUltraAccess();
       const proActive = currentUser && !isAdmin && isProActive(currentPro);
       const plusActive = currentUser && !isAdmin && isPlusActive(currentPlus);
-      ultraPill.classList.toggle("hidden", !ultraActive);
+      ultraPill.classList.toggle("hidden", !ultraActive || isApexActive());
+      document.getElementById("apexPill").classList.toggle("hidden", !isApexActive()); userPill.classList.toggle("apex-frame",isApexActive());
       proPill.classList.toggle("hidden", ultraActive || !proActive);
       if (ultraActive) {
         ultraPill.textContent = "👑 ULTRA";
@@ -8262,6 +8360,7 @@
       const proMs = getProRemainingMs(currentPro);
       const ultraMs = getUltraRemainingMs(currentUltra);
       const texts = [];
+      if(isApexActive()) texts.push("APEX aktif");
       if (ultraMs > 0) texts.push(`ULTRA: ${formatDaysLeft(ultraMs)}`);
       else if (proMs > 0) texts.push(`PRO: ${formatDaysLeft(proMs)}`);
       if (plusMs > 0) texts.push(`Plus: ${formatDaysLeft(plusMs)}`);
@@ -8354,49 +8453,49 @@
     function startPlusAdminListeners() {
       if (!isAdmin) return;
       if (!unsubscribePlusAdmin) {
-        unsubscribePlusAdmin = onSnapshot(plusCollectionRef, (snap) => {
+        unsubscribePlusAdmin = managedSnapshot("tickets", plusCollectionRef, (snap) => {
           plusMap = new Map();
           snap.forEach((d) => plusMap.set(d.id, { id: d.id, ...d.data() }));
           renderPlusAdminList();
         });
       }
       if (!unsubscribePlusCodesAdmin) {
-        unsubscribePlusCodesAdmin = onSnapshot(plusCodeCollectionRef, (snap) => {
+        unsubscribePlusCodesAdmin = managedSnapshot("tickets", plusCodeCollectionRef, (snap) => {
           plusCodeMap = new Map();
           snap.forEach((d) => plusCodeMap.set(d.id, { id: d.id, ...d.data() }));
           renderPlusCodeAdminList();
         });
       }
       if (!unsubscribeProAdmin) {
-        unsubscribeProAdmin = onSnapshot(proCollectionRef, (snap) => {
+        unsubscribeProAdmin = managedSnapshot("tickets", proCollectionRef, (snap) => {
           proMap = new Map();
           snap.forEach((d) => proMap.set(d.id, { id: d.id, ...d.data() }));
           renderProAdminList();
         });
       }
       if (!unsubscribeProCodesAdmin) {
-        unsubscribeProCodesAdmin = onSnapshot(proCodeCollectionRef, (snap) => {
+        unsubscribeProCodesAdmin = managedSnapshot("tickets", proCodeCollectionRef, (snap) => {
           proCodeMap = new Map();
           snap.forEach((d) => proCodeMap.set(d.id, { id: d.id, ...d.data() }));
           renderProCodeAdminList();
         });
       }
       if (!unsubscribeUltraAdmin) {
-        unsubscribeUltraAdmin = onSnapshot(ultraCollectionRef, (snap) => {
+        unsubscribeUltraAdmin = managedSnapshot("tickets", ultraCollectionRef, (snap) => {
           ultraMap = new Map();
           snap.forEach((d) => ultraMap.set(d.id, { id: d.id, ...d.data() }));
           renderUltraAdminList();
         });
       }
       if (!unsubscribeUltraCodesAdmin) {
-        unsubscribeUltraCodesAdmin = onSnapshot(ultraCodeCollectionRef, (snap) => {
+        unsubscribeUltraCodesAdmin = managedSnapshot("tickets", ultraCodeCollectionRef, (snap) => {
           ultraCodeMap = new Map();
           snap.forEach((d) => ultraCodeMap.set(d.id, { id: d.id, ...d.data() }));
           renderUltraCodeAdminList();
         });
       }
       if (!unsubscribeUltraRewardCodesAdmin) {
-        unsubscribeUltraRewardCodesAdmin = onSnapshot(ultraRewardCodeCollectionRef, (snap) => {
+        unsubscribeUltraRewardCodesAdmin = managedSnapshot("tickets", ultraRewardCodeCollectionRef, (snap) => {
           ultraRewardCodeMap = new Map();
           snap.forEach((d) => ultraRewardCodeMap.set(d.id, { id: d.id, ...d.data() }));
           renderUltraRewardCodeAdminList();
@@ -8458,17 +8557,43 @@
       } catch (err) { setUltraCreateMsg(err?.message || "ULTRA kodu oluşturulamadı."); }
       finally { ultraCreateBtn.disabled = false; }
     }
+    async function createApexCode() {
+      if (!isAdmin) return;
+      const code = normalizeApexCode(apexCreateCodeInput?.value || "");
+      const days = Math.max(1, Math.min(3650, Number.parseInt(apexCreateDaysInput?.value || "30", 10) || 30));
+      const maxUses = Math.max(1, Math.min(10000, Number.parseInt(apexCreateUsesInput?.value || "1", 10) || 1));
+      if (!code) return setApexCreateMsg("APEX kodu gir.");
+      if (!/^[A-Z0-9_-]{3,100}$/.test(code)) return setApexCreateMsg("Kod 3-100 karakter olmalı; yalnızca A-Z, 0-9, - ve _ kullan.");
+      apexCreateBtn.disabled = true;
+      try {
+        const codeRef = doc(db, "apexCodes", code);
+        await runTransaction(db, async tx=>{ if((await tx.get(codeRef)).exists()) throw new Error("Bu APEX kodu zaten var."); tx.set(codeRef, { code, daysGranted: days, maxUses, usedCount: 0, createdBy: currentUser, createdAt: serverTimestamp(), createdAtClient: Date.now() }); });
+        setApexCreateMsg(`APEX kodu oluşturuldu: ${code} · ${days} gün · ${maxUses} hesap`, true);
+        apexCreateCodeInput.value = "";
+      } catch (err) { setApexCreateMsg(err?.message || "APEX kodu oluşturulamadı."); }
+      finally { apexCreateBtn.disabled = false; }
+    }
 
     function setUltraMsg(text, ok = false) {
       if (!ultraMsg) return;
       ultraMsg.textContent = text || "";
       ultraMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
     }
+    function setApexMsg(text, ok = false) {
+      if (!apexMsg) return;
+      apexMsg.textContent = text || "";
+      apexMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
 
     function setUltraCreateMsg(text, ok = false) {
       if (!ultraCreateMsg) return;
       ultraCreateMsg.textContent = text || "";
       ultraCreateMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
+    }
+    function setApexCreateMsg(text, ok = false) {
+      if (!apexCreateMsg) return;
+      apexCreateMsg.textContent = text || "";
+      apexCreateMsg.style.color = ok ? "#d7ffe0" : "#ffb4b4";
     }
 
     function setUltraRewardMsg(text, ok = false) {
@@ -8532,10 +8657,41 @@
       } catch (err) { setUltraMsg(err?.message || "ULTRA aktifleştirilemedi."); }
       finally { ultraActivateBtn.disabled = false; }
     }
+    async function activateApex() {
+      if (!currentUser || isAdmin) return;
+      const code = normalizeApexCode(apexCodeInput?.value || "");
+      if (!code) return setApexMsg("APEX kodunu gir.");
+      apexActivateBtn.disabled = true;
+      try {
+        const result = await runTransaction(db, async (tx) => {
+          const codeRef = doc(db, "apexCodes", code);
+          const codeSnap = await tx.get(codeRef);
+          if (!codeSnap.exists()) throw new Error("APEX kodu bulunamadı.");
+          const codeData = codeSnap.data();
+          if ((Number(codeData.usedCount) || 0) >= (Number(codeData.maxUses) || 1)) throw new Error("APEX kodunun kullanım limiti dolmuş.");
+          const claimRef = doc(db, "apexCodeClaims", encodeURIComponent(`${code}__${normalizeKey(currentUser)}`));
+          const claimSnap = await tx.get(claimRef);
+          if (claimSnap.exists()) throw new Error("Bu hesap bu APEX kodunu daha önce kullanmış.");
+          const memberRef = doc(db, "apexMembers", plusDocId(currentUser));
+          const memberSnap = await tx.get(memberRef);
+          const currentUntil = memberSnap.exists() && memberSnap.data()?.apexUntil?.toDate ? memberSnap.data().apexUntil.toDate() : null;
+          const base = currentUntil ? Math.max(Date.now(), currentUntil.getTime()) : Date.now();
+          const days = Math.max(1, Math.min(3650, Number.parseInt(String(codeData.daysGranted ?? 30), 10) || 30));
+          const apexUntil = new Date(base + days * DAY_MS);
+          tx.set(codeRef, { usedCount: (Number(codeData.usedCount) || 0) + 1, lastUsedBy: currentUser, updatedAt: serverTimestamp() }, { merge: true });
+          tx.set(claimRef, { code, username: currentUser, claimedAt: serverTimestamp() });
+          tx.set(memberRef, { username: currentUser, usernameKey: normalizeKey(currentUser), apexUntil: Timestamp.fromDate(apexUntil), isActive: true, updatedAt: serverTimestamp() }, { merge: true });
+          return { days };
+        });
+        setApexMsg(`👑 APEX aktifleştirildi (${result.days} gün). PRO özellikleri de açıldı!`, true);
+        apexCodeInput.value = "";
+      } catch (err) { setApexMsg(err?.message || "APEX aktifleştirilemedi."); }
+      finally { apexActivateBtn.disabled = false; }
+    }
 
     async function redeemUltraRewardCode() {
       if (!currentUser || isAdmin) return;
-      if (!isUltraActive(currentUltra)) return setUltraRewardMsg("ULTRA ödül kodlarını kullanmak için aktif ULTRA üyeliğin olmalı.");
+      if (!hasUltraAccess()) return setUltraRewardMsg("ULTRA ödül kodlarını kullanmak için aktif ULTRA üyeliğin olmalı.");
       const code = normalizeUltraCode(ultraRewardCodeInput?.value || "");
       if (!code) return setUltraRewardMsg("Ödül kodunu gir.");
       ultraRewardRedeemBtn.disabled = true;
@@ -8713,12 +8869,14 @@
       if (thEl) thEl.textContent = thRem;
       if (anEl) anEl.textContent = anRem;
       const modeTitle = document.querySelector('#settingsModal .image-modal-title');
-      if (modeTitle) modeTitle.textContent = isUltraActive(currentUltra) ? "Ayarlar · ULTRA" : (isProActive(currentPro) ? "Ayarlar · PRO" : "Ayarlar");
+      if (modeTitle) modeTitle.textContent = isApexActive() ? "Ayarlar · APEX" : hasUltraAccess() ? "Ayarlar · ULTRA" : (isProActive(currentPro) ? "Ayarlar · PRO" : "Ayarlar");
       applyUltraTheme();
     }
 
     async function sendMessage() {
       const text = messageInput.value.trim();
+      if (!isAdmin && text.toLowerCase()==="/gs") { messageInput.value=""; charCount.textContent="0"; return joinGs(); }
+      if (!isAdmin && dualMode && getSelectedModels().length!==2) return showAppNotice("Çift model için iki farklı açık model seç.");
       const threadId = isAdmin ? selectedThread : currentUser;
 
       if (!threadId) return showAppNotice("Önce bir sohbet seç.");
@@ -8758,7 +8916,8 @@
           recipient: isAdmin ? threadId : ADMIN_USER,
           kind: "text",
           modelId: isAdmin ? "" : activeModel.id,
-          modelName: isAdmin ? "" : activeModel.name,
+          modelName: isAdmin ? "" : getSelectedModels().map(m=>m.name).join(" + "),
+          modelIds: isAdmin ? [] : getSelectedModels().map(m=>m.id), models: isAdmin ? [] : getSelectedModels().map(m=>({id:m.id,name:m.name})),
           actionKind: text.startsWith("*") ? "Canlı Kod (*)" : "Mesaj",
           text,
           imageDataUrl: "",
@@ -8767,6 +8926,7 @@
           expiresAt: Timestamp.fromDate(new Date(Date.now() + DAY_MS))
         });
         if (!isAdmin) await recordUsage("message", activeModel);
+        if(isAdmin && document.getElementById("clearStatusesOnSend").checked) await changeLiveStatus("clear",null,threadId);
         messageInput.value = "";
         charCount.textContent = "0";
         setTimeout(scrollToBottomFast, 10);
@@ -8794,7 +8954,8 @@
           ...getMessageIdentityFields(),
           recipient: isAdmin ? threadId : ADMIN_USER,
           modelId: isAdmin ? "" : activeModel.id,
-          modelName: isAdmin ? "" : activeModel.name,
+          modelName: isAdmin ? "" : getSelectedModels().map(m=>m.name).join(" + "),
+          modelIds: isAdmin ? [] : getSelectedModels().map(m=>m.id), models: isAdmin ? [] : getSelectedModels().map(m=>({id:m.id,name:m.name})),
           actionKind: "Resim Gönderimi",
           text: "",
           imageDataUrl: compressed.dataUrl,
@@ -8851,7 +9012,7 @@
         orderBy("createdAtClient", "desc"),
         limit(LIVE_MESSAGES_LIMIT)
       );
-      unsubscribeMessages = onSnapshot(q, (snap) => {
+      unsubscribeMessages = managedSnapshot("chat", q, (snap) => {
         const wasHydrated = messagesHydrated;
         const distanceFromBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
         const shouldScrollToBottom = !wasHydrated || distanceFromBottom < 140;
@@ -9029,7 +9190,7 @@
     function listenThreads() {
       if (unsubscribeThreads) unsubscribeThreads();
       const q = query(collection(db, "messages"), orderBy("createdAtClient", "desc"), limit(80));
-      unsubscribeThreads = onSnapshot(q, (snap) => {
+      unsubscribeThreads = managedSnapshot("chat", q, (snap) => {
         const latestByUser = new Map();
         snap.forEach((d) => {
           const data = d.data();
@@ -9048,7 +9209,7 @@
     function listenPlusStatus() {
       if (unsubscribePlusSelf) unsubscribePlusSelf();
       if (!currentUser || isAdmin) return;
-      unsubscribePlusSelf = onSnapshot(doc(db, "plusMembers", plusDocId(currentUser)), (snap) => {
+      unsubscribePlusSelf = managedSnapshot("core", doc(db, "plusMembers", plusDocId(currentUser)), (snap) => {
         currentPlus = snap.exists() ? { id: snap.id, ...snap.data() } : null;
         updatePlusStatusText();
         updatePlusPill();
@@ -9060,7 +9221,7 @@
     function listenProStatus() {
       if (unsubscribeProSelf) unsubscribeProSelf();
       if (!currentUser || isAdmin) return;
-      unsubscribeProSelf = onSnapshot(doc(db, "proMembers", plusDocId(currentUser)), (snap) => {
+      unsubscribeProSelf = managedSnapshot("core", doc(db, "proMembers", plusDocId(currentUser)), (snap) => {
         currentPro = snap.exists() ? { id: snap.id, ...snap.data() } : null;
         updatePlusStatusText();
         updatePlusPill();
@@ -9072,7 +9233,7 @@
     function listenUltraStatus() {
       if (unsubscribeUltraSelf) unsubscribeUltraSelf();
       if (!currentUser || isAdmin) return;
-      unsubscribeUltraSelf = onSnapshot(doc(db, "ultraMembers", plusDocId(currentUser)), (snap) => {
+      unsubscribeUltraSelf = managedSnapshot("core", doc(db, "ultraMembers", plusDocId(currentUser)), (snap) => {
         currentUltra = snap.exists() ? { id: snap.id, ...snap.data() } : null;
         checkAndResetRights();
         updatePlusStatusText();
@@ -9085,8 +9246,9 @@
 
     function listenStatus() {
       if (unsubscribeStatus) unsubscribeStatus();
-      unsubscribeStatus = onSnapshot(statusDocRef, (snap) => {
+      unsubscribeStatus = managedSnapshot("core", statusDocRef, (snap) => {
         const d = snap.exists() ? (snap.data() || {}) : {};
+        liveStatuses = d.liveStatuses || {}; renderLiveStatuses();
         chatOpen = d.open !== false;
         customModelsCatalog = Array.isArray(d.customModels) ? d.customModels : [];
         quotaRates = normalizeQuotaRates(d.quotaRates || DEFAULT_QUOTA_RATES);
@@ -9280,7 +9442,7 @@
     ultraCodeInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") void activateUltra(); });
     ultraRewardCodeInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") void redeemUltraRewardCode(); });
     ultraThemeSelect?.addEventListener("change", () => {
-      if (!isUltraActive(currentUltra)) return;
+      if (!hasUltraAccess()) return;
       localStorage.setItem("glogego_ultra_theme", ultraThemeSelect.value);
       applyUltraTheme();
     });
@@ -9465,13 +9627,285 @@
     document.getElementById("adminNewModelTierSelect")?.addEventListener("change", (e) => {
       const isPromo = e.target.value === "promo_only";
       const chk = document.getElementById("adminNewModelPromoOnlyChk");
-      if (chk && isPromo) chk.checked = true;
+      if (chk) chk.checked = isPromo;
+      if(e.target.value === "apex") { document.getElementById("adminNewModelGpCostInput").value="0"; document.getElementById("adminNewModelPromoCodeInput").value=""; }
     });
     document.getElementById("adminNewModelPromoOnlyChk")?.addEventListener("change", (e) => {
       const sel = document.getElementById("adminNewModelTierSelect");
       if (sel && e.target.checked) sel.value = "promo_only";
       else if (sel && !e.target.checked && sel.value === "promo_only") sel.value = "standard";
     });
+
+    // GloGeGo APEX: event-driven state; countdown ticks never write Firestore.
+    const liveSubscriptions = new Set();
+    function scopeVisible(scope) {
+      if (!currentUser || document.visibilityState === 'hidden') return false;
+      if(scope==='chat') return !gpPanelOpen && !plusPanelOpen && workshopPanel.classList.contains('hidden') && proChatPanel.classList.contains('hidden');
+      if(scope==='store') return gpPanelOpen;
+      if(scope==='tickets') return plusPanelOpen;
+      if(scope==='trade') return tradeRoomVisible;
+      if(scope==='tradechat') return tradeRoomVisible && tradeChatOpen;
+      if(scope==='gs') return gsJoined;
+      if(scope==='prochat') return !document.getElementById('proChatPanel')?.classList.contains('hidden');
+      return true;
+    }
+    function managedSnapshot(scope, ref, next, error) {
+      const entry={scope,stop:null,dead:false};
+      entry.sync=()=>{const wanted=!entry.dead && scopeVisible(scope); if(wanted&&!entry.stop) entry.stop=firebaseOnSnapshot(ref,next,error||((e)=>console.warn('Canlı veri alınamadı',e.code))); else if(!wanted&&entry.stop){entry.stop();entry.stop=null;}};
+      liveSubscriptions.add(entry);entry.sync();
+      return ()=>{entry.dead=true;entry.stop?.();entry.stop=null;liveSubscriptions.delete(entry);};
+    }
+    function syncSubscriptions(){liveSubscriptions.forEach(e=>e.sync());}
+    document.addEventListener('visibilitychange',()=>{syncSubscriptions();if(document.visibilityState==='visible') scheduleGs();else clearTimeout(gsTimer);});
+    let syncQueued=false;
+    new MutationObserver(()=>{if(!syncQueued){syncQueued=true;queueMicrotask(()=>{syncQueued=false;syncSubscriptions();});}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+
+    function listenApexStatus(){
+      unsubscribeApexSelf?.(); if(!currentUser||isAdmin)return;
+      unsubscribeApexSelf=managedSnapshot('core',doc(db,'apexMembers',plusDocId(currentUser)),snap=>{
+        currentApex=snap.exists()?snap.data():null; checkAndResetRights(); updateGpBonusText(); updatePlusPill(); updatePlusStatusText(); updateSettingsUI(); updateActiveModelUI(); renderModelPickerModal();
+      });
+    }
+    function getSelectedModels(){
+      const all=getAllModels(); const available=all.filter(isModelUnlockedForCurrentUser);
+      if(dualMode && (isApexActive()||available.length>=2)) return dualModelIds.map(id=>available.find(m=>m.id===id)).filter(Boolean).slice(0,2);
+      return [getCurrentModelObject()];
+    }
+    let dualMode=false,dualModelIds=[];
+    let liveStatuses={};
+    const threadForStatus=()=>isAdmin?selectedThread:currentUser;
+    function renderLiveStatuses(){
+      const rows=Array.isArray(liveStatuses[threadForStatus()])?liveStatuses[threadForStatus()]:[];
+      document.getElementById('liveStatusRows').innerHTML=rows.map(r=>`<div class="live-state"><span class="live-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>${escapeHtml(r.text)}</span>${isAdmin?`<button type="button" data-remove-status="${escapeHtml(r.id)}" aria-label="Durumu sil">×</button>`:''}</div>`).join('');
+      document.getElementById('liveAdminBar').classList.toggle('hidden',!isAdmin);
+      renderDualReply();
+    }
+    async function changeLiveStatus(action,value,thread=threadForStatus()){
+      if(!isAdmin||!thread)return;
+      try{await runTransaction(db,async tx=>{
+        const snap=await tx.get(statusDocRef), data=snap.data()||{}, map={...(data.liveStatuses||{})};
+        const rows=Array.isArray(map[thread])?map[thread]:[];
+        if(action==='add'){
+          const text=String(value||'').trim().slice(0,160);if(!text||rows.length>=8||rows.some(r=>r.text===text))return;
+          map[thread]=[...rows,{id:crypto.randomUUID(),text,createdAt:Date.now()}];
+        }else {const next=action==='clear'?[]:rows.filter(r=>r.id!==value);if(next.length===rows.length)return;if(next.length)map[thread]=next;else delete map[thread];}
+        // Replace the map atomically, preserving all unrelated chatStatus fields.
+        if(snap.exists())tx.update(statusDocRef,{liveStatuses:map});else tx.set(statusDocRef,{liveStatuses:map});
+      });}catch(e){showAppNotice(e.message||'Durum güncellenemedi.');}
+    }
+    let dualReplyTarget=null;
+    function renderDualReply(){
+      const el=document.getElementById('dualReplyPanel');if(!isAdmin){el.classList.add('hidden');return;}
+      const latest=Array.from(messageCache.values()).filter(m=>m.threadId===selectedThread && m.sender!==ADMIN_USER && m.models?.length===2).sort((a,b)=>(b.createdAtClient||0)-(a.createdAtClient||0))[0];
+      if(!latest){el.classList.add('hidden');dualReplyTarget=null;return;}
+      el.classList.remove('hidden');if(dualReplyTarget?.id===latest.id)return;dualReplyTarget=latest;
+      document.getElementById('dualReplyQuestion').textContent=String(latest.text||'Ekli istek').slice(0,160);
+      latest.models.forEach((m,i)=>{document.getElementById('dualReplyLabel'+i).textContent=m.name;document.getElementById('dualReplyText'+i).value='';});
+    }
+    async function sendDualReply(){
+      if(!isAdmin||!dualReplyTarget||dualReplyTarget.threadId!==selectedThread)return;
+      const target=dualReplyTarget, answers=[0,1].map(i=>document.getElementById('dualReplyText'+i).value.trim());
+      if(answers.some(a=>!a))return showAppNotice('Her iki modelin yanıtını doldur.');
+      const btn=document.getElementById('dualReplySend');btn.disabled=true;
+      try{await setDoc(doc(db,'messages','dual_reply_'+target.id),{threadId:selectedThread,sender:currentUser,recipient:selectedThread,...getMessageIdentityFields(),kind:'text',text:target.models.map((m,i)=>`## 🤖 ${m.name}\n${answers[i]}`).join('\n\n---\n\n'),replyTo:target.id,modelResponses:target.models.map((m,i)=>({modelId:m.id,modelName:m.name,text:answers[i]})),createdAt:serverTimestamp(),createdAtClient:Date.now(),expiresAt:Timestamp.fromDate(new Date(Date.now()+DAY_MS))});
+      if(document.getElementById('clearStatusesOnSend').checked)await changeLiveStatus('clear',null,selectedThread);
+      [0,1].forEach(i=>document.getElementById('dualReplyText'+i).value='');}catch(e){showAppNotice(e.message);}finally{btn.disabled=false;}
+    }
+
+    // Bounded UTF-16 chunks keep UTF-8 documents below the Firestore 1 MiB limit.
+    function writeWorkshopFile(tx,ref,payload){
+      const {htmlContent,...meta}=payload, bytes=new TextEncoder().encode(htmlContent).length;
+      if(bytes<=650000){tx.set(ref,{...meta,htmlContent,chunkCount:0});return;}
+      const chunks=[];for(let i=0;i<htmlContent.length;){let end=Math.min(i+210000,htmlContent.length);const c=htmlContent.charCodeAt(end-1);if(c>=0xD800&&c<=0xDBFF)end--;chunks.push(htmlContent.slice(i,end));i=end;}
+      const chunkVersion=crypto.randomUUID();
+      tx.set(ref,{...meta,htmlContent:'',chunkCount:chunks.length,chunkVersion});
+      chunks.forEach((content,i)=>tx.set(doc(ref,'chunks',String(i)),{content,chunkVersion,ownerKey:meta.ownerKey||'',buyerKey:meta.buyerKey||''}));
+    }
+    async function readWorkshopFile(ref,data,tx=null){
+      if(!data.chunkCount)return data;
+      if(!Number.isInteger(data.chunkCount)||data.chunkCount<1||data.chunkCount>12)throw new Error('Dosya parçaları geçersiz.');
+      const parts=await Promise.all(Array.from({length:data.chunkCount},(_,i)=>tx?tx.get(doc(ref,'chunks',String(i))):getDoc(doc(ref,'chunks',String(i)))));
+      if(parts.some(p=>!p.exists()||p.data().chunkVersion!==data.chunkVersion))throw new Error('Dosya güncellenmiş veya bir parçası eksik. Yeniden açmayı dene.');
+      return {...data,htmlContent:parts.map(p=>p.data().content).join('')};
+    }
+    function deleteWorkshopChunks(tx,ref,data){for(let i=0;i<(data?.chunkCount||0);i++)tx.delete(doc(ref,'chunks',String(i)));}
+
+    const gsRef=doc(db,'settings','gsAuctionRoom');
+    let gsJoining=false,gsJoined=false,gsRoom=null,gsUnsub=null,gsTimer=null,gsTick=null,gsBusy=false,gsItems=[],gsItemsPhase='',gsEpoch=0;
+    const gsKey=()=>normalizeKey(currentUser||'');
+    const gsDeadline=r=>Math.min(r.endsAtMs,r.phase==='waiting'?Infinity:(r.matchEndsAtMs||Infinity));
+    const gsClosed=r=>!r||['closed','sold','cancelled'].includes(r.phase);
+    function gsEligible(item){return item.marketListed!==true && !item.auctionRoomId && item.tradable!==false && item.tradeable!==false && item.sellable!==false;}
+    function gsNotice(t){document.getElementById('gsNotice').textContent=t||'';}
+    function stopGs(){gsJoined=false;gsUnsub?.();gsUnsub=null;clearTimeout(gsTimer);clearInterval(gsTick);gsTimer=null;gsTick=null;gsEpoch++;}
+    async function joinGs(){
+      if(!currentUser||isAdmin||gsJoining)return;
+      document.getElementById('gsModal').classList.remove('hidden');gsNotice('Lobiye bağlanılıyor…');
+      if(gsJoined){renderGs();return;}
+      const user=currentUser,key=gsKey(),epoch=gsEpoch;gsJoining=true;
+      try{
+        await runTransaction(db,async tx=>{
+          const snap=await tx.get(gsRef);let r=snap.exists()?snap.data():null;
+          if(!gsClosed(r) && r.players.some(p=>p.key===key))return;
+          if(r?.phase==='waiting' && Date.now()>=r.endsAtMs && r.players.length<2) r=null;
+          if(gsClosed(r))r={id:crypto.randomUUID(),phase:'waiting',players:[],endsAtMs:Date.now()+180000,createdAtMs:Date.now(),turn:0,order:[],bid:null};
+          if(r.phase!=='waiting'||r.players.length>=4||Date.now()>=r.endsAtMs)throw new Error('Aktif oda dolu veya tur başladı. Tur bitince yeniden /gs yaz.');
+          r.players.push({key,user});
+          if(r.players.length===4){r.order=r.players.map(p=>p.key);for(let i=r.order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r.order[i],r.order[j]]=[r.order[j],r.order[i]];}r.phase='selecting';r.matchEndsAtMs=Date.now()+600000;r.endsAtMs=Date.now()+30000;}
+          tx.set(gsRef,r);
+        });
+        if(currentUser!==user||epoch!==gsEpoch)return;
+        sessionStorage.setItem("glogego_gs_"+key,"1");
+        gsJoined=true;gsUnsub=managedSnapshot('gs',gsRef,snap=>{
+          gsRoom=snap.data()||null;
+          if(!gsRoom?.players?.some(p=>p.key===key)){stopGs();gsNotice('Bu odada değilsin.');return;}
+          renderGs();scheduleGs();void loadGsItems();
+          if(gsClosed(gsRoom)){sessionStorage.removeItem("glogego_gs_"+key);stopGs();}
+        },e=>{gsNotice('Oda dinlenemedi: '+e.message);stopGs();});
+        gsTick=setInterval(()=>{if(document.visibilityState==='visible')renderGsClock();},1000);
+      }catch(e){gsNotice(e.message);}finally{gsJoining=false;}
+    }
+    async function cancelGsAndClose(){
+      const button=document.getElementById('gsClose');if(button.disabled)return;
+      button.disabled=true;
+      const roomId=gsRoom?.id,userKey=gsKey();
+      try{
+        if(gsJoined && roomId) await runTransaction(db,async tx=>{
+          const snap=await tx.get(gsRef),r=snap.data();
+          if(!r || r.id!==roomId || gsClosed(r) || !r.players.some(p=>p.key===userKey))return;
+          if(r.item?.id){
+            const ref=doc(db,'gpInventory',r.item.id),item=await tx.get(ref);
+            if(item.exists() && item.data().auctionRoomId===r.id)tx.update(ref,{marketListed:false,auctionRoomId:null});
+          }
+          tx.update(gsRef,{phase:'cancelled',result:`${currentUser} × düğmesine bastı; tur durduruldu. Satış yapılmadı.`,closedAtMs:Date.now()});
+        });
+        sessionStorage.removeItem('glogego_gs_'+userKey);stopGs();
+        document.getElementById('gsModal').classList.add('hidden');
+      }catch(e){gsNotice('Tur durdurulamadı: '+e.message+' Bağlantını kontrol edip tekrar dene.');}
+      finally{button.disabled=false;}
+    }
+    function renderGsClock(){
+      const r=gsRoom;if(!r)return;const left=Math.max(0,Math.ceil((gsDeadline(r)-Date.now())/1000));
+      document.getElementById('gsClock').textContent=r.phase==='waiting'?`Oyuncular bekleniyor: ${r.players.length}/4 · Kalan süre: ${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`:gsClosed(r)?'Tur tamamlandı':`Teklif / seçim: ${left} sn · Maç: ${Math.floor(Math.max(0,Math.ceil(((r.matchEndsAtMs||r.endsAtMs)-Date.now())/1000))/60)}:${String(Math.max(0,Math.ceil(((r.matchEndsAtMs||r.endsAtMs)-Date.now())/1000))%60).padStart(2,'0')}`;
+    }
+    function renderGs(){
+      const r=gsRoom;if(!r)return;renderGsClock();
+      document.getElementById('gsPlayers').textContent=r.players.map(p=>p.user).join(' · ');
+      const mine=r.phase==='selecting'&&r.order[r.turn]===gsKey();
+      document.getElementById('gsItems').classList.toggle('hidden',!mine);
+      document.getElementById('gsBidForm').classList.toggle('hidden',r.phase!=='bidding'||r.sellerKey===gsKey());
+      document.getElementById('gsItemTitle').textContent=r.item?.title||'';
+      document.getElementById('gsHighest').textContent=r.bid?`${r.bid.user}: ${r.bid.amount} ${r.bid.currency.toUpperCase()} (${r.bid.valueGp} GP)`:'Henüz teklif yok';
+      gsNotice(r.phase==='waiting'?'4 kişi dolunca veya süre sonunda en az 2 kişiyle başlar.':r.phase==='selecting'?`${r.players.find(p=>p.key===r.order[r.turn])?.user||'Oyuncu'} ürün seçiyor (30 sn).`:r.phase==='bidding'?'Her en yüksek teklif sayacı 15 saniyeye yeniler. 1 UP = 1000 GP.':r.result||'Tur kapandı.');
+    }
+    async function loadGsItems(){
+      const r=gsRoom;if(r?.phase!=='selecting'||r.order[r.turn]!==gsKey())return;
+      const phase=r.id+':'+r.turn;if(gsItemsPhase===phase)return;gsItemsPhase=phase;
+      try{const snap=await getDocs(query(collection(db,'gpInventory'),where('ownerKey','==',gsKey())));
+        if(gsRoom?.id!==r.id||gsRoom.turn!==r.turn)return;
+        gsItems=snap.docs.map(d=>({id:d.id,...d.data()})).filter(gsEligible);
+        document.getElementById('gsItems').innerHTML=gsItems.map(i=>`<button type="button" class="btn secondary" data-gs-item="${escapeHtml(i.id)}">${escapeHtml(i.title||'Eşya')} · Ortaya koy</button>`).join('');
+        if(!gsItems.length)await advanceGs(r.id,r.phase,r.turn,true);
+      }catch(e){gsNotice('Envanter okunamadı: '+e.message);}
+    }
+    function scheduleGs(){
+      clearTimeout(gsTimer);if(!gsJoined||gsClosed(gsRoom)||document.visibilityState==='hidden')return;
+      const r=gsRoom, epoch=gsEpoch;
+      // Stagger clients: first successful transition changes the document and cancels followers.
+      const rank=Math.max(0,r.players.findIndex(p=>p.key===gsKey()));
+      gsTimer=setTimeout(()=>{if(epoch===gsEpoch)void advanceGs(r.id,r.phase,r.turn);},Math.max(0,gsDeadline(r)-Date.now())+rank*1200+100);
+    }
+    async function advanceGs(id,phase,turn,skip=false){
+      if(gsBusy||!gsJoined)return;gsBusy=true;
+      try{await runTransaction(db,async tx=>{
+        const snap=await tx.get(gsRef);if(!snap.exists())return;const r=snap.data();
+        if(r.id!==id||r.phase!==phase||r.turn!==turn||!r.players.some(p=>p.key===gsKey())||gsClosed(r))return;
+        if(skip){if(r.phase!=='selecting'||r.order[r.turn]!==gsKey())return;}else if(Date.now()<gsDeadline(r))return;
+        if(r.phase==='selecting' && r.matchEndsAtMs && Date.now()>=r.matchEndsAtMs){tx.update(gsRef,{phase:'cancelled',result:'10 dakikalık maç süresi doldu. Ürün seçilmediği için tur kapandı.'});return;}
+        if(r.phase==='waiting'){
+          if(r.players.length<2){tx.update(gsRef,{phase:'cancelled',result:'En az 2 oyuncu bulunamadığı için lobi kapandı.'});return;}
+          const order=r.players.map(p=>p.key);for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+          tx.update(gsRef,{phase:'selecting',order,turn:0,matchEndsAtMs:Date.now()+600000,endsAtMs:Date.now()+30000});return;
+        }
+        if(r.phase==='selecting'){
+          const next=r.turn+1;
+          tx.update(gsRef,next>=r.order.length?{phase:'cancelled',result:'Kimsede satılabilir eşya olmadığı veya süresinde ürün seçilmediği için tur iptal edildi.'}:{turn:next,endsAtMs:Math.min(Date.now()+30000,r.matchEndsAtMs||Infinity)});return;
+        }
+        if(r.phase==='bidding'){
+          const itemRef=doc(db,'gpInventory',r.item.id), itemSnap=await tx.get(itemRef),item=itemSnap.data();
+          if(!item || item.ownerKey!==r.sellerKey || item.auctionRoomId!==r.id){tx.update(gsRef,{phase:'cancelled',result:'Ürünün sahipliği veya satış kilidi değiştiği için tur iptal edildi.'});return;}
+          if(!r.bid){tx.update(itemRef,{marketListed:false,auctionRoomId:null});tx.update(gsRef,{phase:'closed',result:'Teklif verilmedi. Ürün satıcıda kaldı.'});return;}
+          const buyerRef=doc(db,'gpBalances',gpDocId(r.bid.user)),sellerRef=doc(db,'gpBalances',gpDocId(r.seller));
+          const buyerSnap=await tx.get(buyerRef),sellerSnap=await tx.get(sellerRef);
+          const amount=Number(r.bid.amount),currency=r.bid.currency,buyer=buyerSnap.data()||{},seller=sellerSnap.data()||{};
+          if(!['gp','up'].includes(currency)||!Number.isSafeInteger(amount)||amount<=0)throw new Error('Teklif geçersiz.');
+          if((Number(buyer[currency])||0)<amount){tx.update(itemRef,{marketListed:false,auctionRoomId:null});tx.update(gsRef,{phase:'cancelled',result:'Kazananın bakiyesi değişti; satış iptal edildi, ürün satıcıda kaldı.'});return;}
+          tx.set(buyerRef,{[currency]:(Number(buyer[currency])||0)-amount,updatedAt:serverTimestamp()},{merge:true});
+          tx.set(sellerRef,{[currency]:(Number(seller[currency])||0)+amount,updatedAt:serverTimestamp()},{merge:true});
+          tx.update(itemRef,{owner:r.bid.user,ownerKey:r.bid.key,marketListed:false,auctionRoomId:null,acquiredAtClient:Date.now()});
+          tx.update(gsRef,{phase:'sold',result:`${r.item.title}, ${r.bid.user} kullanıcısına ${amount} ${currency.toUpperCase()} karşılığında satıldı.`,settledAtMs:Date.now()});
+        }
+      });}catch(e){gsNotice('Tur ilerletilemedi: '+e.message+' · Yeniden dene düğmesini kullan.');}finally{gsBusy=false;}
+    }
+    async function offerGsItem(itemId){
+      if(gsBusy||!gsJoined)return;gsBusy=true;
+      try{await runTransaction(db,async tx=>{
+        const roomSnap=await tx.get(gsRef),r=roomSnap.data();
+        if(!r||r.id!==gsRoom.id||r.phase!=='selecting'||r.order[r.turn]!==gsKey()||Date.now()>=gsDeadline(r))throw new Error('Ürün seçme sırası veya süresi değişti.');
+        const ref=doc(db,'gpInventory',itemId),snap=await tx.get(ref),item=snap.data();
+        if(!item||item.ownerKey!==gsKey()||!gsEligible(item))throw new Error('Bu ürün artık satılabilir değil.');
+        tx.update(ref,{marketListed:true,auctionRoomId:r.id});
+        tx.update(gsRef,{phase:'bidding',seller:currentUser,sellerKey:gsKey(),item:{id:itemId,title:String(item.title||'Eşya').slice(0,120)},bid:null,endsAtMs:Math.min(Date.now()+15000,r.matchEndsAtMs||Infinity)});
+      });}catch(e){gsNotice(e.message);}finally{gsBusy=false;}
+    }
+    async function bidGs(event){
+      event.preventDefault();if(gsBusy||!gsJoined)return;
+      const amount=Number(document.getElementById('gsBidAmount').value),currency=document.getElementById('gsBidCurrency').value;
+      if(!Number.isSafeInteger(amount)||amount<=0||amount>1000000000||!['gp','up'].includes(currency))return gsNotice('Pozitif tam sayı gir.');
+      gsBusy=true;const btn=document.getElementById('gsBidBtn');btn.disabled=true;
+      try{await runTransaction(db,async tx=>{
+        const snap=await tx.get(gsRef),r=snap.data();
+        if(!r||r.id!==gsRoom.id||r.phase!=='bidding'||Date.now()>=gsDeadline(r))throw new Error('Teklif süresi sona erdi.');
+        if(!r.players.some(p=>p.key===gsKey())||r.sellerKey===gsKey())throw new Error('Bu ürüne teklif veremezsin.');
+        const valueGp=amount*(currency==='up'?1000:1);if(valueGp<=(r.bid?.valueGp||0))throw new Error('Mevcut en yüksek tekliften daha yüksek olmalı.');
+        const balance=await tx.get(doc(db,'gpBalances',gpDocId(currentUser)));
+        if((Number(balance.data()?.[currency])||0)<amount)throw new Error('Bakiyen yetersiz.');
+        tx.update(gsRef,{bid:{key:gsKey(),user:currentUser,amount,currency,valueGp},endsAtMs:Math.min(Date.now()+15000,r.matchEndsAtMs||Infinity)});
+      });}catch(e){gsNotice(e.message);}finally{gsBusy=false;btn.disabled=false;}
+    }
+
+    function initApexUI(){
+      const gift=document.getElementById('adminGiftUltraBtn').parentElement;
+      const block=document.createElement('div');block.className='plus-box';block.innerHTML='<strong>🌌 APEX Süresi</strong><input id="adminGiftApexDays" class="gp-input" type="number" min="1" max="3650" value="30"><button id="adminGiftApexBtn" class="btn" type="button">APEX Ver</button>';gift.after(block);
+      document.getElementById('adminGiftApexBtn').onclick=()=>grantAdminMembership('apex');
+      apexActivateBtn.onclick=()=>activateApex();apexCreateBtn.onclick=()=>createApexCode();
+      const records=document.createElement('div');records.innerHTML='<button id="apexRefreshAdmin" type="button" class="btn secondary">APEX üyelerini ve kodlarını getir</button><div id="apexAdminRecords" class="plus-admin-list"></div>';apexCreateMsg.after(records);document.getElementById('apexRefreshAdmin').onclick=refreshApexAdmin;
+
+      const info=document.createElement('div');info.className='plus-feature';info.textContent='🌌 APEX: %15 mağaza indirimi · günlük +6 GP · 6 saatte 50 Düşünme + 50 Analiz · 2 MB atölye · animasyonlu temalar';apexMsg.after(info);
+      document.getElementById('dualModeToggle').onchange=e=>{const models=getAllModels().filter(isModelUnlockedForCurrentUser);if(e.target.checked&&!isApexActive()&&models.length<2){e.target.checked=false;return setModelPickerMsg('İki açık model veya APEX gerekli.');}dualMode=e.target.checked;dualModelIds=dualMode?[getCurrentModelObject().id]:[];updateActiveModelUI();renderModelPickerModal();};
+      document.getElementById('liveAdminBar').addEventListener('click',e=>{const b=e.target.closest('[data-status]');if(b)void changeLiveStatus('add',b.dataset.status);});
+      document.getElementById('liveStatusAdd').onclick=()=>{void changeLiveStatus('add',document.getElementById('liveStatusCustom').value);document.getElementById('liveStatusCustom').value='';};
+      document.getElementById('liveStatusClear').onclick=()=>changeLiveStatus('clear');
+      document.getElementById('liveStatusRows').onclick=e=>{const b=e.target.closest('[data-remove-status]');if(b)void changeLiveStatus('remove',b.dataset.removeStatus);};
+      document.getElementById('dualReplySend').onclick=sendDualReply;
+      new MutationObserver(()=>renderDualReply()).observe(document.getElementById('messages'),{childList:true});
+      document.getElementById('gsClose').onclick=cancelGsAndClose;
+      document.getElementById('gsReopen').onclick=joinGs;
+      document.getElementById('gsBidForm').onsubmit=bidGs;
+      document.getElementById('gsItems').onclick=e=>{const b=e.target.closest('[data-gs-item]');if(b)void offerGsItem(b.dataset.gsItem);};
+      document.getElementById('gsRetry').onclick=()=>{if(gsRoom)void advanceGs(gsRoom.id,gsRoom.phase,gsRoom.turn);};
+      renderLiveStatuses();
+    }
+    let apexAdminCacheAt=0;
+    async function refreshApexAdmin(){
+      if(!isAdmin)return;
+      if(Date.now()-apexAdminCacheAt<60000)return;
+      const box=document.getElementById('apexAdminRecords');box.textContent='Yükleniyor…';
+      try{const [members,codes]=await Promise.all([getDocs(query(collection(db,'apexMembers'),limit(100))),getDocs(query(collection(db,'apexCodes'),limit(100)))]);
+        box.innerHTML='<strong>APEX üyeleri</strong>'+members.docs.map(d=>{const m=d.data();return `<div class="plus-row"><span>${escapeHtml(m.username||d.id)}</span><small>${escapeHtml(formatDaysLeft((m.apexUntil?.toMillis?.()||0)-Date.now()))}</small></div>`;}).join('')+'<strong>APEX kodları</strong>'+codes.docs.map(d=>{const c=d.data();return `<div class="plus-row"><span>${escapeHtml(c.code||d.id)}</span><small>${Number(c.daysGranted)||0} gün · ${Number(c.usedCount)||0}/${Number(c.maxUses)||1}</small></div>`;}).join('');apexAdminCacheAt=Date.now();
+      }catch(e){box.textContent=e.message;}
+    }
+    initApexUI();
 
     loadVoiceSetting();
     if (loadSession()) showApp();
