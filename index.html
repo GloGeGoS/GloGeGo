@@ -267,6 +267,8 @@ service cloud.firestore {
         "up": {
           "$guest": {
             "hello": { ".write": "auth != null && auth.uid === $guest", ".validate": "newData.isString() && newData.val().length <= 5000" },
+            "ping": { ".write": "auth != null && auth.uid === $guest", ".validate": "newData.isString() && newData.val().length <= 5000" },
+            "pong": { ".write": "auth != null && auth.uid === $guest", ".validate": "newData.isString() && newData.val().length <= 5000" },
             "moves": { ".write": "auth != null && auth.uid === $guest && root.child('kervanRelay').child($session).child('host').exists()", ".validate": "newData.isString() && newData.val().length <= 18000" },
             "commands": {
               "$command": {
@@ -1658,8 +1660,8 @@ const LEVELS={easy:{reaction:.85,scan:.4,error:2.5,spread:3,vision:42,fov:.66,tu
 const prefs=readSaved('kervan.match.v3',{});
 const match={mode:MODES[prefs.mode]?prefs.mode:'bomb',level:LEVELS[prefs.level]?prefs.level:'normal',left:900,buyLeft:0,result:false,lastWall:performance.now()};
 const difficulty=()=>LEVELS[match.level],deathmatch=()=>match.mode==='duel'||match.mode==='tdm';
-const NET={active:false,guest:false,searching:false,room:null,roomData:null,uid:null,peers:new Map(),unsubs:[],mySlot:0,bySlot:[],seq:0,lastSend:0,lastSnapshot:0,events:[],generation:0,starting:false};
-const PROTOCOL='kervan-sync-5';
+const NET={active:false,guest:false,searching:false,room:null,roomData:null,uid:null,peers:new Map(),retryAttempts:new Map(),unsubs:[],mySlot:0,bySlot:[],seq:0,lastSend:0,lastSnapshot:0,events:[],generation:0,starting:false};
+const PROTOCOL='kervan-sync-6';
 const WORLD_HASH=(()=>{const data=JSON.stringify([selectedMap,MAP,boxes.map(b=>[b.x0,b.y0,b.z0,b.x1,b.y1,b.z1])]);let h=2166136261;for(let i=0;i<data.length;i++)h=Math.imul(h^data.charCodeAt(i),16777619);return(h>>>0).toString(16);})();
 const motion={seq:0,pending:[],outgoing:[],accumulator:0};
 const baseNames=ents.map((e,i)=>i?'Bot '+i:'SEN');
@@ -1680,7 +1682,7 @@ const panel=document.createElement('div');panel.className='onlinePanel';panel.in
  <label>Bot zorluğu <select id="levelSelect"><option value="easy">Kolay</option><option value="normal">Normal</option><option value="hard">Zor</option><option value="expert">Çok Zor</option></select></label>
  <button id="onlinePlay">ÇOK OYUNCULU</button><button id="saveProfile">ADI KAYDET</button><button id="netExit">EŞLEŞTİRMEDEN / MAÇTAN AYRIL</button>
  <div id="onlineStatus" role="status" aria-live="polite">Tek oyunculu hazır. Mobil/PC için RTDB veya WebRTC bağlantısı seçebilirsin.</div>
- <details open><summary>🌐 Farklı Wi-Fi / Telefon–PC bağlantısı</summary><p>Farklı ağlarda WebRTC tek başına bağlantı kuramayabilir. Firebase Realtime Database bağlantısını (ücretsiz Spark planında da kullanılabilir) açıp URL'yi BURAYA bir kez girersen maç sahibi Firebase aktarmasını kullanır; diğer oyuncular URL'yi lobiden otomatik alır. Bu bir sunucu.js gerektirmez.</p><label>Realtime Database URL <input id="relayURL" placeholder="https://proje-adi.europe-west1.firebasedatabase.app" autocomplete="off"></label><button id="downloadRealtimeRules" type="button">REALTIME DATABASE KURALLARINI İNDİR</button><p id="relayHelp">Firebase Console → Build → Realtime Database → Create Database → Rules bölümüne indirilen kuralları yapıştır ve Publish. Oyunu HTTPS üzerinden yayınla. Kurmazsan STUN/TURN ile WebRTC kullanılacak.</p><details><summary>Gelişmiş: TURN sunucusu (alternatif)</summary><label>TURN URL <input id="turnURL" placeholder="turn:relay.example:3478"></label><label>Kullanıcı <input id="turnUser"></label><label>Parola <input id="turnPass" type="password"></label></details></details>`;
+ <details open><summary>🌐 Farklı Wi-Fi / Telefon–PC bağlantısı</summary><p>Farklı ağlarda WebRTC tek başına bağlantı kuramayabilir. Firebase Realtime Database bağlantısını (ücretsiz Spark planında da kullanılabilir) açıp URL'yi İKİ CİHAZDA da girersen lobi sahibi Firebase aktarmasını kullanır. Katılan oyuncu URL'yi lobiden de alır. Bu bir sunucu.js gerektirmez. İki cihazda da aynı güncel HTML dosyasını aç.</p><label>Realtime Database URL <input id="relayURL" placeholder="https://proje-adi.europe-west1.firebasedatabase.app" autocomplete="off"></label><button id="downloadRealtimeRules" type="button">REALTIME DATABASE KURALLARINI İNDİR</button><p id="relayHelp">Firebase Console → Build → Realtime Database → Create Database → Rules bölümüne indirilen kuralları yapıştır ve Publish. Oyunu HTTPS üzerinden yayınla. Kurmazsan STUN/TURN ile WebRTC kullanılacak.</p><details><summary>Gelişmiş: TURN sunucusu (alternatif)</summary><label>TURN URL <input id="turnURL" placeholder="turn:relay.example:3478"></label><label>Kullanıcı <input id="turnUser"></label><label>Parola <input id="turnPass" type="password"></label></details></details>`;
 $('go').after(panel);$('modeSelect').value=match.mode;$('levelSelect').value=match.level;
 $('relayURL').value=readSaved('kervan.rtdb.url.v1','');$('relayURL').addEventListener('change',e=>{const v=e.target.value.trim();writeSaved('kervan.rtdb.url.v1',v);});$('downloadRealtimeRules').onclick=()=>{const a=document.createElement('a'),url=URL.createObjectURL(new Blob([$('realtimeRules').textContent],{type:'application/json'}));a.href=url;a.download='kervan-realtime.rules.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);};
 panel.insertAdjacentHTML('beforeend','<details><summary>Firebase kurulumu ve kurallar</summary><p>Anonymous girişini ve kullanıcı oluşturmayı açın. Firestore (default) veritabanını oluşturun. Farklı Wi-Fi aktarması için bu sürümün Firestore ve Realtime Database kurallarını da yayımlayın. Aşağıdaki kuralları Rules sekmesinde yayımlayın. Dosyayı HTTPS statik barındırmada açın; aynı alan adı ve tarayıcı profilini kullanın. İsterseniz signals için TTL temizliği kurun (zorunlu değil). Kısıtlı ağlarda TURN gerekebilir.</p><button id="downloadRules">FIRESTORE KURALLARINI İNDİR</button></details>');
@@ -1757,7 +1759,7 @@ async function initRelay(url){const normalized=relayURLValue(url);if(!normalized
 function relayRef(path){return relaySDK.ref(relayDatabase,'kervanRelay/'+NET.roomData.session+'/'+path);}
 function relayWrite(path,payload){if(!NET.roomData||!relayDatabase)return;relaySDK.set(relayRef(path),JSON.stringify(payload)).catch(e=>{if(NET.active||NET.searching)networkError('Realtime Database yazma hatası: '+friendly(e)+' · Rules kurallarını yayımla.');});}
 function relayListen(peer,path){const stop=relaySDK.onValue(relayRef(path),snap=>{if(NET.peers.get(peer.uid)!==peer||!snap.exists())return;try{const msg=JSON.parse(snap.val());if(!msg||typeof msg.type!=='string')return;receive(peer,msg);}catch(e){console.warn('RTDB packet rejected',e);}},e=>networkError('Realtime Database okuma hatası: '+friendly(e)+' · RTDB Rules kurallarını kontrol et.'));peer.relStops.push(stop);}
-async function prepareRelayHost(){if(!NET.roomData?.relayURL||NET.guest)return;await initRelay(NET.roomData.relayURL);const host=relayRef('host');await relaySDK.set(host,NET.uid);relaySDK.onDisconnect(relayRef('')).remove().catch(()=>{});}
+async function prepareRelayHost(){if(!NET.roomData?.relayURL||NET.guest)return;await initRelay(NET.roomData.relayURL);const host=relayRef('host');await relaySDK.set(host,NET.uid);/* Do not delete the relay on transient socket disconnect: it would eject everybody. Explicit leave removes it. */}
 async function connectRelay(uid,offerer){const room=NET.roomData,session=room.session;const guest=offerer?NET.uid:uid;
  const peer={uid,mode:'relay',pc:{close(){}},channel:{readyState:'open',close(){}},ready:false,sentHello:false,relStops:[],lastInput:performance.now(),lastReceived:performance.now(),lastCommand:0,relMoves:[],lastRelMove:0,lastRelShot:0,lastPing:0};NET.peers.set(uid,peer);
  try{await initRelay(room.relayURL);if(NET.peers.get(uid)!==peer||NET.roomData?.session!==session)return;
@@ -1788,44 +1790,140 @@ async function matchmake(){if(NET.searching||NET.active)return;if(!validName())r
  try{await firebase();if(generation!==NET.generation)return;const f=FB,key=[match.mode,selectedMap,match.level].join('_'),size=MODES[match.mode].size,configuredRelay=relayURLValue($('relayURL').value);writeSaved('kervan.rtdb.url.v1',configuredRelay);
  for(let shard=0;shard<8;shard++){const ref=f.doc(f.db,'lobbies',key+'_'+shard);const joined=await f.runTransaction(f.db,async tx=>{const snap=await tx.get(ref),old=snap.data(),now=Date.now();
  if(!old||old.expiresAt.toMillis()<now||old.state==='closed'){const room={host:NET.uid,session:crypto.randomUUID(),key,state:'waiting',members:[{uid:NET.uid,name:P.name}],capacity:size,createdAt:f.Timestamp.fromMillis(now),expiresAt:f.Timestamp.fromMillis(now+90000),startAt:null,...(configuredRelay?{relayURL:configuredRelay}:{})};tx.set(ref,room);return room;}
- if(!['waiting','countdown'].includes(old.state)||old.members.length>=size)return null;if(old.members.some(m=>m.uid===NET.uid))return old;
+ if(!['waiting','countdown'].includes(old.state)||old.members.length>=size||old.expiresAt.toMillis()<now+25000||(configuredRelay&&!old.relayURL)||(configuredRelay&&old.relayURL!==configuredRelay))return null;if(old.members.some(m=>m.uid===NET.uid))return old;
  const members=[...old.members,{uid:NET.uid,name:P.name}],room={...old,members,state:members.length>=3?'connecting':'countdown',startAt:members.length>=3?f.Timestamp.fromMillis(now):(old.startAt||f.Timestamp.fromMillis(now+30000))};tx.update(ref,{members,state:room.state,startAt:room.startAt});return room;});
  if(joined){NET.room=ref;NET.roomData=joined;break;}}
  if(!NET.room)throw Error('Tüm eşleştirme odaları dolu. Biraz sonra tekrar dene.');if(generation!==NET.generation){await leaveNetwork();return;}
- NET.guest=NET.roomData.host!==NET.uid;if(NET.roomData.relayURL&&!NET.guest)await prepareRelayHost();NET.unsubs.push(f.onSnapshot(NET.room,snap=>{if(generation!==NET.generation)return;if(!snap.exists()){networkError('Lobi kapandı. Yeniden eşleştirme başlatabilirsin.');return;}handleRoom(snap.data()).catch(e=>networkError(friendly(e)));},e=>networkError(friendly(e))));
- NET.lobbyTimer=setInterval(()=>lobbyTick().catch(e=>networkError(friendly(e))),500);NET.heartbeat=setInterval(()=>heartbeat().catch(e=>networkError(friendly(e))),30000);
+ NET.guest=NET.roomData.host!==NET.uid;if(NET.roomData.relayURL&&!NET.guest)await prepareRelayHost();NET.unsubs.push(f.onSnapshot(NET.room,{includeMetadataChanges:true},snap=>{
+   if(generation!==NET.generation||snap.metadata.fromCache)return; // Ignore stale cached member lists.
+   if(!snap.exists()){networkError('Lobi kapandı. Yeniden eşleştirme başlatabilirsin.');return;}
+   handleRoom(snap.data()).catch(e=>status('Lobi yeniden eşitleniyor: '+friendly(e),true));
+ },e=>{if(generation===NET.generation)status('Lobi dinleme hatası: '+friendly(e)+' · Bağlantıyı kontrol et.',true);}));
+ NET.lobbyTimer=setInterval(()=>lobbyTick().catch(e=>status('Lobi güncellemesi ertelendi: '+friendly(e),true)),500);
+ NET.heartbeat=setInterval(()=>heartbeat().catch(e=>console.warn('Heartbeat postponed',e)),20000);
  }catch(e){await leaveNetwork();status('Eşleştirme başarısız: '+friendly(e),true);}}
 $('onlinePlay').onclick=matchmake;$('netExit').onclick=()=>leaveNetwork().then(()=>{G.started=false;G.paused=true;status('Eşleştirmeden / maçtan ayrıldın.');});
-async function handleRoom(room){if(room.session!==NET.roomData.session){networkError('Lobi süresi doldu. Yeniden bağlan.');return;}NET.roomData=room;
- if(room.state==='closed'){networkError('Maç sahibi ayrıldı. Maç güvenle kapatıldı; yeniden eşleşebilirsin.');return;}
- if(!room.members.some(m=>m.uid===NET.uid)){networkError('Lobi üyeliğin sonlandı.');return;}
+async function handleRoom(room){
+ if(!NET.roomData||!NET.room)return;
+ if(room.session!==NET.roomData.session){networkError('Lobi oturumu değişti. Eski odanın süresi dolmuş olabilir.');return;}
+ // Never trust an obsolete cache/event to evict a real player: confirm on the server.
+ if(!room.members.some(m=>m.uid===NET.uid)){
+   const current=await FB.getDocFromServer(NET.room);
+   if(current.exists()&&current.data().session===room.session&&current.data().members.some(m=>m.uid===NET.uid)){room=current.data();}
+   else{networkError('Sunucu, bu lobide artık üyeliğin olmadığını doğruladı. Eşleştirmeye yeniden gir.');return;}
+ }
+ NET.roomData=room;
+ if(room.state==='closed'){networkError('Maç sahibi lobiyi kapattı. Yeniden eşleşebilirsin.');return;}
  if(!NET.guest){for(const member of room.members)if(member.uid!==NET.uid&&!NET.peers.has(member.uid))await connectPeer(member.uid,false);}
  else if(!NET.peers.has(room.host))await connectPeer(room.host,true);
- if(NET.active){for(const [uid,peer] of NET.peers)if(!room.members.some(m=>m.uid===uid))dropPeer(uid);}
+ if(NET.active){for(const [uid] of NET.peers)if(!room.members.some(m=>m.uid===uid))dropPeer(uid);}
  if(['connecting','playing'].includes(room.state))tryStart();}
 async function lobbyTick(){const r=NET.roomData;if(!r||NET.active)return;const n=r.members.length;if(r.state==='waiting')status('Oyuncu aranıyor…\n'+MODES[match.mode].name+' · '+MAP_NAMES[selectedMap]);
  if(r.state==='countdown'){const left=Math.max(0,Math.ceil((r.startAt.toMillis()-Date.now())/1000));status('Oyuncu bulundu · '+n+'/'+r.capacity+'\nLobi: '+left+' saniye. Yeni oyuncu katılırsa maç hemen başlar.');if(left===0&&!NET.guest)await changeRoomState('connecting');}
  if(r.state==='connecting'){status((r.relayURL?'Firebase RTDB aktarması':'WebRTC eşler arası bağlantısı')+' kuruluyor… '+n+' oyuncu; boş yerler botlarla dolacak.');tryStart();}}
 async function changeRoomState(state){const f=FB;return f.runTransaction(f.db,async tx=>{const s=await tx.get(NET.room);if(!s.exists()||s.data().host!==NET.uid||s.data().session!==NET.roomData.session)throw Error('Maç oturumu değişti. Yeniden eşleşin.');const room={...s.data(),state};tx.update(NET.room,{state});return room;});}
-async function heartbeat(){if(NET.room&&!NET.guest)await FB.updateDoc(NET.room,{expiresAt:FB.Timestamp.fromMillis(Date.now()+90000)});}
-async function tryStart(){if(NET.guest||NET.starting||NET.active||!['connecting','playing'].includes(NET.roomData.state))return;const others=NET.roomData.members.filter(m=>m.uid!==NET.uid);if(!others.every(m=>NET.peers.get(m.uid)?.channel?.readyState==='open'&&NET.peers.get(m.uid)?.ready))return;NET.starting=true;try{const room=await changeRoomState('playing');NET.roomData=room;startOnline(room.members);const initial=snapshot();for(const peer of NET.peers.values())send(peer,{...connectionIdentity(),type:'start',members:room.members,initial});}catch(e){networkError(friendly(e));}finally{NET.starting=false;}}
+async function heartbeat(){if(NET.room&&!NET.guest){try{await FB.updateDoc(NET.room,{expiresAt:FB.Timestamp.fromMillis(Date.now()+90000)});NET.heartbeatFailures=0;}catch(e){NET.heartbeatFailures=(NET.heartbeatFailures||0)+1;if(NET.heartbeatFailures>1)status('İnternet kısa süreli kesildi; lobi açık tutuluyor. Bağlantı yeniden deneniyor…',true);console.warn('Lobby lease failed',e);}}}
+async function tryStart(){if(NET.guest||NET.starting||NET.active||!['connecting','playing'].includes(NET.roomData.state))return;const others=NET.roomData.members.filter(m=>m.uid!==NET.uid);if(!others.every(m=>NET.peers.get(m.uid)?.channel?.readyState==='open'&&NET.peers.get(m.uid)?.ready))return;NET.starting=true;try{const room=await changeRoomState('playing');NET.roomData=room;startOnline(room.members);const initial=snapshot();for(const peer of NET.peers.values())send(peer,{...connectionIdentity(),type:'start',members:room.members,initial});}catch(e){status('Maç başlatma yeniden denenecek: '+friendly(e),true);}finally{NET.starting=false;}}
 function startOnline(members,initial=null){if(NET.guest&&(!initial||!sameConnection(initial)))throw Error('Ortak maç durumu alınamadı. İki tarafta güncel dosyayı açın.');NET.active=true;NET.searching=false;const now=performance.now();NET.lastSend=0;NET.lastSimulationAt=now;motion.seq=0;motion.pending=[];motion.outgoing=[];motion.accumulator=0;for(const peer of NET.peers.values()){peer.lastInput=now;peer.lastReceived=now;}startTransportWatch();lastSnapshotSeq=-1;lastGuestRound=0;lastGuestAlive=true;buffers.clear();for(const m of netGrenades.values())scene.remove(m);netGrenades.clear();netSmokes.clear();configureRoster(members);newMatch();if(initial)acceptSnapshot(initial);G.started=true;G.paused=false;play();NET.lastSnapshot=performance.now();status('Ortak maç: '+(NET.roomData?.session||'').slice(0,6)+' · '+MAP_NAMES[selectedMap]+' · '+(NET.roomData?.relayURL?'RTDB (farklı Wi-Fi)':'WebRTC'));if(NET.lobbyTimer)clearInterval(NET.lobbyTimer);if(!TOUCH)banner('MAÇ BAŞLADI','Nişan almak için oyun alanına tıkla','',4);}
 function connectionIdentity(){return{protocol:PROTOCOL,session:NET.roomData?.session,map:selectedMap,world:WORLD_HASH,mode:match.mode,level:match.level};}
 function sameConnection(m){return m.protocol===PROTOCOL&&m.session===NET.roomData?.session&&m.map===selectedMap&&m.world===WORLD_HASH;}
-function helloPeer(peer){if(peer.sentHello)return;peer.sentHello=true;send(peer,{...connectionIdentity(),type:'hello'});clearTimeout(peer.timeout);peer.timeout=setTimeout(()=>{if(!peer.ready&&NET.peers.get(peer.uid)===peer)networkError('Diğer oyuncuyla el sıkışma başarısız. İki cihazda aynı güncel dosyayı aç ve Firebase kurallarını kontrol et.');},20000);}
+function helloPeer(peer){if(peer.sentHello)return;peer.sentHello=true;send(peer,{...connectionIdentity(),type:'hello'});clearTimeout(peer.timeout);peer.timeout=setTimeout(()=>{if(!peer.ready&&NET.peers.get(peer.uid)===peer)schedulePeerRetry(peer.uid,'Karşılıklı bağlantı onayı gecikti');},20000);}
 function iceServers(){const servers=[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302','stun:stun.cloudflare.com:3478']}],urls=$('turnURL').value.trim().split(/[\s,;]+/).filter(Boolean);if(urls.length){if(!urls.every(url=>/^turns?:[^\s]+$/.test(url)))throw Error('TURN URL geçersiz.');servers.push({urls,username:$('turnUser').value.trim(),credential:$('turnPass').value});}return servers;}
 function gathered(pc){if(pc.iceGatheringState==='complete')return Promise.resolve();return new Promise(resolve=>{const timer=setTimeout(()=>{pc.removeEventListener('icegatheringstatechange',check);resolve();},18000);function check(){if(pc.iceGatheringState==='complete'){clearTimeout(timer);pc.removeEventListener('icegatheringstatechange',check);resolve();}}pc.addEventListener('icegatheringstatechange',check);});}
-async function connectPeer(uid,offerer){if(NET.roomData?.relayURL)return connectRelay(uid,offerer);const pc=new RTCPeerConnection({iceServers:iceServers()}),peer={pc,uid,channel:null,unsub:null,lastInput:performance.now(),seq:-1,lastCommand:0,handled:false};NET.peers.set(uid,peer);const guest=offerer?NET.uid:uid,signal=FB.doc(FB.db,'signals',NET.roomData.session+'_'+guest);peer.signal=signal;
- peer.timeout=setTimeout(()=>{if(peer.channel?.readyState!=='open'&&NET.peers.get(uid)===peer)networkError('WebRTC bağlantısı kurulamadı. Farklı Wi-Fi için menüde Firebase Realtime Database URL’sini girip RTDB Rules kurallarını yayımla; alternatif: TURN.');},35000);
- pc.onconnectionstatechange=()=>{if(['failed','closed'].includes(pc.connectionState)&&NET.peers.has(uid)){if(NET.guest)networkError('Maç sahibiyle WebRTC bağlantısı kesildi.');else{dropPeer(uid);status('Bir oyuncu ayrıldı; yerini bot aldı.');}}};
- const bind=ch=>{peer.channel=ch;ch.onopen=()=>{helloPeer(peer);};ch.onclose=()=>{if(NET.peers.has(uid)){if(NET.guest)networkError('Maç sahibi bağlantısı kapandı.');else dropPeer(uid);}};ch.onmessage=ev=>{if(typeof ev.data!=='string'||ev.data.length>100000)return;try{receive(peer,JSON.parse(ev.data));}catch(e){console.warn('Rejected network packet',e.message);}};};
+/* Connection drop is not a lobby leave. Keep the Firestore membership and remote avatar.
+   The previous version incorrectly removed guests from the members array on every
+   short ICE failure; the resulting listener then said “Lobi üyeliğin sonlandı”. */
+function disposePeer(peer){
+ clearTimeout(peer.timeout);clearTimeout(peer.disconnectTimer);clearTimeout(peer.retryTimer);
+ try{peer.unsub?.();}catch{}try{peer.channel?.close();}catch{}try{peer.pc?.close();}catch{}
+ if(peer.relStops){for(const stop of peer.relStops)try{stop();}catch{}peer.relStops=[];}
+}
+function schedulePeerRetry(uid,reason='Bağlantı koptu'){
+ const peer=NET.peers.get(uid);if(!peer||peer.retrying||!NET.roomData)return;
+ peer.retrying=true;clearTimeout(peer.timeout);clearTimeout(peer.disconnectTimer);
+ const attempts=(NET.retryAttempts.get(uid)||0)+1;NET.retryAttempts.set(uid,attempts);
+ const delay=Math.min(12000,1000+attempts*2000),generation=NET.generation;
+ status(reason+' · '+(NET.roomData.relayURL?'RTDB':'WebRTC')+' bağlantısı yeniden deneniyor (deneme '+attempts+').'+(attempts>=3&&!NET.roomData.relayURL?' Farklı Wi-Fi için iki cihazda da Realtime Database URL’sini ayarla.':''),attempts>=3);
+ peer.retryTimer=setTimeout(async()=>{
+   if(NET.generation!==generation||NET.peers.get(uid)!==peer||!NET.roomData?.members?.some(m=>m.uid===uid))return;
+   NET.peers.delete(uid);disposePeer(peer);
+   try{await connectPeer(uid,NET.guest);}catch(e){
+     console.warn('Peer reconnect failed',e);
+     if(NET.generation!==generation||!NET.roomData)return;
+     const again=NET.peers.get(uid);
+     if(again)schedulePeerRetry(uid,'Bağlantı hâlâ kurulamadı');
+     else{status('Eş bağlantısı yeniden deneniyor: '+friendly(e),true);setTimeout(()=>{
+       if(NET.generation===generation&&NET.roomData?.members?.some(m=>m.uid===uid)&&!NET.peers.has(uid))connectPeer(uid,NET.guest).catch(err=>status('Bağlantı kurulamadı: '+friendly(err),true));
+     },5000);}
+   }
+ },delay);
+}
+async function connectPeer(uid,offerer){
+ if(NET.roomData?.relayURL)return connectRelay(uid,offerer);
+ const pc=new RTCPeerConnection({iceServers:iceServers()}),peer={pc,uid,channel:null,unsub:null,lastInput:performance.now(),lastReceived:performance.now(),seq:-1,lastCommand:0,handled:false,ready:false};
+ NET.peers.set(uid,peer);
+ const guest=offerer?NET.uid:uid,signal=FB.doc(FB.db,'signals',NET.roomData.session+'_'+guest);peer.signal=signal;
+ peer.timeout=setTimeout(()=>{if(peer.channel?.readyState!=='open'&&NET.peers.get(uid)===peer)schedulePeerRetry(uid,'WebRTC bağlantısı zaman aşımı');},34000);
+ pc.onconnectionstatechange=()=>{
+   if(NET.peers.get(uid)!==peer||peer.retrying)return;
+   if(pc.connectionState==='connected'){clearTimeout(peer.disconnectTimer);return;}
+   if(pc.connectionState==='disconnected'){
+     clearTimeout(peer.disconnectTimer);peer.disconnectTimer=setTimeout(()=>{
+       if(NET.peers.get(uid)===peer&&pc.connectionState==='disconnected')schedulePeerRetry(uid,'Ağ geçici olarak koptu');
+     },8500);
+   }else if(pc.connectionState==='failed')schedulePeerRetry(uid,'WebRTC bağlantısı başarısız');
+ };
+ const bind=ch=>{peer.channel=ch;
+   ch.onopen=()=>{clearTimeout(peer.disconnectTimer);helloPeer(peer);};
+   ch.onclose=()=>{if(NET.peers.get(uid)===peer&&!peer.retrying){clearTimeout(peer.disconnectTimer);peer.disconnectTimer=setTimeout(()=>schedulePeerRetry(uid,'Oyun kanalı kapandı'),2200);}};
+   ch.onmessage=ev=>{if(typeof ev.data!=='string'||ev.data.length>100000)return;try{receive(peer,JSON.parse(ev.data));}catch(e){console.warn('Rejected network packet',e.message);}};
+ };
  if(offerer)bind(pc.createDataChannel('kervan',{ordered:true}));else pc.ondatachannel=ev=>bind(ev.channel);
- peer.unsub=FB.onSnapshot(signal,async snap=>{if(!snap.exists()||peer.handled||!NET.peers.has(uid))return;const d=snap.data();try{if(offerer&&d.answer){peer.handled=true;await pc.setRemoteDescription({type:'answer',sdp:d.answer});peer.unsub?.();}else if(!offerer&&d.offer){peer.handled=true;await pc.setRemoteDescription({type:'offer',sdp:d.offer});await pc.setLocalDescription(await pc.createAnswer());await gathered(pc);await FB.updateDoc(signal,{answer:pc.localDescription.sdp});peer.unsub?.();}}catch(e){networkError('WebRTC sinyalleme: '+friendly(e));}},e=>networkError(friendly(e)));
- if(offerer){await pc.setLocalDescription(await pc.createOffer());await gathered(pc);await FB.setDoc(signal,{room:NET.room.id,session:NET.roomData.session,host:uid,guest:NET.uid,offer:pc.localDescription.sdp,answer:'',expiresAt:FB.Timestamp.fromMillis(Date.now()+120000)});}}
-function send(peer,data){if(peer.mode==='relay'){sendRelay(peer,data);return;}if(peer.channel?.readyState==='open'&&peer.channel.bufferedAmount<128000)peer.channel.send(JSON.stringify(data));}
+ peer.unsub=FB.onSnapshot(signal,async snap=>{
+   if(!snap.exists()||peer.handled||NET.peers.get(uid)!==peer)return;
+   const d=snap.data();if(d.session!==NET.roomData?.session)return;
+   // A fully answered offer belongs to an older connection attempt.
+   if(!offerer&&d.answer)return;
+   try{
+     if(offerer&&d.answer){peer.handled=true;await pc.setRemoteDescription({type:'answer',sdp:d.answer});peer.unsub?.();}
+     else if(!offerer&&d.offer){peer.handled=true;await pc.setRemoteDescription({type:'offer',sdp:d.offer});await pc.setLocalDescription(await pc.createAnswer());await gathered(pc);if(NET.peers.get(uid)===peer){await FB.updateDoc(signal,{answer:pc.localDescription.sdp});peer.unsub?.();}}
+   }catch(e){if(NET.peers.get(uid)===peer)schedulePeerRetry(uid,'WebRTC sinyalleme hatası: '+friendly(e));}
+ },e=>{if(NET.peers.get(uid)===peer)schedulePeerRetry(uid,'WebRTC sinyali okunamadı: '+friendly(e));});
+ if(offerer){
+   // The guest owns the signal doc. Erase its old offer before publishing a new one.
+   const old=await FB.getDoc(signal);
+   if(NET.peers.get(uid)!==peer)return;
+   if(old.exists())await FB.deleteDoc(signal);
+   if(NET.peers.get(uid)!==peer)return;
+   await pc.setLocalDescription(await pc.createOffer());await gathered(pc);
+   if(NET.peers.get(uid)!==peer)return;
+   await FB.setDoc(signal,{room:NET.room.id,session:NET.roomData.session,host:uid,guest:NET.uid,offer:pc.localDescription.sdp,answer:'',expiresAt:FB.Timestamp.fromMillis(Date.now()+120000)});
+ }
+}
+function send(peer,data){
+ if(peer.mode==='relay'){sendRelay(peer,data);return;}
+ if(peer.channel?.readyState==='open'&&peer.channel.bufferedAmount<128000){try{peer.channel.send(JSON.stringify(data));}catch(e){schedulePeerRetry(peer.uid,'Oyun paketi gönderilemedi');}}
+}
 function hostSend(data){const peer=NET.peers.get(NET.roomData?.host);if(peer)send(peer,data);}
-function dropPeer(uid){const peer=NET.peers.get(uid);if(!peer)return;NET.peers.delete(uid);clearTimeout(peer.timeout);peer.unsub?.();peer.channel?.close();peer.pc.close();const e=ents.find(e=>e.uid===uid);if(e){e.remote=false;e.uid=null;e.name='Bot '+(1+Math.max(0,...ents.filter(x=>x!==e&&!x.uid).map(x=>+(x.name.match(/^Bot ([0-9]+)$/)?.[1]||0))));e.target=null;e.input=null;e.wps=[sitePoint(G.atkSite)];e.hold=SITE[e.netSlot%2?'A':'B'].holds[0];}if(!NET.guest&&NET.room)FB.runTransaction(FB.db,async tx=>{const s=await tx.get(NET.room);if(s.exists()&&s.data().host===NET.uid)tx.update(NET.room,{members:s.data().members.filter(m=>m.uid!==uid)});}).catch(()=>{});if(peer.signal)FB.deleteDoc(peer.signal).catch(()=>{});}
-async function leaveNetwork(){NET.generation++;NET.active=false;NET.searching=false;NET.starting=false;clearInterval(NET.lobbyTimer);clearInterval(NET.heartbeat);clearInterval(NET.transportTimer);for(const unsub of NET.unsubs)unsub();NET.unsubs=[];const peers=[...NET.peers.values()];NET.peers.clear();for(const peer of peers){clearTimeout(peer.timeout);peer.unsub?.();peer.channel?.close();peer.pc.close();}const room=NET.room,r=NET.roomData;NET.room=null;NET.roomData=null;if(room&&FB){try{await FB.runTransaction(FB.db,async tx=>{const s=await tx.get(room);if(!s.exists()||s.data().session!==r.session)return;if(s.data().host===NET.uid)tx.update(room,{state:'closed',expiresAt:FB.Timestamp.fromMillis(Date.now())});else tx.update(room,{members:s.data().members.filter(m=>m.uid!==NET.uid)});});await Promise.allSettled(peers.map(p=>FB.deleteDoc(p.signal)));}catch(e){console.warn('Lobby cleanup deferred to expiry',e);}}if(r?.relayURL&&!NET.guest&&relaySDK&&relayDatabase){try{await relaySDK.remove(relaySDK.ref(relayDatabase,'kervanRelay/'+r.session));}catch(e){console.warn('Relay cleanup deferred',e);}}NET.guest=false;lockLobby(false);resetRoster();}
+/* Only a REAL room departure removes an avatar. No implicit Firestore member removal. */
+function dropPeer(uid){const peer=NET.peers.get(uid);if(!peer)return;NET.peers.delete(uid);NET.retryAttempts.delete(uid);disposePeer(peer);
+ const e=ents.find(e=>e.uid===uid);if(e){e.remote=false;e.uid=null;e.name='Bot '+(1+Math.max(0,...ents.filter(x=>x!==e&&!x.uid).map(x=>+(x.name.match(/^Bot ([0-9]+)$/)?.[1]||0))));e.target=null;e.input=null;e.wps=[sitePoint(G.atkSite)];e.hold=SITE[e.netSlot%2?'A':'B'].holds[0];}
+ // Signal deletion belongs to explicit leaveNetwork(), not a transient ICE failure.
+}
+async function leaveNetwork(){
+ NET.generation++;NET.active=false;NET.searching=false;NET.starting=false;
+ clearInterval(NET.lobbyTimer);clearInterval(NET.heartbeat);clearInterval(NET.transportTimer);
+ for(const unsub of NET.unsubs)try{unsub();}catch{}NET.unsubs=[];
+ const peers=[...NET.peers.values()];NET.peers.clear();NET.retryAttempts.clear();for(const peer of peers)disposePeer(peer);
+ const room=NET.room,r=NET.roomData;NET.room=null;NET.roomData=null;
+ if(room&&FB&&r){try{await FB.runTransaction(FB.db,async tx=>{
+   const s=await tx.get(room);if(!s.exists()||s.data().session!==r.session)return;
+   if(s.data().host===NET.uid)tx.update(room,{state:'closed',expiresAt:FB.Timestamp.fromMillis(Date.now())});
+   else if(s.data().members.some(m=>m.uid===NET.uid))tx.update(room,{members:s.data().members.filter(m=>m.uid!==NET.uid)});
+ });await Promise.allSettled(peers.filter(p=>p.signal).map(p=>FB.deleteDoc(p.signal)));}catch(e){console.warn('Lobby cleanup deferred to expiry',e);}}
+ if(r?.relayURL&&!NET.guest&&relaySDK&&relayDatabase){try{await relaySDK.remove(relaySDK.ref(relayDatabase,'kervanRelay/'+r.session));}catch(e){console.warn('Relay cleanup deferred',e);}}
+ NET.guest=false;lockLobby(false);resetRoster();
+}
 async function networkError(message){await leaveNetwork();G.paused=true;G.started=false;clearControls();tc.classList.remove('on');$('menu').style.display='flex';$('hud').style.display='none';$('resultBox').style.display='none';$('go').textContent='OYNA';status(message,true);}
 addEventListener('pagehide',()=>{leaveNetwork();});
 
@@ -1882,7 +1980,9 @@ function receive(peer,msg){if(!msg||typeof msg.type!=='string')return;
  peer.lastReceived=performance.now();
  if(msg.type==='ping'){send(peer,{type:'pong'});return;}
  if(msg.type==='pong')return;
- if(msg.type==='hello'){if(!sameConnection(msg)||msg.mode!==match.mode||msg.level!==match.level){networkError('Oyun sürümü, harita veya lobi uyuşmuyor. İki sitede aynı güncel index.html dosyasını açın.');return;}helloPeer(peer);peer.ready=true;clearTimeout(peer.timeout);tryStart();if(peer.pendingStart){const initial=peer.pendingStart;peer.pendingStart=null;receive(peer,initial);}return;}
+ if(msg.type==='hello'){if(!sameConnection(msg)||msg.mode!==match.mode||msg.level!==match.level){networkError('Oyun sürümü, harita veya lobi uyuşmuyor. İki sitede aynı güncel index.html dosyasını açın.');return;}helloPeer(peer);peer.ready=true;clearTimeout(peer.timeout);clearTimeout(peer.disconnectTimer);NET.retryAttempts.delete(peer.uid);tryStart();
+   if(!NET.guest&&NET.active)send(peer,{...connectionIdentity(),type:'start',members:NET.roomData.members,initial:snapshot()});
+   if(peer.pendingStart){const initial=peer.pendingStart;peer.pendingStart=null;receive(peer,initial);}return;}
  if(NET.guest){if(peer.uid!==NET.roomData?.host)return;if(msg.type==='start'){if(!peer.ready){peer.pendingStart=msg;return;}if(!sameConnection(msg)||msg.mode!==match.mode||msg.level!==match.level){networkError('Ortak maç doğrulanamadı. İki sitedeki oyunu güncelleyin.');return;}if(!NET.active)startOnline(msg.members,msg.initial);}else if(msg.type==='snapshot'&&NET.active)acceptSnapshot(msg);return;}
  if(!NET.active)return;const e=ents.find(e=>e.remote&&e.uid===peer.uid);if(!e)return;
  if(msg.type==='moves')acceptMoves(e,peer,msg);
@@ -1892,7 +1992,7 @@ function networkTick(){if(!NET.active||NET.guest)return;const now=performance.no
 function startTransportWatch(){clearInterval(NET.transportTimer);NET.transportTimer=setInterval(()=>{
  if(!NET.active)return;const now=performance.now();
  for(const [uid,peer] of NET.peers){
-   if(now-(peer.lastReceived||now)>90000){if(NET.guest){networkError('Maç sahibinden 90 saniyedir bağlantı yanıtı alınamıyor. Sekme veya cihaz uykuya geçmiş olabilir.');return;}dropPeer(uid);continue;}
+   if(now-(peer.lastReceived||now)>45000&&!peer.retrying){schedulePeerRetry(uid,'Oyun verisi bir süredir alınamıyor');continue;}
    if(peer.mode!=='relay'||now-(peer.lastPing||0)>9000){peer.lastPing=now;send(peer,{type:'ping'});}
  }
  // requestAnimationFrame can stop in a background tab. Use bounded fixed physics
